@@ -3,6 +3,6 @@
 
 
 
-[PR 보내는 방법] (https://github.com/ShinsegaePointCloneCode/Back/Contribute.md)
+[PR 보내는 방법](https://github.com/ShinsegaePointCloneCode/Back/Contribute.md)
 
-[Git 참고자료] (https://github.com/ShinsegaePointCloneCode/Back/Git.md)
+[Git 참고자료](https://github.com/ShinsegaePointCloneCode/Back/Git.md)
