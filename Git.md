@@ -1,4 +1,3 @@
-````
 # Git Command Reference
 
 Git 을 사용하면서 자주 사용하는 명령어들에 대해 정리한 md 입니다.
@@ -311,4 +310,3 @@ _cf> fixup 과 squash 그리고 squeeze 의 차이점_
 #### Reference>
 
 - [How to Write a Git Commit Message](https://item4.github.io/2016-11-01/How-to-Write-a-Git-Commit-Message)
-````
