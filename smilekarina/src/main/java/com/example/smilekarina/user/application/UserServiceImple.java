@@ -3,7 +3,9 @@ package com.example.smilekarina.user.application;
 import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.dto.UserGetDto;
 import com.example.smilekarina.user.dto.UserSignUpDto;
+import com.example.smilekarina.user.dto.UserModifyDto;
 import com.example.smilekarina.user.infrastructure.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -50,6 +52,7 @@ public class UserServiceImple implements UserService{
                 .address(user.getAddress())
                 .build();
         return userGetDto;
+
     }
 
     @Override
@@ -70,4 +73,18 @@ public class UserServiceImple implements UserService{
     public List<UserGetDto> getAllUsers() {
         return null;
     }
+
+    @Override
+    @Transactional
+    public void modify(String UUID, UserModifyDto userModifyDto) {
+        User modifieduser = userRepository.findByUUID(UUID);
+
+        if (null != userModifyDto.getAddress()) {
+            modifieduser.setAddress(userModifyDto.getAddress());
+        }
+        if (null != userModifyDto.getEmail()) {
+            modifieduser.setEmail(userModifyDto.getEmail());
+        }
+    }
+
 }

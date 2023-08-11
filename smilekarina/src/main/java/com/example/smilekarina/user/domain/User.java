@@ -1,15 +1,12 @@
 package com.example.smilekarina.user.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Builder
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // new User() 막는 용도
 @AllArgsConstructor
 public class User {
 
@@ -18,7 +15,7 @@ public class User {
     private Long id;
     @Column(unique = true, nullable = false, length = 100, name = "UUID")
     private String UUID; // todo: UUID
-    @Column(nullable = false, length = 30, name = "login_id")
+    @Column(nullable = false, length = 45, name = "login_id")
     private String loginId;
     @Column(nullable = false, length = 100, name = "user_name")
     private String userName;
@@ -26,7 +23,7 @@ public class User {
     private String email;
     @Column(nullable = false, length = 100, name = "password")
     private String password; // todo: Hashing
-    @Column(length = 30, name = "phone")
+    @Column(length = 15, name = "phone")
     private String phone;
     @Column(length = 100, name = "address")
     private String address;
@@ -34,9 +31,17 @@ public class User {
     private Integer status; // todo: default 1
     @Column(length = 100, name = "point_password")
     private String pointPassword; // todo: Hashing
+    @Column(length = 100, name = "pre_password")
+    private String prePassword; // todo: Hashing
 
     public void hashPassword(String password){
         this.password = password;
 //        this.password = new BCryptPasswordEncoder().encode(password); // todo: Hashing - spring security
+    }
+    public void setAddress(String address) {
+        this.address = address;
+    }
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
