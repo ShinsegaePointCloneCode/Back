@@ -3,7 +3,7 @@ package com.example.smilekarina.user.application;
 import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.dto.UserGetDto;
 import com.example.smilekarina.user.dto.UserSignUpDto;
-import com.example.smilekarina.user.dto.UserModifyDto;
+import com.example.smilekarina.user.vo.UserModifyIn;
 import com.example.smilekarina.user.infrastructure.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -76,14 +76,14 @@ public class UserServiceImple implements UserService{
 
     @Override
     @Transactional
-    public void modify(String UUID, UserModifyDto userModifyDto) {
+    public void modify(String UUID, UserModifyIn userModifyIn) {
         User modifieduser = userRepository.findByUUID(UUID);
 
-        if (null != userModifyDto.getAddress()) {
-            modifieduser.setAddress(userModifyDto.getAddress());
+        if (null != userModifyIn.getAddress()) {
+            modifieduser.setAddress(userModifyIn.getAddress());
         }
-        if (null != userModifyDto.getEmail()) {
-            modifieduser.setEmail(userModifyDto.getEmail());
+        if (null != userModifyIn.getEmail()) {
+            modifieduser.setEmail(userModifyIn.getEmail());
         }
     }
 

@@ -3,7 +3,7 @@ package com.example.smilekarina.user.presentation;
 import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.dto.UserGetDto;
 import com.example.smilekarina.user.dto.UserSignUpDto;
-import com.example.smilekarina.user.dto.UserModifyDto;
+import com.example.smilekarina.user.vo.UserModifyIn;
 import com.example.smilekarina.user.vo.UserGetOut;
 import com.example.smilekarina.user.vo.UserSignUpIn;
 import lombok.RequiredArgsConstructor;
@@ -53,9 +53,19 @@ public class UserController {
     }
 //    @Operation(summary= "회원 정보 수정하기", discription= "uuid와 수정된 정보로 회원 정보를 수정한다.")
     @PutMapping("/myinfo/modify/{UUID}")
-    public ResponseEntity<?> modifyUser(@PathVariable String UUID, @RequestBody UserModifyDto userModifyDto) {
+    public ResponseEntity<?> modifyUser(@PathVariable String UUID, @RequestBody UserModifyIn userModifyIn) {
         log.info("INPUT UUID is : {}" , UUID);
-        userService.modify(UUID, userModifyDto);
+        userService.modify(UUID, userModifyIn);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/join/{loginId}")
+    public ResponseEntity<?> checkUser(@PathVariable String loginId) {
+        UserGetDto userGetDto = userService.getUserByLoginId(loginId);
+
+        if (userGetDto == null) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.status(204).body("아이디가 중복됩니다."); //todo : 전역 state 변경
     }
 }

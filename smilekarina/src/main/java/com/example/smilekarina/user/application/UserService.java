@@ -2,7 +2,7 @@ package com.example.smilekarina.user.application;
 
 import com.example.smilekarina.user.dto.UserGetDto;
 import com.example.smilekarina.user.dto.UserSignUpDto;
-import com.example.smilekarina.user.dto.UserModifyDto;
+import com.example.smilekarina.user.vo.UserModifyIn;
 
 import java.util.List;
 
@@ -12,5 +12,5 @@ public interface UserService {
     UserGetDto getUserByUUID(String UUID);
     List<UserGetDto> getAllUsers();
 
-    void modify(String UUID, UserModifyDto userModifyDto);
+    void modify(String UUID, UserModifyIn userModifyIn);
 }

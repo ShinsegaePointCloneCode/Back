@@ -1,4 +1,4 @@
-package com.example.smilekarina.user.dto;
+package com.example.smilekarina.user.vo;
 
 import lombok.*;
 
@@ -8,7 +8,7 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserModifyDto {
+public class UserModifyIn {
     private String address;
     private String email;
 }
