@@ -11,6 +11,5 @@ public interface UserService {
     UserGetDto getUserByLoginId(String loginId);
     UserGetDto getUserByUUID(String UUID);
     List<UserGetDto> getAllUsers();
-
     void modify(String UUID, UserModifyIn userModifyIn);
 }

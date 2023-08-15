@@ -1,5 +1,6 @@
 package com.example.smilekarina.user.presentation;
 
+import com.example.smilekarina.global.vo.ResponseOut;
 import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.dto.UserGetDto;
 import com.example.smilekarina.user.dto.UserSignUpDto;
@@ -32,12 +33,13 @@ public class UserController {
                 .address(userSignUpIn.getAddress())
                 .build();
         userService.createUser(userSignUpDto);
-        return ResponseEntity.ok().build();
+        ResponseOut<?> responseOut = ResponseOut.success();
+        return ResponseEntity.ok(responseOut);
     }
 
 //    @Operation(summary= "회원 정보 가져오기", discription= "uuid로 회원정보를 가져온다.")
     @GetMapping("/user/{UUID}")
-    public ResponseEntity<UserGetOut> getUserByUUID(@PathVariable String UUID) {
+    public ResponseEntity<ResponseOut<?>> getUserByUUID(@PathVariable String UUID) {
         log.info("INPUT UUID is : {}" , UUID);
         UserGetDto userGetDto = userService.getUserByUUID(UUID);
         log.info("OUTPUT userGetDto is : {}" , userGetDto);
@@ -49,23 +51,28 @@ public class UserController {
                 .address(userGetDto.getAddress())
                 .build();
         log.info("OUTPUT userGetOut is : {}" , userGetOut);
-        return ResponseEntity.ok(userGetOut);
+        ResponseOut<?> responseOut = ResponseOut.success(userGetOut);
+        return ResponseEntity.ok(responseOut);
     }
 //    @Operation(summary= "회원 정보 수정하기", discription= "uuid와 수정된 정보로 회원 정보를 수정한다.")
     @PutMapping("/myinfo/modify/{UUID}")
     public ResponseEntity<?> modifyUser(@PathVariable String UUID, @RequestBody UserModifyIn userModifyIn) {
         log.info("INPUT UUID is : {}" , UUID);
         userService.modify(UUID, userModifyIn);
-        return ResponseEntity.ok().build();
+        ResponseOut<?> responseOut = ResponseOut.success();
+        return ResponseEntity.ok(responseOut);
     }
 
+//    @Operation(summary= "아이디 찾기", discription= "login id를 가져와서 중복되는 것인지 확인한다.")
     @GetMapping("/join/{loginId}")
     public ResponseEntity<?> checkUser(@PathVariable String loginId) {
         UserGetDto userGetDto = userService.getUserByLoginId(loginId);
 
         if (userGetDto == null) {
-            return ResponseEntity.ok().build();
+            ResponseOut<?> responseOut = ResponseOut.success();
+            return ResponseEntity.ok(responseOut);
         }
-        return ResponseEntity.status(204).body("아이디가 중복됩니다."); //todo : 전역 state 변경
+        ResponseOut<?> responseOut = ResponseOut.checkLogId(loginId);
+        return ResponseEntity.ok(responseOut);
     }
 }

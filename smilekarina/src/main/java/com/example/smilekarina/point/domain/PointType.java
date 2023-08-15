@@ -1,7 +1,6 @@
 package com.example.smilekarina.point.domain;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 public enum PointType implements CodeValue{

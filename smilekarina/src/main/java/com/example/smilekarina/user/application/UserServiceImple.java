@@ -1,5 +1,6 @@
 package com.example.smilekarina.user.application;
 
+import com.example.smilekarina.global.vo.ResponseOut;
 import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.dto.UserGetDto;
 import com.example.smilekarina.user.dto.UserSignUpDto;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -86,5 +88,6 @@ public class UserServiceImple implements UserService{
             modifieduser.setEmail(userModifyIn.getEmail());
         }
     }
+
 
 }

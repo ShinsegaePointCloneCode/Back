@@ -15,7 +15,7 @@ public class User {
     private Long id;
     @Column(unique = true, nullable = false, length = 100, name = "UUID")
     private String UUID; // todo: UUID
-    @Column(nullable = false, length = 45, name = "login_id")
+    @Column(nullable = false, length = 45, name = "login_id", unique = true)
     private String loginId;
     @Column(nullable = false, length = 100, name = "user_name")
     private String userName;

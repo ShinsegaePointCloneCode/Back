@@ -13,6 +13,12 @@ public class ResponseOut<T> {
     private int code;
     private T result;
 
+    public static <T> ResponseOut<T> success() {
+        ResponseOut<T> re = new ResponseOut<>();
+        re.setSuccess(true);
+        re.setCode(1000);
+        return re;
+    }
     public static <T> ResponseOut<T> success(T result) {
         ResponseOut<T> re = new ResponseOut<>();
         re.setSuccess(true);
@@ -21,7 +27,7 @@ public class ResponseOut<T> {
         return re;
     }
 
-    public static <T> ResponseOut<T> checkLog(T result) {
+    public static <T> ResponseOut<T> checkLogId(T result) {
         ResponseOut<T> re = new ResponseOut<>();
         re.setSuccess(false);
         re.setCode(3100);
