@@ -6,8 +6,8 @@ import lombok.Getter;
 public enum PointType implements CodeValue{
     EVENT("E", "이벤트"), GIFT("G", "선물"), COUPON("C", "쿠폰"), ETC("T", "기타");
 
-    private String code;
-    private String value;
+    private final String code;
+    private final String value;
 
     PointType(String code, String value) {
         this.code = code;
