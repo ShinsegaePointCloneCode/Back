@@ -1,6 +1,6 @@
 package com.example.smilekarina.club.dto;
 
-import jakarta.persistence.Column;
+import com.example.smilekarina.user.domain.User;
 import lombok.*;
 
 @Builder
@@ -9,9 +9,10 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClubListCreateDto {
+public class ClubListGetDto {
     private Boolean beauty;
     private Boolean momKids;
     private Boolean car;
     private Boolean biz;
+    private User user;
 }

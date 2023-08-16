@@ -9,7 +9,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CarCreateDto {
+public class CarGetDto {
     private String regionNumber;
     private Integer carNumber;
 }
