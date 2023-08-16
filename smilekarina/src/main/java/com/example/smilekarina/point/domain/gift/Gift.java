@@ -35,7 +35,7 @@ public class Gift {
     @Column(nullable = false, name = "sender_point_id")
     private Long senderPointId;
 
-    // TODO 보낸날짜
+    // 보낸날짜
 
     @Column(nullable = false, name = "recipient_point_id")
     private Long recipientPointId;
