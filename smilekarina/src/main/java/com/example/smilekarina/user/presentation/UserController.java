@@ -1,7 +1,5 @@
 package com.example.smilekarina.user.presentation;
 
-import com.example.smilekarina.club.application.ClubService;
-import com.example.smilekarina.club.dto.ClubListCreateDto;
 import com.example.smilekarina.global.vo.ResponseOut;
 import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.dto.UserGetDto;
