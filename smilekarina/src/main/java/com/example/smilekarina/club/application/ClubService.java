@@ -1,16 +1,13 @@
 package com.example.smilekarina.club.application;
 
-import com.example.smilekarina.club.dto.BizCreateDto;
-import com.example.smilekarina.club.dto.CarCreateDto;
-import com.example.smilekarina.club.dto.ClubListCreateDto;
-import com.example.smilekarina.club.dto.MomCreateDto;
-import com.example.smilekarina.user.domain.User;
-import com.example.smilekarina.user.dto.UserSignUpDto;
+import com.example.smilekarina.club.dto.BizGetDto;
+import com.example.smilekarina.club.dto.CarGetDto;
+import com.example.smilekarina.club.dto.MomGetDto;
 
 public interface ClubService {
-    void createClubList(User user);
-    void createMom(MomCreateDto momCreateDto);
-    void createCar(CarCreateDto carCreateDto);
-    void createBiz(BizCreateDto bizCreateDto);
+    void createClubList(String UUID);
+    void createMom(MomGetDto momCreateDto);
+    void createCar(CarGetDto carCreateDto);
+    void createBiz(BizGetDto bizCreateDto);
 
 }

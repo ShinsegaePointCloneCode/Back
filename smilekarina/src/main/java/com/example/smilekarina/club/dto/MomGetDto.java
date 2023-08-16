@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MomCreateDto {
+public class MomGetDto {
     private Boolean sexFirst;
     private LocalDate birthFirst;
     private Boolean sexSecond;

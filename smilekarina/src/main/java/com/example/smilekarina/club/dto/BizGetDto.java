@@ -8,7 +8,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BizCreateDto {
+public class BizGetDto {
     private String bizCompany;
     private Integer bizRegNumber;
     private String bizRepresentation;
