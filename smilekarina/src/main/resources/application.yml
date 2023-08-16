@@ -13,9 +13,16 @@ spring:
       hibernate:
         format_sql: true
       dialect: org.hibernate.dialect.MySQL5Dialect
+    open-in-view: true # false 할지 조원과 상의
 
   datasource:
     url: jdbc:mysql://localhost:3307/ssgpoint
     username: root
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+#jwt:
+#  secret_key: eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTY5MjE2MzQyMiwiaWF0IjoxNjkyMTYzNDIyfQ.pARNwzwfm4ioB2BwTY8yFtKoSJmtNlSC9ks6pGGfGvM
+#  EXPIRATION_TIME: 14400000
+#  header: Authorization
+#  prefix: Bearer

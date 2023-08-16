@@ -3,7 +3,9 @@ package com.example.smilekarina.user.application;
 import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.dto.UserGetDto;
 import com.example.smilekarina.user.dto.UserSignUpDto;
+import com.example.smilekarina.user.vo.UserModifyIn;
 import com.example.smilekarina.user.infrastructure.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,7 +16,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserServiceImple implements UserService{
+public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
 
@@ -42,32 +44,46 @@ public class UserServiceImple implements UserService{
 
         User user = userRepository.findByLoginId(loginId);
         log.info("user is : {}" , user);
-        UserGetDto userGetDto = UserGetDto.builder()
+        return UserGetDto.builder()
                 .loginId(user.getLoginId())
                 .userName(user.getUserName())
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .address(user.getAddress())
                 .build();
-        return userGetDto;
+
     }
 
     @Override
     public UserGetDto getUserByUUID(String UUID) {
         User user = userRepository.findByUUID(UUID);
         log.info("user is : {}" , user);
-        UserGetDto userGetDto = UserGetDto.builder()
+        return UserGetDto.builder()
                 .loginId(user.getLoginId())
                 .userName(user.getUserName())
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .address(user.getAddress())
                 .build();
-        return userGetDto;
     }
 
     @Override
     public List<UserGetDto> getAllUsers() {
         return null;
     }
+
+    @Override
+    @Transactional
+    public void modify(String UUID, UserModifyIn userModifyIn) {
+        User modifieduser = userRepository.findByUUID(UUID);
+
+        if (null != userModifyIn.getAddress()) {
+            modifieduser.setAddress(userModifyIn.getAddress());
+        }
+        if (null != userModifyIn.getEmail()) {
+            modifieduser.setEmail(userModifyIn.getEmail());
+        }
+    }
+
+
 }
