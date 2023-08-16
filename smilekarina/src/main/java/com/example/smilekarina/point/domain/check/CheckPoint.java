@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CheckPoint {
+    // 출석체크
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
