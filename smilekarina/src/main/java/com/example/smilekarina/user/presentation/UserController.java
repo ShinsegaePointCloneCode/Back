@@ -1,5 +1,7 @@
 package com.example.smilekarina.user.presentation;
 
+import com.example.smilekarina.club.application.ClubService;
+import com.example.smilekarina.club.dto.ClubListCreateDto;
 import com.example.smilekarina.global.vo.ResponseOut;
 import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.dto.UserGetDto;
@@ -20,7 +22,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-//    @Operation(summary= "회원 가입", discription= "회원 가입 정보를 받아서 가입시킨다.")
+
+    //    @Operation(summary= "회원 가입", discription= "회원 가입 정보를 받아서 가입시킨다.")
     @PostMapping("/user/join/cert")
     public ResponseEntity<?> createUser(@RequestBody UserSignUpIn userSignUpIn) {
         log.info("INPUT Object Data is : {}" , userSignUpIn);
@@ -32,6 +35,7 @@ public class UserController {
                 .phone(userSignUpIn.getPhone())
                 .address(userSignUpIn.getAddress())
                 .build();
+
         userService.createUser(userSignUpDto);
         ResponseOut<?> responseOut = ResponseOut.success();
         return ResponseEntity.ok(responseOut);

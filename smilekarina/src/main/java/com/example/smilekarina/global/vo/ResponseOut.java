@@ -1,13 +1,11 @@
 package com.example.smilekarina.global.vo;
 
+
 import lombok.*;
 
 
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class ResponseOut<T> {
     private boolean isSuccess;
     private int code;
@@ -17,6 +15,7 @@ public class ResponseOut<T> {
         ResponseOut<T> re = new ResponseOut<>();
         re.setSuccess(true);
         re.setCode(1000);
+        re.setResult(null);
         return re;
     }
     public static <T> ResponseOut<T> success(T result) {

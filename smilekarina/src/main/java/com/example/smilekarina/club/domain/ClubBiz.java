@@ -27,6 +27,7 @@ public class ClubBiz {
     private String bizEmail;
     @Column(nullable = false, name = "person_info")
     private Boolean personalInfo;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", nullable = false)
     private ClubList clubList;
 }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AlarmServiceImple implements AlarmService{
+public class AlarmServiceImpl implements AlarmService{
     private final AlarmRepository alarmRepository;
 
 }

@@ -16,7 +16,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserServiceImple implements UserService{
+public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
 
@@ -44,14 +44,13 @@ public class UserServiceImple implements UserService{
 
         User user = userRepository.findByLoginId(loginId);
         log.info("user is : {}" , user);
-        UserGetDto userGetDto = UserGetDto.builder()
+        return UserGetDto.builder()
                 .loginId(user.getLoginId())
                 .userName(user.getUserName())
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .address(user.getAddress())
                 .build();
-        return userGetDto;
 
     }
 
@@ -59,14 +58,13 @@ public class UserServiceImple implements UserService{
     public UserGetDto getUserByUUID(String UUID) {
         User user = userRepository.findByUUID(UUID);
         log.info("user is : {}" , user);
-        UserGetDto userGetDto = UserGetDto.builder()
+        return UserGetDto.builder()
                 .loginId(user.getLoginId())
                 .userName(user.getUserName())
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .address(user.getAddress())
                 .build();
-        return userGetDto;
     }
 
     @Override

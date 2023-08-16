@@ -16,7 +16,6 @@ public class ClubList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long userId;
     @Column(nullable = false, name = "beauty", columnDefinition = "boolean default false")
     private Boolean beauty;
     @Column(nullable = false, name = "mom_kids", columnDefinition = "boolean default false")

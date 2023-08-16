@@ -14,10 +14,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class PointServiceImple implements PointService{
+public class PointServiceImpl implements PointService{
     private final PointRepository pointRepository;
     private final UserRepository userRepository;
 
@@ -27,6 +29,7 @@ public class PointServiceImple implements PointService{
 
         User getUser = userRepository.findByLoginId(pointAddDto.getLoginId());
         log.info("user is : {}" , getUser);
+
         if(getUser == null){
             log.info("user is null");
             return;

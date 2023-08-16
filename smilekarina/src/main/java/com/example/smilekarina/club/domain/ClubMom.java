@@ -25,6 +25,7 @@ public class ClubMom {
     private Boolean sexSecond;
     @Column(name = "birth_second")
     private LocalDate birthSecond;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", nullable = false)
     private ClubList clubList;
 }

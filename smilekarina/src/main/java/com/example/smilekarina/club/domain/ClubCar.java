@@ -19,6 +19,7 @@ public class ClubCar {
     private String regionNumber;
     @Column(nullable = false, name = "car_number")
     private Integer carNumber;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", nullable = false)
     private ClubList clubList;
 }
