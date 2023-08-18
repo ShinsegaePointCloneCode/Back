@@ -20,6 +20,7 @@
 //@Slf4j
 //@RequiredArgsConstructor
 //public class JwtTokenProvider {
+//    @Value("${jwt.secret_key}") String SECRET_KEY;
 //    // 토큰 생성 로직
 //    private final Environment env;
 //    private final String SECRET_KEY = env.getProperty("JWT.SECRET_KEY");
