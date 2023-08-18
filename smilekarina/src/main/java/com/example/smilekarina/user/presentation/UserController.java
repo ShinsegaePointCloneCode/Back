@@ -27,9 +27,7 @@ public class UserController {
     @PostMapping("/user/join/cert")
     public ResponseEntity<?> createUser(@RequestBody UserSignUpIn userSignUpIn) {
         log.info("INPUT Object Data is : {}" , userSignUpIn);
-        UserSignUpDto userSignUpDto = modelMapper.map(userSignUpIn, UserSignUpDto.class);
-
-        userService.createUser(userSignUpDto);
+        userService.createUser(modelMapper.map(userSignUpIn, UserSignUpDto.class));
         ResponseOut<?> responseOut = ResponseOut.success();
         return ResponseEntity.ok(responseOut);
     }
