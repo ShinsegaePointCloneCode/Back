@@ -1,5 +1,7 @@
 package com.example.smilekarina.point.domain.gift;
 
+// 선물
+import com.example.smilekarina.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Gift {
+public class Gift extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,8 +36,6 @@ public class Gift {
 
     @Column(nullable = false, name = "sender_point_id")
     private Long senderPointId;
-
-    // 보낸날짜
 
     @Column(nullable = false, name = "recipient_point_id")
     private Long recipientPointId;
