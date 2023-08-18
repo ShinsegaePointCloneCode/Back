@@ -7,7 +7,7 @@ build/
 .run
 .github
 
-### STS ###  
+### STS ###
 .apt_generated
 .classpath
 .factorypath
