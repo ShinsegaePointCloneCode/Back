@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+//FAQ
 public class FAQ {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +28,7 @@ public class FAQ {
     private String faqContent;
     /*
     @Column(nullable = false, name = "faq_date")
-    private LocalDateTime faqDate;  //todo: faq 등록 날짜
+    private LocalDateTime faqDate;  //todo: faq 등록 날짜 -> extends baseEntity createdAt
     */
     @Column(nullable = false, name = "faq_answer",columnDefinition = "TEXT")
     private String faqAnswer;

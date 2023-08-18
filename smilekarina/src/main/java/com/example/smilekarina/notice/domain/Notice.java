@@ -24,6 +24,6 @@ public class Notice {
     private String noticeContent;   //공지사항 내용
     /*
     @Column(nullable = false,name="notice_date" )
-    private LocalDateTime noticeDate;   //todo : 공지사항 날짜
+    private LocalDateTime noticeDate;   //todo : 공지사항 날짜 ->
      */
 }

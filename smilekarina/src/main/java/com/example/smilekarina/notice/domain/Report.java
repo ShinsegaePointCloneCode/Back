@@ -21,6 +21,8 @@ public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;    //1:1 상담 아이디
+    // 답변이 달리기 전까진 대분류 소분류 제목 내용 수정이 가능
+    // 답변이 달리면 user는 수정 X
     @Column(nullable = false, length = 30, name = "big_option")
     private String bigOption;   //대분류
     @Column(nullable = false, length = 30, name = "small_option")
@@ -32,16 +34,19 @@ public class Report {
     /*
     @Column (nullable = false, name="report_date")
     private LocalDateTime reportDate;   // todo :상담 등록 날짜: 년 월 일
+    //todo : 프론트와 상의해보기 날짜 잘라서 주길 바라냐 아니면 그냥 주면 자르겠냐                                        
      */
-    @Column(nullable = false, length = 255, name="answer_title")
+    // todo : 상담 내용 수정했을때, 수정일로 저장이 되는지 아니면 최초 등록날짜가 유지되는지 확인후
+    //      최초 일자이면 createdAt 수정일이면 updatedAt
+    @Column(nullable = true, length = 255, name="answer_title")
     private String answerTitle; // 답변 제목
-    @Column(nullable = false, name="answer_content", columnDefinition = "TEXT")
+    @Column(nullable = true, name="answer_content", columnDefinition = "TEXT")
     private String answerContent;   //답변 내용
     /*
-    @Column(nullable = false,name="answer_date")
-    private LocalDateTime answerDate; // todo : 답변등록 날짜: 년 월 일 시 분 초
+    @Column(nullable = true,name="answer_date")
+    private LocalDateTime answerDate;
+    // todo : 답변등록 날짜: 년 월 일 시 분 초 -> extends baseEntity createddate
      */
-
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;  //user id
 }
