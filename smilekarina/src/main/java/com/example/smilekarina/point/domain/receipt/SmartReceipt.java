@@ -1,6 +1,5 @@
 package com.example.smilekarina.point.domain.receipt;
 
-import com.example.smilekarina.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SmartReceipt extends BaseEntity {
+public class SmartReceipt {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
