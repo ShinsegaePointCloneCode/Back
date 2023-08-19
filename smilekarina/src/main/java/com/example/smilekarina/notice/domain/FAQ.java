@@ -28,7 +28,8 @@ public class FAQ {
     private String faqContent;
     /*
     @Column(nullable = false, name = "faq_date")
-    private LocalDateTime faqDate;  //todo: faq 등록 날짜 -> extends baseEntity createdAt
+    private LocalDateTime faqDate;  //todo: faq 등록 날짜 -> extends baseEntity createdDate
+    todo : LocalDateTime 말고 LocalDate도 고려해보기 -> api정의서보면서 고려해보기
     */
     @Column(nullable = false, name = "faq_answer",columnDefinition = "TEXT")
     private String faqAnswer;

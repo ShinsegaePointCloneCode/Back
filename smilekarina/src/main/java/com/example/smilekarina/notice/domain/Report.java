@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,7 +15,8 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-//1:1 상담
+//1:1 상담-> 최대 6개월까지 보관
+//todo: 6개월 이후엔 화면에서만 안보이게 하는것인지 아니면 db에서도 없어지는것인지는 알아보기
 public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +37,7 @@ public class Report {
     //todo : 프론트와 상의해보기 날짜 잘라서 주길 바라냐 아니면 그냥 주면 자르겠냐                                        
      */
     // todo : 상담 내용 수정했을때, 수정일로 저장이 되는지 아니면 최초 등록날짜가 유지되는지 확인후
-    //      최초 일자이면 createdAt 수정일이면 updatedAt
+    //      최초 일자이면 createdDate 수정일이면 updatedDate
     @Column(nullable = true, length = 255, name="answer_title")
     private String answerTitle; // 답변 제목
     @Column(nullable = true, name="answer_content", columnDefinition = "TEXT")

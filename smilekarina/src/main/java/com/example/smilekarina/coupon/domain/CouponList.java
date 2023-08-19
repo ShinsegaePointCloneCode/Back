@@ -1,6 +1,6 @@
 package com.example.smilekarina.coupon.domain;
-
 import com.example.smilekarina.user.domain.User;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

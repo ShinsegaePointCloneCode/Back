@@ -19,5 +19,5 @@ public class Branch {
     private Float branchLontitude;  // 경도
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    private Franchise franchise;
+    private Franchise franchise;    //프랜차이즈 id
 }

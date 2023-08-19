@@ -18,10 +18,8 @@ public class ApplicationEvent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;    //응모형 이벤트 id -> application_event_id
-    /*
     @Column(nullable = false,name="prize_result_date")
     private LocalDateTime prizeResultDate;  //todo: 당첨 발표일
-     */
     @Column(nullable = false, name = "event_id")
     private Long eventId;//이벤트 아이디
     @Column(nullable = false, name="prize_number")

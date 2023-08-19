@@ -8,13 +8,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.EnumMap;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+//쿠폰
 public class Coupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,10 +30,11 @@ public class Coupon {
     @Column(nullable = false, name="coupon_type")
     private Boolean couponType; //쿠폰 유형 ex)  True-퍼센트, False-금액
     @Column(nullable = false,name="coupon_discount")
-    private Integer couponDiscount; //쿠폰 할인액 ex)
-    /*
+    private Integer couponDiscount; //쿠폰 할인액 ex) 퍼센트일경우 :20 / 금액일 경우 : 2000
+
     @Column(nullable = false, name="coupon_img")
     private Long couponImg; // todo: 쿠폰 이미지 -> 이미지 id 받아서 사용 image id는 BIGINT이기에 Long
-     */
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private CouponPartner couponPartner;  //coupon_parter_id
 }
