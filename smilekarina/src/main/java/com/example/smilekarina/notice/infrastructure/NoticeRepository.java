@@ -1,4 +1,8 @@
 package com.example.smilekarina.notice.infrastructure;
 
-public interface NoticeRepository {
+import com.example.smilekarina.notice.domain.Notice;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface NoticeRepository extends JpaRepository<Notice,Long> {
+
 }

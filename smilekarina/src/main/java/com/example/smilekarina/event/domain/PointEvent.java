@@ -19,5 +19,5 @@ public class PointEvent {
     @Column(nullable = false, name="point_price")
     private Integer pointPrice; // 포인트제공액
     @Column(nullable = false,name="event_id")
-    private Long eventId;   // 이벤트아이디..? todo : 이벤트 id가 뭔지 앱켜고 확인해보기
+    private Long eventId;   // 이벤트아이디
 }

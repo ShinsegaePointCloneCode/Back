@@ -1,12 +1,12 @@
 package com.example.smilekarina.notice.domain;
 
+import com.example.smilekarina.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -14,7 +14,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 //FAQ
-public class FAQ {
+public class FAQ extends BaseEntity {
+    //extends BaseEntitiy를 작성하고 저장하면 자동으로 createdDate와 updatedDate가 생성됨
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;    //faq id
@@ -26,11 +27,6 @@ public class FAQ {
     private String faqTitle;
     @Column(nullable = false, name = "faq_content",columnDefinition = "TEXT")   //faq 내용
     private String faqContent;
-    /*
-    @Column(nullable = false, name = "faq_date")
-    private LocalDateTime faqDate;  //todo: faq 등록 날짜 -> extends baseEntity createdDate
-    todo : LocalDateTime 말고 LocalDate도 고려해보기 -> api정의서보면서 고려해보기
-    */
     @Column(nullable = false, name = "faq_answer",columnDefinition = "TEXT")
     private String faqAnswer;
 }

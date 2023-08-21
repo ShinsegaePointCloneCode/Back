@@ -1,5 +1,6 @@
 package com.example.smilekarina.event.domain;
 
+import com.example.smilekarina.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 //이벤트
-public class Event {
+public class Event extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;    //event_id
@@ -22,10 +23,6 @@ public class Event {
     private String eventHead;   //이벤트 제목
     @Column(nullable = false, name = "linked_url")  //길이 255
     private String linkedUrl;   //이벤트 연결
-    /*
-    private
-    //이벤트 등록일자 : extends 써서 createdDate 사용
-     */
     @Column(nullable = false, name="event_start")
     private LocalDateTime eventStart;   //이벤트 시작일
     @Column(nullable = false, name="event_end")

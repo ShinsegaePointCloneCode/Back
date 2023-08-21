@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-//즐겨찾기 매장
+//자주찾는 매장
 public class MyStore {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
