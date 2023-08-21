@@ -1,4 +1,4 @@
-package com.example.smilekarina.point.domain.partner;
+package com.example.smilekarina.convert.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,13 +6,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-// 제휴 포인트카드 적립
+// 전환 포인트
 @Builder
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CardPartnerAccept {
+public class ConvertedPoint {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +21,11 @@ public class CardPartnerAccept {
     @Column(nullable = false, name = "point_id")
     private Long pointId;
 
-    // TODO 컬럼이 부족한 것 같다. 개발식 확인 필요
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private ConvertedPartner convertedPartner;
+
+    @Column(nullable = false, name = "user_id")
+    private Long userId;
 
 }

@@ -1,4 +1,4 @@
-package com.example.smilekarina.point.domain.receipt;
+package com.example.smilekarina.event.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,13 +6,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-// 스마트 영수증 조회가 불가능한 곳에서 적립한 포인트
+// 이벤트 적립 포인트
 @Builder
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReceiptAccept {
+public class EventAcceptPoint {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,10 +21,10 @@ public class ReceiptAccept {
     @Column(nullable = false, name = "point_id")
     private Long pointId;
 
+    @Column(nullable = false, name = "point_event_id")
+    private Long pointEventId;
+
     @Column(nullable = false, name = "user_id")
     private Long userId;
-
-    @Column(nullable = false, name = "franchise_id")
-    private Integer franchiseId;
 
 }

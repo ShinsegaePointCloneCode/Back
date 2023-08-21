@@ -1,4 +1,4 @@
-package com.example.smilekarina.point.domain.convert;
+package com.example.smilekarina.convert.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
