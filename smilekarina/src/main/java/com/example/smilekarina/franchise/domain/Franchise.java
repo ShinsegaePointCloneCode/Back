@@ -16,7 +16,7 @@ public class Franchise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;     //가맹점 아이디
-    @Column(nullable = false,name="franchise_name",length = 255)
+    @Column(nullable = false,name="franchise_name")
     private String franchiseName;   // 가맹점 이름
     @Column(nullable = false, name="image_id")
     private Long imageId;   // 이미지id
