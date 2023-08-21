@@ -15,7 +15,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/api/v1")
-public class PointController {
+public class
+PointController {
     private final PointService pointService;
 
     @PostMapping("/point")

@@ -1,22 +1,22 @@
 package com.example.smilekarina.user.domain;
 
+import com.example.smilekarina.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-//import org.springframework.security.core.GrantedAuthority;
-//import org.springframework.security.core.authority.SimpleGrantedAuthority;
-//import org.springframework.security.core.userdetails.UserDetails;
-//
-//import java.util.Collection;
-//import java.util.List;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.Collection;
+import java.util.List;
 
 @Builder
 @Entity
 @Getter
 @NoArgsConstructor // new User() 막는 용도
 @AllArgsConstructor
-public class User
-//        implements UserDetails
-{
+public class User extends BaseEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +27,7 @@ public class User
     private String loginId;
     @Column(nullable = false, length = 100, name = "user_name")
     private String userName;
-    @Column(nullable = false, length = 100, name = "email")
+    @Column(length = 100, name = "email")
     private String email;
     @Column(nullable = false, length = 100, name = "password")
     private String password; // todo: security
@@ -41,10 +41,13 @@ public class User
     private String pointPassword; // todo: Hashing
     @Column(length = 100, name = "pre_password")
     private String prePassword; // todo: Hashing
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true, length = 10, name = "roll")
+    private Roll roll;
 
     public void hashPassword(String password){
-        this.password = password;
-//        this.password = new BCryptPasswordEncoder().encode(password); // todo: Hashing - spring security
+//        this.password = password;
+        this.password = new BCryptPasswordEncoder().encode(password); // todo: Hashing - spring security
     }
     public void setAddress(String address) {
         this.address = address;
@@ -52,39 +55,39 @@ public class User
     public void setEmail(String email) {
         this.email = email;
     }
+//     security impl
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(roll.name()));
+    }
 
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return List.of(new SimpleGrantedAuthority("USER"));
-//    }
-//
-//    @Override
-//    public String getPassword() {
-//        return password;
-//    }
-//
-//    @Override
-//    public String getUsername() {
-//        return UUID;
-//    }
-//
-//    @Override
-//    public boolean isAccountNonExpired() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isAccountNonLocked() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isCredentialsNonExpired() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isEnabled() {
-//        return false;
-//    }
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return loginId;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

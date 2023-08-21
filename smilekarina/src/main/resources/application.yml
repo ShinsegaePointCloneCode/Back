@@ -21,8 +21,28 @@ spring:
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-#jwt:
-#  secret_key: eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTY5MjE2MzQyMiwiaWF0IjoxNjkyMTYzNDIyfQ.pARNwzwfm4ioB2BwTY8yFtKoSJmtNlSC9ks6pGGfGvM
-#  EXPIRATION_TIME: 14400000
-#  header: Authorization
-#  prefix: Bearer
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+JWT:
+  SECRET_KEY: f9ee13691cd0a3de2875b5fdcf5babcdb3394a3801e0843d6f998f78b9e016a0
+  EXPIRATION_TIME: 14400000
+  header: Authorization
+  prefix: Bearer
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    groups-order: DESC
+    operations-sorter: method
+    disable-swagger-default-url: true
+    display-request-duration: true
+  api-docs:
+    path: /api-docs
+  show-actuator: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  paths-to-match:
+    - /api/v1/**
