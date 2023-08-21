@@ -1,17 +1,24 @@
 package com.example.smilekarina.user.application;
 
+import com.example.smilekarina.config.security.JwtTokenProvider;
+import com.example.smilekarina.user.domain.Roll;
 import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.dto.UserGetDto;
 import com.example.smilekarina.user.dto.UserSignUpDto;
+import com.example.smilekarina.user.vo.UserLoginIn;
 import com.example.smilekarina.user.vo.UserModifyIn;
 import com.example.smilekarina.user.infrastructure.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+
 
 @Service
 @RequiredArgsConstructor
@@ -19,53 +26,47 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
-
+    private final UserDetailsService userDetailsService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final ModelMapper modelMapper;
     @Override
     public void createUser(UserSignUpDto userSignUpDto) {
-
+        log.info("craeteUser : {}",userSignUpDto);
         UUID uuid = UUID.randomUUID();
         String uuidString = uuid.toString();
+        String hashedPassword = new BCryptPasswordEncoder().encode(userSignUpDto.getPassword());
 
         User user = User.builder()
                 .loginId(userSignUpDto.getLoginId())
                 .UUID(uuidString)
-                .userName(userSignUpDto.getName())
-                .password(userSignUpDto.getPassword())
+                .userName(userSignUpDto.getUserName())
+                .password(hashedPassword)
                 .email(userSignUpDto.getEmail())
                 .phone(userSignUpDto.getPhone())
                 .address(userSignUpDto.getAddress())
                 .status(1)
+                .roll(Roll.USER)
                 .build();
+        log.info("savedUser : {}",user.getLoginId());
         userRepository.save(user);
     }
 
-    @Override
     public UserGetDto getUserByLoginId(String loginId) {
+        Optional<User> user = userRepository.findByLoginId(loginId);
+        user.ifPresent(u -> log.info("user is : {}", u));
 
-        User user = userRepository.findByLoginId(loginId);
-        log.info("user is : {}" , user);
-        return UserGetDto.builder()
-                .loginId(user.getLoginId())
-                .userName(user.getUserName())
-                .email(user.getEmail())
-                .phone(user.getPhone())
-                .address(user.getAddress())
-                .build();
-
+        return user.map(u -> modelMapper.map(u, UserGetDto.class))
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
     }
 
     @Override
     public UserGetDto getUserByUUID(String UUID) {
-        User user = userRepository.findByUUID(UUID);
-        log.info("user is : {}" , user);
-        return UserGetDto.builder()
-                .loginId(user.getLoginId())
-                .userName(user.getUserName())
-                .email(user.getEmail())
-                .phone(user.getPhone())
-                .address(user.getAddress())
-                .build();
+        Optional<User> user = userRepository.findByUUID(UUID);
+        user.ifPresent(u -> log.info("user is : {}", u));
+        return user.map(u -> modelMapper.map(user, UserGetDto.class))
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
     }
+
 
     @Override
     public List<UserGetDto> getAllUsers() {
@@ -75,15 +76,40 @@ public class UserServiceImpl implements UserService{
     @Override
     @Transactional
     public void modify(String UUID, UserModifyIn userModifyIn) {
-        User modifieduser = userRepository.findByUUID(UUID);
+        Optional<User> optionalUser = userRepository.findByUUID(UUID);
 
-        if (null != userModifyIn.getAddress()) {
-            modifieduser.setAddress(userModifyIn.getAddress());
-        }
-        if (null != userModifyIn.getEmail()) {
-            modifieduser.setEmail(userModifyIn.getEmail());
+        // User 객체가 존재할 경우만 내부 로직 실행
+        optionalUser.ifPresent(modifiedUser -> {
+            // 주소 변경
+            if (null != userModifyIn.getAddress()) {
+                modifiedUser.setAddress(userModifyIn.getAddress());
+            }
+            // 이메일 변경
+            if (null != userModifyIn.getEmail()) {
+                modifiedUser.setEmail(userModifyIn.getEmail());
+            }
+        });
+
+        // User 객체가 존재하지 않을 경우 예외 발생
+        if (optionalUser.isEmpty()) {
+            throw new NoSuchElementException("User with UUID " + UUID + " not found");
         }
     }
 
+    public String loginUser(UserLoginIn userLoginIn) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userLoginIn.getLoginId());
+        // password 확인
+        if(new BCryptPasswordEncoder().matches(userLoginIn.getPassword(), userDetails.getPassword())) {
+            // JWT 토큰 생성 및 반환
+            return jwtTokenProvider.generateToken(userDetails);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public Long getUserId(String loginId) {
+        return null;
+    }
 
 }

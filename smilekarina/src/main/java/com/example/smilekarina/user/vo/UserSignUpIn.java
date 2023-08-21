@@ -8,7 +8,7 @@ import lombok.ToString;
 public class UserSignUpIn {
     private String loginId;
     private String password;
-    private String name;
+    private String userName;
     private String email;
     private String phone;
     private String address;

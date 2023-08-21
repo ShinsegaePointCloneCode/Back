@@ -1,5 +1,6 @@
 package com.example.smilekarina.club.domain;
 
+import com.example.smilekarina.point.domain.PointType;
 import com.example.smilekarina.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,13 +19,10 @@ public class ClubList {
     private Long id;
     @Column(nullable = false, name = "beauty", columnDefinition = "boolean default false")
     private Boolean beauty;
-    @Column(nullable = false, name = "mom_kids", columnDefinition = "boolean default false")
-    private Boolean momKids;
-    @Column(nullable = false, name = "car", columnDefinition = "boolean default false")
-    private Boolean car;
-    @Column(nullable = false,  name = "biz", columnDefinition = "boolean default false")
-    private Boolean biz;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "id", nullable = false)
     private User user;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "id", nullable = false)
+    private Club club;
 }

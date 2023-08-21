@@ -11,7 +11,7 @@ import lombok.*;
 public class UserSignUpDto {
     private String loginId;
     private String password;
-    private String name;
+    private String userName;
     private String email;
     private String phone;
     private String address;

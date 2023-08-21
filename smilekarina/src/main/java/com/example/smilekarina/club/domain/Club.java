@@ -1,5 +1,6 @@
 package com.example.smilekarina.club.domain;
 
+import com.example.smilekarina.point.domain.PointType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,15 +12,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClubCar {
+public class Club {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, length = 30, name = "region_number")
-    private String regionNumber;
-    @Column(nullable = false, name = "car_number")
-    private Integer carNumber;
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", nullable = false)
-    private ClubList clubList;
+//    @Column(nullable = false, name = "club_type")
+//    @Convert(converter = ClubType.class)
+//    private PointType clubType;
+    @Column(name = "club_content",columnDefinition = "TEXT")
+    private PointType clubContent;
 }
