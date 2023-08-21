@@ -1,4 +1,4 @@
-package com.example.smilekarina.point.domain.gift;
+package com.example.smilekarina.gift.domain;
 
 import jakarta.persistence.AttributeConverter;
 
