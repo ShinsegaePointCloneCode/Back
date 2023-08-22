@@ -47,8 +47,7 @@ public class JwtTokenProvider {
             UserDetails userDetails
     ) {
         log.info("generateToken", extractClaims, userDetails);
-        return Jwts
-                .builder()
+        return Jwts.builder()
                 .setClaims(extractClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new java.util.Date(System.currentTimeMillis()))

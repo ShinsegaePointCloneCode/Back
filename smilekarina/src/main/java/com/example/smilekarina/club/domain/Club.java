@@ -16,9 +16,9 @@ public class Club {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-//    @Column(nullable = false, name = "club_type")
-//    @Convert(converter = ClubType.class)
-//    private PointType clubType;
+    @Column(nullable = false, name = "club_type")
+    @Convert(converter = ClubTypeConverter.class)
+    private ClubType clubType;
     @Column(name = "club_content",columnDefinition = "TEXT")
-    private PointType clubContent;
+    private String clubContent;
 }

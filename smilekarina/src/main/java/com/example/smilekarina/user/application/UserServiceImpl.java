@@ -109,7 +109,8 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Long getUserId(String loginId) {
-        return null;
+        Optional<User> optionalUser =  userRepository.findByLoginId(loginId);
+        return optionalUser.orElseThrow(() -> new NoSuchElementException("User not found")).getId();
     }
 
 }
