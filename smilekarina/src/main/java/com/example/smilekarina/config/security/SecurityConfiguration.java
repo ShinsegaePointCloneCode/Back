@@ -28,6 +28,12 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(
                         authorizeHttpRequests -> authorizeHttpRequests
                                 .requestMatchers(
+                                        "/api/v1/join/**")
+                                .authenticated() // 인증된 사용자만 접근을 허용합니다.
+                )
+                .authorizeHttpRequests(
+                        authorizeHttpRequests -> authorizeHttpRequests
+                                .requestMatchers(
                                         "/api/v1/**",
                                         "/swagger-ui/**",
                                         "/swagger-resources/**",
