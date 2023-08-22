@@ -1,25 +1,26 @@
 package com.example.smilekarina.card.domain;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-// 카드제휴사
+// 제휴 포인트카드 적립
 @Builder
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CardPartner {
+public class CardPartnerAccept {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @Column(nullable = false, length = 45, name = "card_partner_name")
-    private String cardPartnerName;
+    @Column(nullable = false, name = "point_id")
+    private Long pointId;
+
+    // TODO 컬럼이 부족한 것 같다. 개발식 확인 필요
 
 }

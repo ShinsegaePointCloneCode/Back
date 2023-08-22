@@ -1,4 +1,4 @@
-package com.example.smilekarina.point.domain.check;
+package com.example.smilekarina.check.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

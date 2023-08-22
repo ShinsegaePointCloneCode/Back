@@ -1,4 +1,4 @@
-package com.example.smilekarina.point.domain;
+package com.example.smilekarina.global.domain;
 
 public interface CodeValue {
     String getCode();
