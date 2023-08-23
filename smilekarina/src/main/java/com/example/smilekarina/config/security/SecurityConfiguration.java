@@ -25,15 +25,16 @@ public class SecurityConfiguration {
 
         http
                 .csrf(CsrfConfigurer::disable) // CSRF 보안을 비활성화. API 서버로 사용하기 때문에 일반적으로 비활성화
+//                .authorizeHttpRequests(
+//                        authorizeHttpRequests -> authorizeHttpRequests
+//                                .requestMatchers(
+//                                        "/api/v1/join/**")
+//                                .authenticated() // 인증된 사용자만 접근을 허용합니다.
+//                )
                 .authorizeHttpRequests(
                         authorizeHttpRequests -> authorizeHttpRequests
                                 .requestMatchers(
-                                        "/api/v1/join/**")
-                                .authenticated() // 인증된 사용자만 접근을 허용합니다.
-                )
-                .authorizeHttpRequests(
-                        authorizeHttpRequests -> authorizeHttpRequests
-                                .requestMatchers(
+                                        "",
                                         "/api/v1/**",
                                         "/swagger-ui/**",
                                         "/swagger-resources/**",
