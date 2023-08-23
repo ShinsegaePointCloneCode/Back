@@ -18,5 +18,5 @@ public interface UserService {
     void modify(String UUID, UserModifyIn userModifyIn);
     String loginUser(UserLoginIn userLoginIn);
     Long getUserId(String loginId);
-
+    Long getUserIdFromToken(String token);
 }

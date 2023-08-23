@@ -68,7 +68,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return UUID;
+        return loginId;
     }
 
     @Override
