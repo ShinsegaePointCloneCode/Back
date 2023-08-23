@@ -1,4 +1,7 @@
 package com.example.smilekarina.coupon.infrastructure;
 
-public interface CouponListRepository {
+import com.example.smilekarina.coupon.domain.CouponList;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CouponListRepository extends JpaRepository<CouponList, Long> {
 }

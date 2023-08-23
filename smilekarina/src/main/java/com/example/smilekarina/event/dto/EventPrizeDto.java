@@ -10,13 +10,13 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventListGetDto {
+public class EventPrizeDto {
     private Long id;
     private String eventHead;   //이벤트 제목
     private String linkedUrl;   //이벤트 연결
-    private LocalDateTime reg_date; //이벤트 등록일
+    private LocalDateTime reg_date;//이벤트 등록일
     private LocalDateTime eventStart;   //이벤트 시작일
     private LocalDateTime eventEnd; //이벤트 종료일
-    private Long eventThumbnail;    //이벤트 썸네일
+    private Long eventDetailImage;    //이벤트 썸네일
     private String eventType;   //이벤트 종류
 }
