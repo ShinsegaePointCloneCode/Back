@@ -30,4 +30,9 @@ public class SmartReceipt {
     @Column(nullable = false, name = "franchise_id")
     private Integer franchiseId;
 
+    @Column(nullable = false, length = 45, name = "branch_name")
+    private String branchName;
+
+
+
 }
