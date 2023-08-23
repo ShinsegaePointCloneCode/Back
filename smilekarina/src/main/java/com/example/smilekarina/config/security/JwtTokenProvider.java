@@ -26,13 +26,15 @@ public class JwtTokenProvider {
     private final Environment env;
 
 
-    // JWT 토큰에서 loginId(사용자명)을 추출합니다. token -> loginId
+    // JWT 토큰에서 UUID(사용자명)을 추출합니다. token -> UUID
     public String getLoginId(String token) {
         return extractClaim(token, Claims::getSubject);
     }
     // JWT 토큰의 claims 부분에서 특정 claim을 추출합니다.
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        log.info("extractClaim method : {}",token);
         Claims claims = extractAllClaims(token);
+        log.info("Clims: {}",claims);
         return claimsResolver.apply(claims);
     }
 
@@ -70,6 +72,7 @@ public class JwtTokenProvider {
     }
     // JWT 토큰의 모든 claims를 추출합니다.
     private Claims extractAllClaims(String token) {
+        log.info("extractAllClaims {}", token);
         return Jwts
                 .parserBuilder()
                 .setSigningKey(getSigningKey())
