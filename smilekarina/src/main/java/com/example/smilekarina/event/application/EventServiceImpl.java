@@ -61,6 +61,7 @@ public class EventServiceImpl implements EventService{
         log.info("{}", eventGetDto);
         return eventGetDto;
     }
+    /*
     //이벤트리스트로 보기
     @Override
     public List<EventListGetDto> getAllEvent() {
@@ -68,9 +69,12 @@ public class EventServiceImpl implements EventService{
         //Event에서 EventGetDto로 넣어주는 처리
         //USer Point에 Sample 찾기
         List<EventListGetDto> eventListGetDtoList = eventlist.stream().map(point->{
-            return EventListGetDto
+            return EventListGetDto.builder()
+                    .
         })
         return ;
     }
+
+     */
 
 }

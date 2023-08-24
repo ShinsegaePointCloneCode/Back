@@ -12,5 +12,5 @@ public interface EventService {
     void createEventPartner(EventPartnerGetDto eventPartnerGetDto);
     EventGetDto getEvent(Long id);
 
-    List<EventListGetDto> getAllEvent();
+    //List<EventListGetDto> getAllEvent();
 }
