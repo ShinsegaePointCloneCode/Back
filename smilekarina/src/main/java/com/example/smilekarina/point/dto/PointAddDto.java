@@ -11,5 +11,5 @@ public class PointAddDto {
     private Integer point;
     private String pointType;
     private Boolean used;
-    private String loginId;
+    private Long userId;
 }
