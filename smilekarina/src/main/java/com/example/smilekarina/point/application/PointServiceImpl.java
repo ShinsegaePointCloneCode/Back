@@ -5,6 +5,7 @@ import com.example.smilekarina.point.domain.PointType;
 import com.example.smilekarina.point.domain.PointTypeConverter;
 import com.example.smilekarina.point.dto.PointAddDto;
 import com.example.smilekarina.point.dto.PointGetDto;
+import com.example.smilekarina.point.dto.PointPasswordCheckDto;
 import com.example.smilekarina.point.infrastructure.PointRepository;
 import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.infrastructure.UserRepository;
@@ -45,9 +46,7 @@ public class PointServiceImpl implements PointService{
         return null;
     }
 
-    /*
-        포인트 생성
-     */
+    // 포인트 생성
     @Override
     public Long registerPoint(PointAddDto pointAddDto) {
 
@@ -75,6 +74,20 @@ public class PointServiceImpl implements PointService{
                 .build());
 
         return resultPoint.getId();
+    }
+
+    // 포인트 비밀번호 일치 확인
+    @Override
+    public Boolean checkPointPassword(PointPasswordCheckDto pointPasswordCheckDto) {
+
+        User user = userRepository.findById(pointPasswordCheckDto.getUserId()).orElseThrow(IllegalArgumentException::new);
+
+        // 포인트 비밀번호가 없거나 일치하지 않은 경우
+        if(user.getPointPassword() == null || !user.getPointPassword().equals(pointPasswordCheckDto.getPointPassword())) {
+          return false;
+        }
+
+        return true;
     }
 
 

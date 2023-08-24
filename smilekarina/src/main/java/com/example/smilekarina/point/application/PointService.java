@@ -2,6 +2,7 @@ package com.example.smilekarina.point.application;
 
 import com.example.smilekarina.point.dto.PointAddDto;
 import com.example.smilekarina.point.dto.PointGetDto;
+import com.example.smilekarina.point.dto.PointPasswordCheckDto;
 
 import java.util.List;
 
@@ -12,6 +13,9 @@ public interface PointService {
 
     // 포인트 데이터 등록하기
     Long registerPoint(PointAddDto pointAddDto);
+
+    // 포인트 비밀번호 일치 확인
+    Boolean checkPointPassword(PointPasswordCheckDto pointPasswordCheckDto);
 
 
 
