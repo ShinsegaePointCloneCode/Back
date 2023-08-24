@@ -22,4 +22,8 @@ public enum ClubType implements CodeValue {
     public String getValue() {
         return value;
     }
+
+    public static ClubType fromString(String name) {
+        return ClubType.valueOf(name.toUpperCase());
+    }
 }

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -20,4 +21,6 @@ public class CheckPoint {
     private Integer userId;
     @Column(nullable = false, name= "cnt_date", columnDefinition = "int default 0")
     private Integer cntDate;
+    @Column(nullable = false, name= "check_date")
+    private LocalDate ckeckDate;
 }

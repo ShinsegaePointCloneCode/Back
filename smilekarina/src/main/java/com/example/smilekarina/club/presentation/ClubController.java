@@ -40,13 +40,15 @@ public class ClubController {
     }
     @PostMapping("/myinfo/clubAgree/biz")
     public ResponseEntity<?> createClubBiz(@RequestHeader("Authorization") String token, @RequestBody BizIn bizIn) {
+        System.out.println(token);
         clubService.registerClubForBiz(token, bizIn);
         ResponseOut<?> responseOut = ResponseOut.success();
         return ResponseEntity.ok(responseOut);
     }
-    @DeleteMapping("/myinfo/clubAgree/biz")
-    public ResponseEntity<?> deleteClubMom(@RequestHeader("Authorization") String token) {
-        clubService.clear(token, ClubType.BIZ);
+    @DeleteMapping("/myinfo/clubAgree/{clubType}")
+    public ResponseEntity<?> deleteClubMom(@RequestHeader("Authorization") String token, @PathVariable String clubType) {
+        ClubType type = ClubType.fromString(clubType);
+        clubService.clear(token, type);
         ResponseOut<?> responseOut = ResponseOut.success();
         return ResponseEntity.ok(responseOut);
     }
