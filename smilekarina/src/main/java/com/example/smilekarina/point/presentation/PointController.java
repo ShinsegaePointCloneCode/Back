@@ -6,6 +6,7 @@ import com.example.smilekarina.point.dto.PointAddDto;
 import com.example.smilekarina.point.dto.PointGetDto;
 import com.example.smilekarina.point.vo.PointIn;
 import com.example.smilekarina.point.vo.PointOut;
+import com.example.smilekarina.point.vo.PointPasswordModifyIn;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,21 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/api/v1")
-public class
-PointController {
+public class PointController {
 
     private final PointService pointService;
+
+    /*
+        포인트 비밀번호 변경
+     */
+    @PutMapping("/user/pointpwdChg")
+    public ResponseEntity<?> changePointPassword(@RequestHeader("Authorization") String token,
+                                                 @RequestBody PointPasswordModifyIn pointPasswordModifyIn) {
+
+        pointService.modifyPointPassword(token, pointPasswordModifyIn.getPointPassword());
+        ResponseOut<?> responseOut = ResponseOut.success();
+        return ResponseEntity.ok(responseOut);
+    }
 
 //    /*
 //        헤더 포인트 조회

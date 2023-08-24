@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -42,9 +43,7 @@ public class ClubServiceImpl implements ClubService{
     @Override
     public void registerClubForMemberBeauty(String token) {
         Long userId = userService.getUserIdFromToken(token);
-        log.info("userId 가져왔다 : {}",userId);
         Long clubId = createClub(ClubType.BEAUTY,null);
-        log.info("clubId 가져왔다 : {}",clubId);
         createClubList(userId, clubId);
     }
 
@@ -59,7 +58,9 @@ public class ClubServiceImpl implements ClubService{
     @Override
     public void registerClubForBiz(String token, BizIn bizIn) {
         Long userId = userService.getUserIdFromToken(token);
+        System.out.println(userId);
         String commaSeparatedString = transformToCommaSeparatedString(bizIn);
+        System.out.println(commaSeparatedString);
         Long clubId = createClub(ClubType.BIZ,commaSeparatedString);
         createClubList(userId, clubId);
     }
@@ -95,13 +96,16 @@ public class ClubServiceImpl implements ClubService{
         Long userId = userService.getUserIdFromToken(token);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + userId));
-//        Optional<ClubList> clubListOptional = clubListRepository.findByUserAndClubType(user, clubType);
-//        clubListOptional.ifPresent(clubListRepository::delete);
+        List<ClubList> clubLists = clubListRepository.findByUserAndClub_ClubType(user, clubType);
+        if (!clubLists.isEmpty()) {
+            clubListRepository.deleteAll(clubLists); // 일치하는 모든 ClubList 항목을 삭제합니다
+        }
     }
 
     private String transformToCommaSeparatedString(Object obj) {
         StringBuilder sb = new StringBuilder();
         Field[] fields = obj.getClass().getDeclaredFields();
+        log.info("여긴 왔다냥 {}",fields);
         for (Field field : fields) {
             field.setAccessible(true);
             try {

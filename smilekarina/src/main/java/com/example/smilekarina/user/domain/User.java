@@ -54,6 +54,7 @@ public class User extends BaseEntity implements UserDetails {
     public void setEmail(String email) {
         this.email = email;
     }
+    public void setPointPassword(String pointPassword) { this.pointPassword = pointPassword; }
 //     security impl
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

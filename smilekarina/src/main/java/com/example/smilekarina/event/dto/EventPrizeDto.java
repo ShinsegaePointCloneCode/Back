@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EventPrizeDto {
-    private Long id;
+    private Long prizeId;
     private String eventHead;   //이벤트 제목
     private String linkedUrl;   //이벤트 연결
     private LocalDateTime reg_date;//이벤트 등록일

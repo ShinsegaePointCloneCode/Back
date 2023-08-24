@@ -37,7 +37,7 @@ public class Gift extends BaseEntity {
     @Column(nullable = false, name = "sender_point_id")
     private Long senderPointId;
 
-    @Column(nullable = false, name = "recipient_point_id")
+    @Column(name = "recipient_point_id")
     private Long recipientPointId;
 
 }
