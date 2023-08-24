@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService{
     private final UserDetailsService userDetailsService;
     private final JwtTokenProvider jwtTokenProvider;
     private final ModelMapper modelMapper;
+    // 유저 추가 로직
     @Override
     public void createUser(UserSignUpDto userSignUpDto) {
         log.info("craeteUser : {}",userSignUpDto);
@@ -56,15 +57,15 @@ public class UserServiceImpl implements UserService{
         user.ifPresent(u -> log.info("user is : {}", u));
 
         return user.map(u -> modelMapper.map(u, UserGetDto.class))
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
+                .orElse(null);
     }
-
+    //uuid로 dto 만들기
     @Override
     public UserGetDto getUserByUUID(String UUID) {
         Optional<User> user = userRepository.findByUUID(UUID);
         user.ifPresent(u -> log.info("user is : {}", u));
         return user.map(u -> modelMapper.map(user, UserGetDto.class))
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
+                .orElse(null);
     }
 
 
@@ -75,8 +76,9 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
-    public void modify(String UUID, UserModifyIn userModifyIn) {
-        Optional<User> optionalUser = userRepository.findByUUID(UUID);
+    public void modify(String token, UserModifyIn userModifyIn) {
+        String loginId = jwtTokenProvider.getLoginId(token.substring(7));
+        Optional<User> optionalUser = userRepository.findByLoginId(loginId);
 
         // User 객체가 존재할 경우만 내부 로직 실행
         optionalUser.ifPresent(modifiedUser -> {
@@ -92,7 +94,7 @@ public class UserServiceImpl implements UserService{
 
         // User 객체가 존재하지 않을 경우 예외 발생
         if (optionalUser.isEmpty()) {
-            throw new NoSuchElementException("User with UUID " + UUID + " not found");
+            throw new NoSuchElementException("User with loginId " + loginId + " not found");
         }
     }
 
@@ -106,11 +108,15 @@ public class UserServiceImpl implements UserService{
             return null;
         }
     }
-
     @Override
     public Long getUserId(String loginId) {
         Optional<User> optionalUser =  userRepository.findByLoginId(loginId);
         return optionalUser.orElseThrow(() -> new NoSuchElementException("User not found")).getId();
+    }
+    @Override
+    public UserGetDto getUserDtoFromToken(String token) {
+        String loginId = jwtTokenProvider.getLoginId(token.substring(7));
+        return getUserByLoginId(loginId);
     }
 
     public Long getUserIdFromToken(String token) {

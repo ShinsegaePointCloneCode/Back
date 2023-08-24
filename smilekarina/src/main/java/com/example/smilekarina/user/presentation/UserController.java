@@ -47,20 +47,18 @@ public class UserController {
         return ResponseEntity.ok(ResponseOut.success());
     }
 
-    @Operation(summary= "회원 정보 가져오기", description= "uuid로 회원정보를 가져온다.", tags = { "User Controller" })
-    @GetMapping("/user/{UUID}")
-    public ResponseEntity<ResponseOut<?>> getUserByUUID(@PathVariable String UUID) {
-        log.info("INPUT UUID is : {}" , UUID);
-        UserGetDto userGetDto = userService.getUserByUUID(UUID);
+    @Operation(summary= "회원 정보 가져오기", description= "token으로 회원정보를 가져온다.", tags = { "User Controller" })
+    @GetMapping("/user")
+    public ResponseEntity<ResponseOut<?>> getUserByUUID(@RequestHeader("Authorization") String token) {
+        UserGetDto userGetDto = userService.getUserDtoFromToken(token);
         log.info("OUTPUT userGetDto is : {}" , userGetDto);
         ResponseOut<?> responseOut = ResponseOut.success(modelMapper.map(userGetDto, UserGetOut.class));
         return ResponseEntity.ok(responseOut);
     }
     @Operation(summary= "회원 정보 수정하기", description= "uuid와 수정된 정보로 회원 정보를 수정한다.", tags = { "User Controller" })
-    @PutMapping("/myinfo/modify/{UUID}")
-    public ResponseEntity<?> modifyUser(@PathVariable String UUID, @RequestBody UserModifyIn userModifyIn) {
-        log.info("INPUT UUID is : {}" , UUID);
-        userService.modify(UUID, userModifyIn);
+    @PutMapping("/myinfo/modify")
+    public ResponseEntity<?> modifyUser(@RequestHeader("Authorization") String token, @RequestBody UserModifyIn userModifyIn) {
+        userService.modify(token, userModifyIn);
         ResponseOut<?> responseOut = ResponseOut.success();
         return ResponseEntity.ok(responseOut);
     }
