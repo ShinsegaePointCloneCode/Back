@@ -46,7 +46,6 @@ public class User extends BaseEntity implements UserDetails {
     private Roll roll;
 
     public void hashPassword(String password){
-//        this.password = password;
         this.password = new BCryptPasswordEncoder().encode(password); // todo: Hashing - spring security
     }
     public void setAddress(String address) {

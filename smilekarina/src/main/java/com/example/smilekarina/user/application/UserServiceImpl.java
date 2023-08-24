@@ -115,7 +115,6 @@ public class UserServiceImpl implements UserService{
 
     public Long getUserIdFromToken(String token) {
         String loginId = jwtTokenProvider.getLoginId(token.substring(7));
-        log.info("loginid는 들고온닥 {}", loginId);
         Optional<User> optionalUser = userRepository.findByLoginId(loginId);
         return optionalUser.orElseThrow(() -> new NoSuchElementException("User not found")).getId();
     }

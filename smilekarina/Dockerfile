@@ -7,7 +7,7 @@ COPY src src
 RUN chmod +x ./gradlew
 RUN ./gradlew bootJAR
 
-FROM adoptopenjdk/openjdk11
+FROM openjdk:17-alpine
 COPY --from=builder build/libs/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=prod","-jar", "/app.jar"]

@@ -1,6 +1,6 @@
 package com.example.smilekarina.coupon.domain;
-
 import com.example.smilekarina.user.domain.User;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +24,9 @@ public class CouponList {
     private String couponNumber;    //쿠폰 번호
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     private User user;  //user id
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     private Coupon coupon;  //coupon id
 }

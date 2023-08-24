@@ -12,14 +12,16 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-//즐겨찾기 매장
+//자주찾는 매장
 public class MyStore {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;    //즐겨찾기 매장 id
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     private User user;  //user id
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     private Branch branch;  //Branch id
 }
