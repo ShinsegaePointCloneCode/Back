@@ -20,9 +20,10 @@ public class MyEventList {
     private Long id;    //event_list_id
     @Column(nullable = false, name = "event_id")
     private Long eventId;   //event_id :해당하는 이벤트 id값
-    @Column(nullable = false, name="prize_bool")
+    @Column(nullable = false, name="prize_bool",columnDefinition = "boolean default false")
     private Boolean prizeBool;  //이벤트 당첨여부  default : false 당첨되면 true
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     private User user;  //user_id
 }

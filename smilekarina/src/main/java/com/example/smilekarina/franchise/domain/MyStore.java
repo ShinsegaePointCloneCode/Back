@@ -19,7 +19,9 @@ public class MyStore {
     private Long id;    //즐겨찾기 매장 id
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     private User user;  //user id
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     private Branch branch;  //Branch id
 }

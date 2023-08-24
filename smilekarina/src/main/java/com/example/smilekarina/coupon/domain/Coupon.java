@@ -24,7 +24,7 @@ public class Coupon {
     private LocalDateTime couponStart;    //쿠폰유효시작일
     @Column(nullable = false,name="coupon_end")
     private LocalDateTime couponEnd;  //쿠폰유효만료일
-    @Column(nullable = false,name="coupon_img")
+    @Column(nullable = false,name="coupon_num")
     private Integer couponNum;  //쿠폰 수량
     @Column(nullable = false, name="coupon_type")
     private Boolean couponType; //쿠폰 유형 ex)  True-퍼센트, False-금액
@@ -35,5 +35,6 @@ public class Coupon {
     private Long couponImgId; // todo: 쿠폰 이미지 -> 이미지 id 받아서 사용 image id는 BIGINT이기에 Long
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     private CouponPartner couponPartner;  //coupon_parter_id
 }

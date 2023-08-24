@@ -38,5 +38,6 @@ public class Report extends BaseEntity {
     private String answerContent;   //답변 내용
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     private User user;  //user id
 }

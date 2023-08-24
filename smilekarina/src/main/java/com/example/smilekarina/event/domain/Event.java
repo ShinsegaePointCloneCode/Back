@@ -47,5 +47,6 @@ public class Event extends BaseEntity {
     private Long eventDetailImage;    //이벤트 세부내용 이미지
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     private EventPartner eventPartner;  //event_partner_id : 이벤트 주최 id
 }

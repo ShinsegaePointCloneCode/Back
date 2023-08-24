@@ -24,7 +24,9 @@ public class CouponList {
     private String couponNumber;    //쿠폰 번호
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     private User user;  //user id
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     private Coupon coupon;  //coupon id
 }
