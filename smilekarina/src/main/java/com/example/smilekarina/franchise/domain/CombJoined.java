@@ -18,7 +18,9 @@ public class CombJoined {
     private Long id;    //가맹점 통합 가입 리스트 id
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     private User user;  //user id
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     private Franchise franchise; //Franchise id
 }
