@@ -4,18 +4,16 @@ import com.example.smilekarina.point.domain.Point;
 import com.example.smilekarina.point.domain.PointType;
 import com.example.smilekarina.point.domain.PointTypeConverter;
 import com.example.smilekarina.point.dto.PointAddDto;
-import com.example.smilekarina.point.dto.PointGetDto;
 import com.example.smilekarina.point.dto.PointPasswordCheckDto;
 import com.example.smilekarina.point.infrastructure.PointRepository;
+import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.infrastructure.UserRepository;
-import jakarta.persistence.Convert;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,6 +21,7 @@ import java.util.Optional;
 @Slf4j
 public class PointServiceImpl implements PointService{
 
+    private final UserService userService;
     private final PointRepository pointRepository;
     private final UserRepository userRepository;
 
@@ -90,6 +89,22 @@ public class PointServiceImpl implements PointService{
         return true;
     }
 
+    // 포인트 비밀번호 수정
+    @Override
+    @Transactional
+    public void modifyPointPassword(String token, String pointPassword) {
+
+        // 토큰 정보에서 userId 값 가져 오기
+        Long userId = userService.getUserIdFromToken(token);
+
+        // 수정대상 유저정보 가져오기
+        Optional<User> user = userRepository.findById(userId);
+
+        // User 객체가 존재할 경우만 내부 로직 실행
+        user.ifPresent(modifiedUser -> {
+            modifiedUser.setPointPassword(pointPassword);
+        });
+    }
 
     // 밑에는 강사님 코드 참고용 ************************************
 

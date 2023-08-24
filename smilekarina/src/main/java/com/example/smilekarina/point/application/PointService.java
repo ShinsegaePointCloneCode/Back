@@ -17,6 +17,9 @@ public interface PointService {
     // 포인트 비밀번호 일치 확인
     Boolean checkPointPassword(PointPasswordCheckDto pointPasswordCheckDto);
 
+    // 포인트 비밀번호 수정
+    void modifyPointPassword(String token, String pointPassword);
+
 
 
 
