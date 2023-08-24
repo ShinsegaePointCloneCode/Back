@@ -27,7 +27,6 @@ public class ClubController {
     }
     @PostMapping("/myinfo/clubAgree/beauty")
     public ResponseEntity<?> createClubBeauty(@RequestHeader("Authorization") String token) {
-        log.info("token 가져왔닥");
         clubService.registerClubForMemberBeauty(token);
         log.info("clubservice token {}",token);
         ResponseOut<?> responseOut = ResponseOut.success();
