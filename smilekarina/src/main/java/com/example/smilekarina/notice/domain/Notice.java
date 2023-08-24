@@ -1,5 +1,6 @@
 package com.example.smilekarina.notice.domain;
 
+import com.example.smilekarina.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 //공지사항
-public class Notice {
+public class Notice extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;    //공지사항 id
@@ -22,8 +23,4 @@ public class Notice {
     private String noticeTitle; //공지사항 제목
     @Column(nullable = false,name="notice_content",columnDefinition = "TEXT")
     private String noticeContent;   //공지사항 내용
-    /*
-    @Column(nullable = false,name="notice_date" )
-    private LocalDateTime noticeDate;   //todo : 공지사항 날짜
-     */
 }

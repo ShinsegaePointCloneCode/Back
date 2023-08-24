@@ -1,12 +1,15 @@
 package com.example.smilekarina.point.vo;
 
-import com.example.smilekarina.point.domain.PointType;
-import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
 
-@Data
+@Getter
+@ToString
 public class PointIn {
+
     private Integer point;
     private String pointType;
     private Boolean used;
-    private String loginId;
+    private Long userId;
+
 }
