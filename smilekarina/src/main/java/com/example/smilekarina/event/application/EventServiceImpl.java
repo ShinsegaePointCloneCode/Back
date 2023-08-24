@@ -2,10 +2,7 @@ package com.example.smilekarina.event.application;
 
 import com.example.smilekarina.event.domain.Event;
 import com.example.smilekarina.event.domain.EventPartner;
-import com.example.smilekarina.event.dto.CreateEventDto;
-import com.example.smilekarina.event.dto.EventGetDto;
-import com.example.smilekarina.event.dto.EventListGetDto;
-import com.example.smilekarina.event.dto.EventPartnerGetDto;
+import com.example.smilekarina.event.dto.*;
 import com.example.smilekarina.event.infrastructure.EventPartnerRepository;
 import com.example.smilekarina.event.infrastructure.EventRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +29,7 @@ public class EventServiceImpl implements EventService{
     public void createEvent(CreateEventDto createEventDto){
         eventRepository.save(Event.builder()
                 .eventHead(createEventDto.getEventHead())
-                //.linkedUrl(createEventGetDto.getLinkedUrl())
+                .linkedUrl(createEventDto.getLinkedUrl())
                 .regDate(createEventDto.getRegDate())
                 .eventStart(createEventDto.getEventStart())
                 .eventEnd(createEventDto.getEventEnd())
@@ -51,7 +48,7 @@ public class EventServiceImpl implements EventService{
                 .build());
     }
 
-    //이벤트게시글 보기
+    //이벤트게시글 보기(일반)
     @Override
     public EventGetDto getEvent(Long id){
         Event event=eventRepository.findById(id).get();
@@ -61,20 +58,38 @@ public class EventServiceImpl implements EventService{
         log.info("{}", eventGetDto);
         return eventGetDto;
     }
-    /*
+
+    @Override
+    public EventPrizeDto getPrizeEvent(Long id){
+        Event event=eventRepository.findById(id).get();
+        log.info("{}",event);
+        ModelMapper mapper=new ModelMapper();
+        EventPrizeDto eventPrizeDto = mapper.map(event, EventPrizeDto.class);
+        log.info("{}", eventPrizeDto);
+        return eventPrizeDto;
+    }
+
     //이벤트리스트로 보기
     @Override
     public List<EventListGetDto> getAllEvent() {
         List<Event> eventlist=eventRepository.findAll();
         //Event에서 EventGetDto로 넣어주는 처리
         //USer Point에 Sample 찾기
-        List<EventListGetDto> eventListGetDtoList = eventlist.stream().map(point->{
+        List<EventListGetDto> eventListGetDtoList = eventlist.stream().map(event->{
             return EventListGetDto.builder()
-                    .
-        })
-        return ;
+                    .eventHead(event.getEventHead())
+                    .linkedUrl(event.getLinkedUrl())
+                    .reg_date(event.getRegDate())
+                    .eventStart(event.getEventStart())
+                    .eventEnd(event.getEventEnd())
+                    .eventThumbnail(event.getEventThumbnail())
+                    .eventType(event.getEventType())
+                    .build();
+        }
+        ).toList();
+        log.info("Eventlist is : {}" , eventlist);
+        return eventListGetDtoList;
     }
 
-     */
 
 }

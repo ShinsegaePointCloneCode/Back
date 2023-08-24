@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CreateEventDto {
     private String eventHead;   //이벤트 제목
-    //private String linkedUrl;   //이벤트 연결
+    private String linkedUrl;   //이벤트 연결
     private LocalDateTime regDate;
     private LocalDateTime eventStart;   //이벤트 시작일
     private LocalDateTime eventEnd; //이벤트 종료일

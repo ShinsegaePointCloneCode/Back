@@ -22,13 +22,12 @@ public class Event extends BaseEntity {
     private Long id;    //event_id
     @Column(nullable = false, length =45, name = "event_head")
     private String eventHead;   //이벤트 제목
-    /*
-    @Column(name = "linked_url",columnDefinition = "TEXT")
 
+    @Column(name = "linked_url",columnDefinition = "TEXT")
     private String linkedUrl;   //이벤트 연결
     // url이 몇개 들어갈지 모르니까 이걸 어떻게 잘라서 나눌것인가. & 아닌경우는 null
-    todo : varchar 쓸지 TEXT 쓸지 고민해보기
-     */
+    //todo : varchar 쓸지 TEXT 쓸지 고민해보기
+
     @Column(nullable = false, name="reg_date")
     private LocalDateTime regDate;
     @Column(nullable = false, name="event_start")
