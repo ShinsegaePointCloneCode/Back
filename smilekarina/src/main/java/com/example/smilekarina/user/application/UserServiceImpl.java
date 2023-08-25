@@ -125,4 +125,12 @@ public class UserServiceImpl implements UserService{
         return optionalUser.orElseThrow(() -> new NoSuchElementException("User not found")).getId();
     }
 
+    @Override
+    public String findID(String userName, String phone) {
+        return userRepository
+                .findByPhoneAndUserName(phone,userName)
+                .orElseThrow(() -> new NoSuchElementException("User not found"))
+                .getLoginId();
+    }
+
 }
