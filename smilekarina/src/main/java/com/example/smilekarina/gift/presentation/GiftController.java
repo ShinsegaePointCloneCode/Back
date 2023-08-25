@@ -1,13 +1,17 @@
 package com.example.smilekarina.gift.presentation;
 
 import com.example.smilekarina.gift.application.GiftService;
+import com.example.smilekarina.gift.dto.GiftLastDto;
 import com.example.smilekarina.gift.vo.GiftIn;
+import com.example.smilekarina.gift.vo.GiftLastOut;
 import com.example.smilekarina.global.vo.ResponseOut;
 import com.example.smilekarina.point.application.PointService;
 import com.example.smilekarina.point.dto.PointPasswordCheckDto;
 import com.example.smilekarina.user.application.UserService;
+import com.example.smilekarina.user.vo.UserGetOut;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class GiftController {
 
+    private final ModelMapper modelMapper;
     private final GiftService giftService;
     private final PointService pointService;
     private final UserService userService;
@@ -51,18 +56,22 @@ public class GiftController {
         return ResponseEntity.ok(responseOut);
     }
 
-    //******************************************************
-
     /*
         포인트 선물 받기 내역 조회(가장 최근 것만)
      */
+    @GetMapping("/gift/getlast")
+    public ResponseEntity<ResponseOut<?>> getLastGift(@RequestHeader("Authorization") String token) {
 
-    // 1) 토큰에서 유저아이디 취득
+        GiftLastDto giftLastDto = giftService.getLastGift(token);
 
-    // 2) 선물 테이블에 받는 사람이 1)에서 취득한 유저아이디와 일치하는 데이터 중 등록일이
-    // 가장 최신인 Gift 내용과 point 내용, 상대방 로그인 아이디, 이름 취득
-
-
+        if(giftLastDto == null) {
+            ResponseOut<?> responseOut = ResponseOut.success();
+            return ResponseEntity.ok(responseOut);
+        } else {
+            ResponseOut<?> responseOut = ResponseOut.success(modelMapper.map(giftLastDto, GiftLastOut.class));
+            return ResponseEntity.ok(responseOut);
+        }
+    }
 
     //******************************************************
 
