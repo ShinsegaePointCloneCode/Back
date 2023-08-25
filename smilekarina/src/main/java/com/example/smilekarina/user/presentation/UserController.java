@@ -64,8 +64,8 @@ public class UserController {
     }
 
     @Operation(summary= "아이디 찾기", description= "login id를 가져와서 중복되는 것인지 확인한다.", tags = { "User Controller" })
-    @GetMapping("/join/{loginId}")
-    public ResponseEntity<?> checkUser(@PathVariable String loginId) {
+    @GetMapping("/join")
+    public ResponseEntity<?> checkUser(@RequestParam("loginId") String loginId) {
         UserGetDto userGetDto = userService.getUserByLoginId(loginId);
 
         if (userGetDto == null) {
@@ -92,5 +92,13 @@ public class UserController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+    }
+    @Operation(summary= "아이디 찾기", description= "userName과 폰번호로 id 찾기", tags = { "User Controller" })
+    @PostMapping("/member/findIdPw")
+    public ResponseEntity<?> authenticateUser(@RequestParam("userName") String userName,
+                                              @RequestParam("phone") String phone ) {
+        String loginId = userService.findID(userName,phone);
+        ResponseOut<?> responseOut = ResponseOut.success(loginId);
+        return ResponseEntity.ok(responseOut);
     }
 }

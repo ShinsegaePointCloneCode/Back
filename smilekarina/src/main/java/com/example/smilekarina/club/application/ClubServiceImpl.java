@@ -31,9 +31,8 @@ public class ClubServiceImpl implements ClubService{
     private final UserRepository userRepository;
     private final ClubListRepository clubListRepository;
 
-    @Transactional
     @Override
-    public void registerClubForMemberKids(String token, MomKidsIn momKidsIn) {
+    public void registerClubForMomKids(String token, MomKidsIn momKidsIn) {
         Long userId = userService.getUserIdFromToken(token);
         String commaSeparatedString = transformToCommaSeparatedString(momKidsIn);
         Long clubId = createClub(ClubType.MOMKIDS,commaSeparatedString);
@@ -41,7 +40,7 @@ public class ClubServiceImpl implements ClubService{
     }
 
     @Override
-    public void registerClubForMemberBeauty(String token) {
+    public void registerClubForBeauty(String token) {
         Long userId = userService.getUserIdFromToken(token);
         Long clubId = createClub(ClubType.BEAUTY,null);
         createClubList(userId, clubId);
@@ -81,7 +80,6 @@ public class ClubServiceImpl implements ClubService{
                 .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + userId));
         Club club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new NoSuchElementException("Club not found with ID: " + clubId));
-        log.info("엔티티 들고왔다");
         ClubList clubList = ClubList.builder()
                 .user(user)
                 .club(club)
@@ -102,10 +100,50 @@ public class ClubServiceImpl implements ClubService{
         }
     }
 
+    @Override
+    @Transactional
+    public void modifyClubForMom(String token, MomKidsIn momKidsIn) {
+        Long userId = userService.getUserIdFromToken(token);
+        User user = userRepository.findById(userId)
+                .orElseThrow(null);
+        List<ClubList> clubLists = clubListRepository.findByUserAndClub_ClubType(user, ClubType.MOMKIDS);
+        if (!clubLists.isEmpty()) {
+            clubListRepository.deleteAll(clubLists); // 일치하는 모든 ClubList 항목을 삭제합니다
+        }
+        registerClubForMomKids(token,momKidsIn);
+    }
+
+    @Override
+    @Transactional
+    public void modifyClubForCar(String token, CarIn carIn) {
+        Long userId = userService.getUserIdFromToken(token);
+        User user = userRepository.findById(userId)
+                .orElseThrow(null);
+        List<ClubList> clubLists = clubListRepository.findByUserAndClub_ClubType(user, ClubType.CAR);
+        if (!clubLists.isEmpty()) {
+            clubListRepository.deleteAll(clubLists); // 일치하는 모든 ClubList 항목을 삭제합니다
+        }
+        registerClubForCar(token,carIn);
+    }
+
+    @Override
+    @Transactional
+    public void modifyClubForBiz(String token, BizIn bizIn) {
+        Long userId = userService.getUserIdFromToken(token);
+        User user = userRepository.findById(userId)
+                .orElseThrow(null);
+        List<ClubList> clubLists = clubListRepository.findByUserAndClub_ClubType(user, ClubType.BIZ);
+        if (!clubLists.isEmpty()) {
+            clubListRepository.deleteAll(clubLists); // 일치하는 모든 ClubList 항목을 삭제합니다
+        }
+        registerClubForBiz(token,bizIn);
+
+    }
+
+
     private String transformToCommaSeparatedString(Object obj) {
         StringBuilder sb = new StringBuilder();
         Field[] fields = obj.getClass().getDeclaredFields();
-        log.info("여긴 왔다냥 {}",fields);
         for (Field field : fields) {
             field.setAccessible(true);
             try {
@@ -116,7 +154,7 @@ public class ClubServiceImpl implements ClubService{
                 e.printStackTrace();
             }
         }
-        if (sb.length() > 0) {
+        if (!sb.isEmpty()) {
             sb.deleteCharAt(sb.length() - 1); // remove the last comma
         }
         return sb.toString();

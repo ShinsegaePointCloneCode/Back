@@ -20,4 +20,5 @@ public interface UserService {
     UserGetDto getUserDtoFromToken(String token);
     Long getUserId(String loginId);
     Long getUserIdFromToken(String token);
+    String findID(String userName,String phone);
 }
