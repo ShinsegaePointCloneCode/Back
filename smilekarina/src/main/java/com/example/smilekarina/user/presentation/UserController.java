@@ -94,7 +94,7 @@ public class UserController {
         }
     }
     @Operation(summary= "아이디 찾기", description= "userName과 폰번호로 id 찾기", tags = { "User Controller" })
-    @PostMapping("/member/findIdPw")
+    @GetMapping("/member/findIdPw")
     public ResponseEntity<?> authenticateUser(@RequestParam("userName") String userName,
                                               @RequestParam("phone") String phone ) {
         String loginId = userService.findID(userName,phone);
