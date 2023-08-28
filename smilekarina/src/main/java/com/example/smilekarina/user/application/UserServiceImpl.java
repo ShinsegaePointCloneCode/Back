@@ -128,9 +128,9 @@ public class UserServiceImpl implements UserService{
     @Override
     public String findID(String userName, String phone) {
         return userRepository
-                .findByPhoneAndUserName(phone,userName)
-                .orElseThrow(() -> new NoSuchElementException("User not found"))
-                .getLoginId();
+                .findByPhoneAndUserName(phone, userName)
+                .map(User::getLoginId)
+                .orElse(null);
     }
 
 }

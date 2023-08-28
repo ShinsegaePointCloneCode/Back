@@ -98,7 +98,20 @@ public class UserController {
     public ResponseEntity<?> authenticateUser(@RequestParam("userName") String userName,
                                               @RequestParam("phone") String phone ) {
         String loginId = userService.findID(userName,phone);
+        if (loginId== null) {
+            // 아이디를 찾을 수 없을 때
+            ResponseOut<?> responseOut = ResponseOut.fail();
+            return ResponseEntity.ok(responseOut);
+        }
         ResponseOut<?> responseOut = ResponseOut.success(loginId);
+        return ResponseEntity.ok(responseOut);
+    }
+    @Operation(summary= "비밀 번호 바꾸기", description= "인증을 했을 경우 비밀번호를 바꾸는 로직", tags = { "User Controller" })
+    @PutMapping("/myinfo/changePwd")
+    public ResponseEntity<?> changePassword(@RequestHeader("Authorization") String token, @RequestBody String oldPwd, String newPwd) {
+
+
+        ResponseOut<?> responseOut = ResponseOut.success();
         return ResponseEntity.ok(responseOut);
     }
 }
