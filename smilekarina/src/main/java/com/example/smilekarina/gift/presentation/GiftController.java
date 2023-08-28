@@ -1,14 +1,15 @@
 package com.example.smilekarina.gift.presentation;
 
 import com.example.smilekarina.gift.application.GiftService;
+import com.example.smilekarina.gift.dto.GiftAcceptDto;
 import com.example.smilekarina.gift.dto.GiftLastDto;
+import com.example.smilekarina.gift.vo.GiftAcceptIn;
 import com.example.smilekarina.gift.vo.GiftIn;
 import com.example.smilekarina.gift.vo.GiftLastOut;
 import com.example.smilekarina.global.vo.ResponseOut;
 import com.example.smilekarina.point.application.PointService;
 import com.example.smilekarina.point.dto.PointPasswordCheckDto;
 import com.example.smilekarina.user.application.UserService;
-import com.example.smilekarina.user.vo.UserGetOut;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -73,18 +74,24 @@ public class GiftController {
         }
     }
 
-    //******************************************************
-
     /*
         포인트 선물 수락
      */
+    @PostMapping("/gift/accept")
+    public ResponseEntity<?> acceptGift(@RequestHeader("Authorization") String token, @RequestBody GiftAcceptIn giftAcceptIn) {
 
-    // 1) 포인트 테이블에 받는 사람의 적립 포인트 데이터 추가
+        Long userId = userService.getUserIdFromToken(token);
 
-    // 2) 선물 테이블의 선물 타입, 받는사람 포인트id를 갱신
+        GiftAcceptDto giftAcceptDto = GiftAcceptDto.builder()
+                .giftId(giftAcceptIn.getGiftId())
+                .point(giftAcceptIn.getPoint())
+                .userId(userId)
+                .build();
 
-
-    //******************************************************
+        giftService.acceptGift(giftAcceptDto);
+        ResponseOut<?> responseOut = ResponseOut.success();
+        return ResponseEntity.ok(responseOut);
+    }
 
 
     /*

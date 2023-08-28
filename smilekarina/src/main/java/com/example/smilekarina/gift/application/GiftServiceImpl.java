@@ -3,15 +3,18 @@ package com.example.smilekarina.gift.application;
 import com.example.smilekarina.gift.domain.Gift;
 import com.example.smilekarina.gift.domain.GiftType;
 import com.example.smilekarina.gift.domain.GiftTypeConverter;
+import com.example.smilekarina.gift.dto.GiftAcceptDto;
 import com.example.smilekarina.gift.dto.GiftLastDto;
 import com.example.smilekarina.gift.infrastructure.GiftRepository;
 import com.example.smilekarina.gift.vo.GiftIn;
 import com.example.smilekarina.point.application.PointService;
 import com.example.smilekarina.point.domain.PointType;
+import com.example.smilekarina.point.domain.PointTypeConverter;
 import com.example.smilekarina.point.dto.PointAddDto;
 import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.infrastructure.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -90,6 +93,31 @@ public class GiftServiceImpl implements GiftService {
                 .giftMessage(targetGift.getGiftMessage())
                 .createdDate(targetGift.getCreatedDate())
                 .build();
+    }
+
+    // 포인트 선물 수락
+    @Override
+    @Transactional
+    public void acceptGift(GiftAcceptDto giftAcceptDto) {
+
+        // 포인트 테이블에 받는 사람의 적립 포인트 데이터 추가
+        PointAddDto pointAddDto = PointAddDto.builder()
+                .point(giftAcceptDto.getPoint())
+                .pointType(PointType.GIFT.getCode())
+                .used(false)
+                .userId(giftAcceptDto.getUserId())
+                .build();
+        Long pointId = pointService.registerPoint(pointAddDto);
+
+
+        // 선물 테이블의 선물 타입을 받음으로 변경하고, 받는사람 포인트id 등록
+        Optional<Gift> gift = giftRepository.findById(giftAcceptDto.getGiftId());
+
+        gift.ifPresent(modifiedGift -> {
+            GiftType giftType = new GiftTypeConverter().convertToEntityAttribute(GiftType.GET.getCode());
+            modifiedGift.setGiftType(giftType);
+            modifiedGift.setRecipientPointId(pointId);
+        });
     }
 
 }
