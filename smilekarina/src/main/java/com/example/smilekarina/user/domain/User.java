@@ -44,7 +44,9 @@ public class User extends BaseEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = true, length = 10, name = "roll")
     private Roll roll;
-
+    public String getName() {
+        return userName;
+    }
     public void hashPassword(String password){
         this.password = new BCryptPasswordEncoder().encode(password); // todo: Hashing - spring security
     }
