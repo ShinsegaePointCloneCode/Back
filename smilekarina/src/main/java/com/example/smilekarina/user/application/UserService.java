@@ -17,6 +17,8 @@ public interface UserService {
     List<UserGetDto> getAllUsers();
     void modify(String UUID, UserModifyIn userModifyIn);
     String loginUser(UserLoginIn userLoginIn);
+    UserGetDto getUserDtoFromToken(String token);
     Long getUserId(String loginId);
     Long getUserIdFromToken(String token);
+    String findID(String userName,String phone);
 }

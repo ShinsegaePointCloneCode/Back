@@ -21,4 +21,7 @@ public class Club {
     private ClubType clubType;
     @Column(name = "club_content",columnDefinition = "TEXT")
     private String clubContent;
+    public void setClubContent(String clubContent) {
+        this.clubContent = clubContent;
+    }
 }

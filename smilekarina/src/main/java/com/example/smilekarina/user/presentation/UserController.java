@@ -47,27 +47,25 @@ public class UserController {
         return ResponseEntity.ok(ResponseOut.success());
     }
 
-    @Operation(summary= "회원 정보 가져오기", description= "uuid로 회원정보를 가져온다.", tags = { "User Controller" })
-    @GetMapping("/user/{UUID}")
-    public ResponseEntity<ResponseOut<?>> getUserByUUID(@PathVariable String UUID) {
-        log.info("INPUT UUID is : {}" , UUID);
-        UserGetDto userGetDto = userService.getUserByUUID(UUID);
+    @Operation(summary= "회원 정보 가져오기", description= "token으로 회원정보를 가져온다.", tags = { "User Controller" })
+    @GetMapping("/user")
+    public ResponseEntity<ResponseOut<?>> getUserByUUID(@RequestHeader("Authorization") String token) {
+        UserGetDto userGetDto = userService.getUserDtoFromToken(token);
         log.info("OUTPUT userGetDto is : {}" , userGetDto);
         ResponseOut<?> responseOut = ResponseOut.success(modelMapper.map(userGetDto, UserGetOut.class));
         return ResponseEntity.ok(responseOut);
     }
     @Operation(summary= "회원 정보 수정하기", description= "uuid와 수정된 정보로 회원 정보를 수정한다.", tags = { "User Controller" })
-    @PutMapping("/myinfo/modify/{UUID}")
-    public ResponseEntity<?> modifyUser(@PathVariable String UUID, @RequestBody UserModifyIn userModifyIn) {
-        log.info("INPUT UUID is : {}" , UUID);
-        userService.modify(UUID, userModifyIn);
+    @PutMapping("/myinfo/modify")
+    public ResponseEntity<?> modifyUser(@RequestHeader("Authorization") String token, @RequestBody UserModifyIn userModifyIn) {
+        userService.modify(token, userModifyIn);
         ResponseOut<?> responseOut = ResponseOut.success();
         return ResponseEntity.ok(responseOut);
     }
 
     @Operation(summary= "아이디 찾기", description= "login id를 가져와서 중복되는 것인지 확인한다.", tags = { "User Controller" })
-    @GetMapping("/join/{loginId}")
-    public ResponseEntity<?> checkUser(@PathVariable String loginId) {
+    @GetMapping("/join")
+    public ResponseEntity<?> checkUser(@RequestParam("loginId") String loginId) {
         UserGetDto userGetDto = userService.getUserByLoginId(loginId);
 
         if (userGetDto == null) {
@@ -94,5 +92,26 @@ public class UserController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+    }
+    @Operation(summary= "아이디 찾기", description= "userName과 폰번호로 id 찾기", tags = { "User Controller" })
+    @GetMapping("/member/findIdPw")
+    public ResponseEntity<?> authenticateUser(@RequestParam("userName") String userName,
+                                              @RequestParam("phone") String phone ) {
+        String loginId = userService.findID(userName,phone);
+        if (loginId== null) {
+            // 아이디를 찾을 수 없을 때
+            ResponseOut<?> responseOut = ResponseOut.fail();
+            return ResponseEntity.ok(responseOut);
+        }
+        ResponseOut<?> responseOut = ResponseOut.success(loginId);
+        return ResponseEntity.ok(responseOut);
+    }
+    @Operation(summary= "비밀 번호 바꾸기", description= "인증을 했을 경우 비밀번호를 바꾸는 로직", tags = { "User Controller" })
+    @PutMapping("/myinfo/changePwd")
+    public ResponseEntity<?> changePassword(@RequestHeader("Authorization") String token, @RequestBody String oldPwd, String newPwd) {
+
+
+        ResponseOut<?> responseOut = ResponseOut.success();
+        return ResponseEntity.ok(responseOut);
     }
 }
