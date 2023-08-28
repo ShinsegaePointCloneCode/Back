@@ -15,11 +15,11 @@ import java.time.LocalDateTime;
 @RequestMapping("/api/v1")
 public class CheckController {
     private final CheckService checkService;
-    @PostMapping("/benefits/pntPlus/attend")
-    public ResponseEntity<?> createCheck(@RequestHeader("Authorization") String token, @RequestBody LocalDateTime time) {
-        checkService.createCheck(token,time);
-        ResponseOut<?> responseOut = ResponseOut.success();
-        return ResponseEntity.ok(responseOut);
-    }
+//    @PostMapping("/benefits/pntPlus/attend")
+//    public ResponseEntity<?> createCheck(@RequestHeader("Authorization") String token, @RequestBody LocalDateTime time) {
+//        checkService.createCheck(token,time);
+//        ResponseOut<?> responseOut = ResponseOut.success();
+//        return ResponseEntity.ok(responseOut);
+//    }
 
 }

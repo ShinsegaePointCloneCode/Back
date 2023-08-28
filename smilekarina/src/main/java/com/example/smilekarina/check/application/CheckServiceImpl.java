@@ -18,10 +18,10 @@ import java.util.Optional;
 public class CheckServiceImpl implements CheckService {
     private final UserService userService;
     private final CheckRepository checkRepository;
-    @Override
-    public void createCheck(String token, LocalDateTime time) {
-        Long userId = userService.getUserIdFromToken(token);
-        Optional<CheckPoint> checkPoint = checkRepository.findLatestByUserId(userId);
-
-    }
+//    @Override
+//    public void createCheck(String token, LocalDateTime time) {
+//        Long userId = userService.getUserIdFromToken(token);
+//        Optional<CheckPoint> checkPoint = checkRepository.findLatestByUserId(userId);
+//
+//    }
 }

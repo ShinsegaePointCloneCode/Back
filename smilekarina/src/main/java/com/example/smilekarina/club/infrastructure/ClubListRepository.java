@@ -10,4 +10,6 @@ import java.util.Optional;
 
 public interface ClubListRepository extends JpaRepository<ClubList, Long> {
     List<ClubList> findByUserAndClub_ClubType(User user, ClubType clubType);
+    Optional<ClubList> findFirstByUserAndClub_ClubType(User user, ClubType clubType);
+    List<ClubList> findByUser(User user);
 }

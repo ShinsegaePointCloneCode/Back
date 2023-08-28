@@ -18,6 +18,13 @@ public class ResponseOut<T> {
         re.setResult(null);
         return re;
     }
+    public static <T> ResponseOut<T> fail() {
+        ResponseOut<T> re = new ResponseOut<>();
+        re.setSuccess(false);
+        re.setCode(1000);
+        re.setResult(null);
+        return re;
+    }
     public static <T> ResponseOut<T> success(T result) {
         ResponseOut<T> re = new ResponseOut<>();
         re.setSuccess(true);
@@ -25,7 +32,13 @@ public class ResponseOut<T> {
         re.setResult(result);
         return re;
     }
-
+    public static <T> ResponseOut<T> fail(T result) {
+        ResponseOut<T> re = new ResponseOut<>();
+        re.setSuccess(false);
+        re.setCode(1000);
+        re.setResult(result);
+        return re;
+    }
     public static <T> ResponseOut<T> checkLogId(T result) {
         ResponseOut<T> re = new ResponseOut<>();
         re.setSuccess(false);
