@@ -34,6 +34,9 @@ public class Gift extends BaseEntity {
     @Convert(converter = GiftTypeConverter.class)
     private GiftType giftType;
 
+    @Column(nullable = false, name = "point")
+    private Integer point;
+
     @Column(nullable = false, name = "sender_point_id")
     private Long senderPointId;
 

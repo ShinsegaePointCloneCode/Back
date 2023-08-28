@@ -2,6 +2,7 @@ package com.example.smilekarina.club.presentation;
 
 import com.example.smilekarina.club.application.ClubService;
 import com.example.smilekarina.club.domain.ClubType;
+import com.example.smilekarina.club.vo.AllStateOut;
 import com.example.smilekarina.club.vo.BizIn;
 import com.example.smilekarina.club.vo.CarIn;
 import com.example.smilekarina.club.vo.MomKidsIn;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class ClubController {
     private final ClubService clubService;
     @Operation(summary= "맘클럽 만들기", description= "token과 momclub 입력 넣으면", tags = { "Club Controller" })
-    @PostMapping("/myinfo/clubAgree/momkids")
+    @PutMapping("/myinfo/clubAgree/momkids")
     public ResponseEntity<?> createClubMom(@RequestHeader("Authorization") String token, @RequestBody MomKidsIn momKidsIn) {
         clubService.registerClubForMomKids(token, momKidsIn);
         ResponseOut<?> responseOut = ResponseOut.success();
@@ -35,37 +36,37 @@ public class ClubController {
         return ResponseEntity.ok(responseOut);
     }
     @Operation(summary= "카클럽 만들기", description= "token과 carclub 입력 넣으면", tags = { "Club Controller" })
-    @PostMapping("/myinfo/clubAgree/car")
+    @PutMapping("/myinfo/clubAgree/car")
     public ResponseEntity<?> createClubCar(@RequestHeader("Authorization") String token, @RequestBody CarIn carIn) {
         clubService.registerClubForCar(token, carIn);
         ResponseOut<?> responseOut = ResponseOut.success();
         return ResponseEntity.ok(responseOut);
     }
     @Operation(summary= "비즈클럽 만들기", description= "token과 bizclub 입력 넣으면", tags = { "Club Controller" })
-    @PostMapping("/myinfo/clubAgree/biz")
+    @PutMapping("/myinfo/clubAgree/biz")
     public ResponseEntity<?> createClubBiz(@RequestHeader("Authorization") String token, @RequestBody BizIn bizIn) {
         clubService.registerClubForBiz(token, bizIn);
         ResponseOut<?> responseOut = ResponseOut.success();
         return ResponseEntity.ok(responseOut);
     }
-    @Operation(summary= "맘클럽 수정하기", description= "token과 momclub 입력 넣으면", tags = { "Club Controller" })
-    @PutMapping("/myinfo/clubAgree/momkids")
-    public ResponseEntity<?> modifyClubMom(@RequestHeader("Authorization") String token, @RequestBody MomKidsIn momKidsIn) {
-        clubService.modifyClubForMom(token, momKidsIn);
-        ResponseOut<?> responseOut = ResponseOut.success();
+    @Operation(summary= "클럽 찾기", description= "token에 맞는 유저의 클럽 내역 찾기", tags = { "Club Controller" })
+    @GetMapping("/myinfo/clubAgree/{clubTypeDo}")
+    public ResponseEntity<?> getClubMom(@RequestHeader("Authorization") String token,@PathVariable String clubTypeDo) {
+        ClubType clubType = ClubType.valueOf(clubTypeDo.toUpperCase());
+        Object data = null;
+        switch (clubType) {
+            case MOMKIDS -> data = clubService.getMomKidsData(token);
+            case CAR -> data = clubService.getCarData(token);
+            case BIZ -> data = clubService.getBizData(token);
+            default -> throw new IllegalArgumentException("Unsupported club type");
+        }
+        ResponseOut<?> responseOut = ResponseOut.success(data);
         return ResponseEntity.ok(responseOut);
     }
-    @Operation(summary= "카클럽 수정하기", description= "token과 carclub 입력 넣으면", tags = { "Club Controller" })
-    @PutMapping("/myinfo/clubAgree/car")
-    public ResponseEntity<?> modifyClubCar(@RequestHeader("Authorization") String token, @RequestBody CarIn carIn) {
-        clubService.modifyClubForCar(token, carIn);
-        ResponseOut<?> responseOut = ResponseOut.success();
-        return ResponseEntity.ok(responseOut);
-    }
-    @Operation(summary= "비즈클럽 수정하기", description= "token과 bizmclub 입력 넣으면", tags = { "Club Controller" })
-    @PutMapping("/myinfo/clubAgree/biz")
-    public ResponseEntity<?> modifyClubBiz(@RequestHeader("Authorization") String token, @RequestBody BizIn bizIn) {
-        clubService.modifyClubForBiz(token, bizIn);
+    @Operation(summary= "클럽 상태 찾기", description= "token에 맞는 유저의 클럽 가입 내역 찾기", tags = { "Club Controller" })
+    @GetMapping("/myinfo/clubAgree/allState")
+    public ResponseEntity<?> getClubState(@RequestHeader("Authorization") String token) {
+        AllStateOut allStateOut = clubService.getClubState(token);
         ResponseOut<?> responseOut = ResponseOut.success();
         return ResponseEntity.ok(responseOut);
     }
