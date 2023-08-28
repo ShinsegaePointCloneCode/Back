@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Builder
+@ToString
 @Entity
 @Getter
 @NoArgsConstructor // new User() 막는 용도
@@ -47,9 +48,8 @@ public class User extends BaseEntity implements UserDetails {
     public String getName() {
         return userName;
     }
-    public void hashPassword(String password){
-        this.password = new BCryptPasswordEncoder().encode(password); // todo: Hashing - spring security
-    }
+    public void setPassword(String password) { this.password = password; }
+    public void setPrePassword(String prePassword) { this.prePassword = prePassword; }
     public void setAddress(String address) {
         this.address = address;
     }

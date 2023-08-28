@@ -4,6 +4,7 @@ import com.example.smilekarina.global.vo.ResponseOut;
 import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.dto.UserGetDto;
 import com.example.smilekarina.user.dto.UserSignUpDto;
+import com.example.smilekarina.user.infrastructure.UserRepository;
 import com.example.smilekarina.user.vo.*;
 //import com.example.smilekarina.utils.redis.application.RedisService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.token.TokenService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.View;
 
 
 @RestController
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final ModelMapper modelMapper;
     private final UserService userService;
+
 //    private final RedisService redisService;
 
 
@@ -90,7 +93,7 @@ public class UserController {
 
             return new ResponseEntity<>(null, headers, HttpStatus.OK); // body 부분은 null로 설정
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseOut.fail());
         }
     }
     @Operation(summary= "아이디 찾기", description= "userName과 폰번호로 id 찾기", tags = { "User Controller" })
@@ -108,10 +111,27 @@ public class UserController {
     }
     @Operation(summary= "비밀 번호 바꾸기", description= "인증을 했을 경우 비밀번호를 바꾸는 로직", tags = { "User Controller" })
     @PutMapping("/myinfo/changePwd")
-    public ResponseEntity<?> changePassword(@RequestHeader("Authorization") String token, @RequestBody String oldPwd, String newPwd) {
-
-
-        ResponseOut<?> responseOut = ResponseOut.success();
-        return ResponseEntity.ok(responseOut);
+    public ResponseEntity<?> changePassword(@RequestHeader("Authorization") String token, @RequestBody ChangePasswordNewIn changePasswordNewIn) {
+        Long state = userService.changePassword(token, changePasswordNewIn.getOldPwd(), changePasswordNewIn.getNewPwd());
+        // state 0 : 비밀번호 변경, 1 : 비밀번호가 이전 비밀번호와 동일, 2: 올바른 비밀번호가 아닌 경우
+        return switch (state.intValue()) {
+            case 0 -> ResponseEntity.ok(ResponseOut.success("비밀번호가 변경되었습니다."));
+            case 1 -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseOut.fail("비밀번호가 이전 비밀번호와 동일합니다."));
+            case 2 -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseOut.fail("올바른 비밀번호가 아닙니다."));
+            default ->
+                    ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseOut.fail("알 수 없는 오류가 발생했습니다."));
+        };
+    }
+    @Operation(summary= "비밀 번호 찾기", description= "인증을 안 했을 경우 비밀번호를 바꾸는 로직", tags = { "User Controller" })
+    @PutMapping("/member/findPw")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordIn changePasswordIn) {
+        Long state = userService.searchPassword(changePasswordIn.getLoginId(), changePasswordIn.getPassword());
+        // state 0 : 비밀번호 변경, 1 : 비밀번호가 이전 비밀번호와 동일, 2: 올바른 비밀번호가 아닌 경우
+        return switch (state.intValue()) {
+            case 0 -> ResponseEntity.ok(ResponseOut.success("비밀번호가 변경되었습니다."));
+            case 1 -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseOut.fail("비밀번호가 이전 비밀번호와 동일합니다."));
+            default ->
+                    ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseOut.fail("알 수 없는 오류가 발생했습니다."));
+        };
     }
 }
