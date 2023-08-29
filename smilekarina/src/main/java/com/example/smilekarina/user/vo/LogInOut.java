@@ -7,4 +7,5 @@ import lombok.Setter;
 public class LogInOut {
     String UUID;
     String userName;
+    String token;
 }
