@@ -92,9 +92,9 @@ public class UserController {
         if (token != null && !token.isEmpty()) {
 //            redisService.saveTokenToRedis(userLoginIn.getLoginId(), token);
             // 토큰을 응답 헤더에 담아 보냅니다.
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Authorization", "Bearer " + token);
-            return new ResponseEntity<>(ResponseOut.success(logInOut), headers, HttpStatus.OK);
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.add("Authorization", "Bearer " + token);
+            return ResponseEntity.ok(ResponseOut.success(logInOut));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseOut.fail());
         }
