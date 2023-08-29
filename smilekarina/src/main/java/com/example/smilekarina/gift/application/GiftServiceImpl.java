@@ -4,12 +4,12 @@ import com.example.smilekarina.gift.domain.Gift;
 import com.example.smilekarina.gift.domain.GiftType;
 import com.example.smilekarina.gift.domain.GiftTypeConverter;
 import com.example.smilekarina.gift.dto.GiftAcceptDto;
+import com.example.smilekarina.gift.dto.GiftCancelDto;
 import com.example.smilekarina.gift.dto.GiftLastDto;
 import com.example.smilekarina.gift.infrastructure.GiftRepository;
 import com.example.smilekarina.gift.vo.GiftIn;
 import com.example.smilekarina.point.application.PointService;
 import com.example.smilekarina.point.domain.PointType;
-import com.example.smilekarina.point.domain.PointTypeConverter;
 import com.example.smilekarina.point.dto.PointAddDto;
 import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.domain.User;
@@ -117,6 +117,29 @@ public class GiftServiceImpl implements GiftService {
             GiftType giftType = new GiftTypeConverter().convertToEntityAttribute(GiftType.GET.getCode());
             modifiedGift.setGiftType(giftType);
             modifiedGift.setRecipientPointId(pointId);
+        });
+    }
+
+    // 포인트 선물 거절
+    @Override
+    @Transactional
+    public void cancelGift(GiftCancelDto giftCancelDto) {
+
+        // 선물 테이블의 선물 타입을 취소로 갱신
+        Optional<Gift> gift = giftRepository.findById(giftCancelDto.getGiftId());
+
+        gift.ifPresent(modifiedGift -> {
+            GiftType giftType = new GiftTypeConverter().convertToEntityAttribute(GiftType.CANCEL.getCode());
+            modifiedGift.setGiftType(giftType);
+
+            // 포인트 테이블에 보낸 사람의 선물사용취소(적립) 포인트 데이터 추가
+            PointAddDto pointAddDto = PointAddDto.builder()
+                    .point(giftCancelDto.getPoint())
+                    .pointType(PointType.CANCELGIFT.getCode())
+                    .used(false)
+                    .userId(modifiedGift.getGiftSenderId())
+                    .build();
+            pointService.registerPoint(pointAddDto);
         });
     }
 

@@ -2,8 +2,10 @@ package com.example.smilekarina.gift.presentation;
 
 import com.example.smilekarina.gift.application.GiftService;
 import com.example.smilekarina.gift.dto.GiftAcceptDto;
+import com.example.smilekarina.gift.dto.GiftCancelDto;
 import com.example.smilekarina.gift.dto.GiftLastDto;
 import com.example.smilekarina.gift.vo.GiftAcceptIn;
+import com.example.smilekarina.gift.vo.GiftCancelIn;
 import com.example.smilekarina.gift.vo.GiftIn;
 import com.example.smilekarina.gift.vo.GiftLastOut;
 import com.example.smilekarina.global.vo.ResponseOut;
@@ -93,25 +95,25 @@ public class GiftController {
         return ResponseEntity.ok(responseOut);
     }
 
-
     /*
         포인트 선물 거절
      */
+    @PostMapping("/gift/cancel")
+    public ResponseEntity<?> cancelGift(@RequestBody GiftCancelIn giftCancelIn) {
 
-    // 1) 포인트 테이블에 받는 사람 선물취소(적립) 포인트 데이터 추가
-    // 2) 선물 테이블의 선물 타입을 취소로 갱신
+        GiftCancelDto giftCancelDto = GiftCancelDto.builder()
+                .giftId(giftCancelIn.getGiftId())
+                .point(giftCancelIn.getPoint())
+                .build();
 
-
-    //******************************************************
+        giftService.cancelGift(giftCancelDto);
+        ResponseOut<?> responseOut = ResponseOut.success();
+        return ResponseEntity.ok(responseOut);
+    }
 
     /*
         포인트 선물 리스트 조회
      */
-
-
-    // 고민해보기
-
-    //******************************************************
 
 
 }

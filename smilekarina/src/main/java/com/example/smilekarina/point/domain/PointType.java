@@ -11,7 +11,9 @@ public enum PointType implements CodeValue {
     EVENT("EV", "이벤트"),
     GIFT("GF", "선물"),
     CHECK("CH","출석"),
-    ROULETTE("RO","룰렛");
+    ROULETTE("RO","룰렛"),
+    CANCELGIFT("CA","선물사용취소");
+
 
     private final String code;
     private final String value;

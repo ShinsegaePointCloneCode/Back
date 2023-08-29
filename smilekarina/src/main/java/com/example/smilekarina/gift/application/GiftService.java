@@ -1,6 +1,7 @@
 package com.example.smilekarina.gift.application;
 
 import com.example.smilekarina.gift.dto.GiftAcceptDto;
+import com.example.smilekarina.gift.dto.GiftCancelDto;
 import com.example.smilekarina.gift.dto.GiftLastDto;
 import com.example.smilekarina.gift.vo.GiftIn;
 
@@ -16,6 +17,6 @@ public interface GiftService {
     void acceptGift(GiftAcceptDto giftAcceptDto);
 
     // 포인트 선물 거절
-//    void cancelGift();
+    void cancelGift(GiftCancelDto giftCancelDto);
 
 }
