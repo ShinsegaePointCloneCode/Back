@@ -2,6 +2,7 @@ package com.example.smilekarina.user.presentation;
 
 import com.example.smilekarina.global.vo.ResponseOut;
 import com.example.smilekarina.user.application.UserService;
+import com.example.smilekarina.user.dto.LogInDto;
 import com.example.smilekarina.user.dto.UserGetDto;
 import com.example.smilekarina.user.dto.UserSignUpDto;
 import com.example.smilekarina.user.infrastructure.UserRepository;
@@ -82,16 +83,18 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody UserLoginIn userLoginIn) {
 
-        log.info("Login request for user : {}", userLoginIn.getLoginId());
-        String token = userService.loginUser(userLoginIn);
+//        log.info("Login request for user : {}", userLoginIn.getLoginId());
+        LogInDto logInDto = userService.loginUser(userLoginIn);
+//        log.info(logInDto.getToken());
+        String token = logInDto.getToken();
+        LogInOut logInOut = modelMapper.map(logInDto, LogInOut.class);
 
         if (token != null && !token.isEmpty()) {
 //            redisService.saveTokenToRedis(userLoginIn.getLoginId(), token);
             // 토큰을 응답 헤더에 담아 보냅니다.
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", "Bearer " + token);
-
-            return new ResponseEntity<>(null, headers, HttpStatus.OK); // body 부분은 null로 설정
+            return new ResponseEntity<>(ResponseOut.success(logInOut), headers, HttpStatus.OK);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseOut.fail());
         }
