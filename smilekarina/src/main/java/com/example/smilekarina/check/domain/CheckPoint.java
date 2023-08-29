@@ -18,7 +18,7 @@ public class CheckPoint {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, name = "user_id")
-    private Integer userId;
+    private Long userId;
     @Column(nullable = false, name= "cnt_date", columnDefinition = "int default 0")
     private Integer cntDate;
     @Column(nullable = false, name= "check_date")

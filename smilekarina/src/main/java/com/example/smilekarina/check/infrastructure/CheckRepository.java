@@ -13,7 +13,5 @@ import java.util.Optional;
 public interface CheckRepository extends JpaRepository<CheckPoint, Long> {
 //    @Query("SELECT cp FROM CheckPoint cp WHERE cp.userId = ?1 ORDER BY cp.ckeckDate DESC")
 //    Optional<CheckPoint> findLatestByUserId(Long userId);
-//    @Query("SELECT cp FROM CheckPoint cp WHERE cp.userId = ?1 AND cp.ckeckDate BETWEEN ?2 AND ?3")
-//    List<CheckPoint> findByUserIdAndMonth(Long userId, LocalDateTime startDate, LocalDateTime endDate);
-
+    List<CheckPoint> findByUserIdAndCkeckDateBetween(Long userId, LocalDate startDate, LocalDate endDate);
 }
