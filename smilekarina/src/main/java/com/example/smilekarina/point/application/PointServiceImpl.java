@@ -56,7 +56,11 @@ public class PointServiceImpl implements PointService{
 
         Integer totalPoint = 0;
         if(lastPoint != null) {
-            totalPoint = lastPoint.getTotalPoint() + pointAddDto.getPoint();
+            if(pointAddDto.getUsed()) {
+                totalPoint = lastPoint.getTotalPoint() - pointAddDto.getPoint();
+            } else {
+                totalPoint = lastPoint.getTotalPoint() + pointAddDto.getPoint();
+            }
         } else {
             totalPoint = pointAddDto.getPoint();
         }
