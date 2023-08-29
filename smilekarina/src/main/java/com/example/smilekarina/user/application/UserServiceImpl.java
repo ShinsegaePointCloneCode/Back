@@ -3,6 +3,7 @@ package com.example.smilekarina.user.application;
 import com.example.smilekarina.config.security.JwtTokenProvider;
 import com.example.smilekarina.user.domain.Roll;
 import com.example.smilekarina.user.domain.User;
+import com.example.smilekarina.user.dto.LogInDto;
 import com.example.smilekarina.user.dto.UserGetDto;
 import com.example.smilekarina.user.dto.UserSignUpDto;
 import com.example.smilekarina.user.vo.UserLoginIn;
@@ -98,19 +99,21 @@ public class UserServiceImpl implements UserService{
             throw new NoSuchElementException("User with loginId " + loginId + " not found");
         }
     }
-
-    public String loginUser(UserLoginIn userLoginIn) {
+    @Override
+    public LogInDto loginUser(UserLoginIn userLoginIn) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(userLoginIn.getLoginId());
-        Integer state = userRepository.findByLoginId(userLoginIn.getLoginId())
-                .map(User::getStatus) // 여기서 바로 boolean 값 가져오기
-                .orElse(1);       // 기본값은 false 혹은 필요한 값을 넣으세요
-        if (state == 1) {
+        User user = userRepository.findByLoginId(userLoginIn.getLoginId()).orElse(null);
+        // 유저가 존재하지 않거나 삭제한 유저가 아니면
+//        log.info("user : {} ", user);
+        if (user != null && (user.getStatus() == 1)) {
             // password 확인
             if(new BCryptPasswordEncoder().matches(userLoginIn.getPassword(), userDetails.getPassword())) {
                 // JWT 토큰 생성 및 반환
-                return jwtTokenProvider.generateToken(userDetails);
-            } else {
-                return null;
+                return LogInDto.builder()
+                        .userName(user.getName())
+                        .token(jwtTokenProvider.generateToken(userDetails))
+                        .UUID(user.getUUID())
+                        .build();
             }
         }
         return null;
