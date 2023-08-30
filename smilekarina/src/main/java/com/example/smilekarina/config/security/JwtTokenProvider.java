@@ -26,7 +26,7 @@ public class JwtTokenProvider {
     private final Environment env;
 
 
-    // JWT 토큰에서 UUID(사용자명)을 추출합니다. token -> UUID
+    // JWT 토큰에서 UUID(사용자명)을 추출합니다. token -> loginId
     public String getLoginId(String token) {
         return extractClaim(token, Claims::getSubject);
     }

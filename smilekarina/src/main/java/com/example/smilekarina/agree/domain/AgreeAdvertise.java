@@ -28,4 +28,6 @@ public class AgreeAdvertise{
     private Boolean DM;
     @Column(nullable = false, length = 1, name = "TM", columnDefinition = "int default 0")
     private Boolean TM;
+    @Column(nullable = false, name = "user_id")
+    private Long userId;
 }

@@ -47,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         loginId = jwtTokenProvider.getLoginId(jwt);
         // 유효성 검사
         if (loginId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // UUID를 기반으로 사용자 정보를 가져옵니다.
+            // loginId 기반으로 사용자 정보를 가져옵니다.
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(loginId);
             // 토큰이 유효한 경우 인증 정보를 생성하고 Security Context에 설정합니다.
             if (jwtTokenProvider.validateToken(jwt, userDetails)) {
