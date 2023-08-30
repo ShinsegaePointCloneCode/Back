@@ -47,4 +47,13 @@ public class ResponseOut<T> {
         return re;
     }
 
+    /** 토큰 에러
+     */
+    public static <T> ResponseOut<T> tokenInvalid() {
+        ResponseOut<T> re = new ResponseOut<>();
+        re.setSuccess(false);
+        re.setCode(3200);
+        return re;
+    }
+
 }

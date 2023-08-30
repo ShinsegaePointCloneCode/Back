@@ -25,8 +25,7 @@ public class JwtTokenProvider {
     // 스프링의 Environment 인터페이스를 주입받아 환경 속성에 액세스합니다.
     private final Environment env;
 
-
-    // JWT 토큰에서 UUID(사용자명)을 추출합니다. token -> UUID
+    // JWT 토큰에서 UUID(사용자명)을 추출합니다. token -> loginId
     public String getLoginId(String token) {
         return extractClaim(token, Claims::getSubject);
     }

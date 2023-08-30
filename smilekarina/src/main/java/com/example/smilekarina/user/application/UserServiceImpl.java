@@ -9,15 +9,14 @@ import com.example.smilekarina.user.dto.UserSignUpDto;
 import com.example.smilekarina.user.vo.UserLoginIn;
 import com.example.smilekarina.user.vo.UserModifyIn;
 import com.example.smilekarina.user.infrastructure.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -25,6 +24,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+//@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
@@ -33,6 +33,7 @@ public class UserServiceImpl implements UserService{
     private final ModelMapper modelMapper;
     // 유저 추가 로직
     @Override
+//    @Transactional(readOnly = false)
     public void createUser(UserSignUpDto userSignUpDto) {
         log.info("craeteUser : {}",userSignUpDto);
         UUID uuid = UUID.randomUUID();
@@ -77,7 +78,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    @Transactional
+//    @Transactional(readOnly = false)
     public void modify(String token, UserModifyIn userModifyIn) {
         String loginId = jwtTokenProvider.getLoginId(token.substring(7));
         Optional<User> optionalUser = userRepository.findByLoginId(loginId);
@@ -144,6 +145,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+//    @Transactional(readOnly = false)
     public Long changePassword(String token, String oldPwd, String newPwd) {
         String loginId = jwtTokenProvider.getLoginId(token.substring(7));
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginId);
@@ -158,6 +160,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+//    @Transactional(readOnly = false)
     public Long searchPassword(String loginId, String newPwd) {
         return changeUserPassword(loginId, newPwd);
     }
