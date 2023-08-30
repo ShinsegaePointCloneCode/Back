@@ -19,7 +19,7 @@ public class SecurityConfiguration {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationProvider authendicationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
+    private final TokenEntryPoint tokenEntryPoint;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -30,10 +30,13 @@ public class SecurityConfiguration {
 //                                        "/api/v1/join/**")
 //                                .authenticated() // 인증된 사용자만 접근을 허용합니다.
 //                )
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(tokenEntryPoint))
                 .authorizeHttpRequests(
                         authorizeHttpRequests -> authorizeHttpRequests
                                 .requestMatchers(
                                         "",
+                                        "/error",
                                         "/api/v1/**",
                                         "/swagger-ui/**",
                                         "/swagger-resources/**",

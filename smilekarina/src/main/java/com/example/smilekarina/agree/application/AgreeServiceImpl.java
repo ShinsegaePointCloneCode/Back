@@ -9,16 +9,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+//@Transactional(readOnly = true)
 public class AgreeServiceImpl implements AgreeService{
     private final UserService userService;
     private final AgreeAdvertiseRepository agreeAdvertiseRepository;
-    private final ModelMapper modelMapper;
+
 
     @Override
     public void createAgreeAdvertise(String token, AgreeAdvertiseDto agreeAdvertiseDto) {
