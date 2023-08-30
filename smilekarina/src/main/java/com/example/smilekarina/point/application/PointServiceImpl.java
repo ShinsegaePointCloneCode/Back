@@ -19,6 +19,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+//@org.springframework.transaction.annotation.Transactional(readOnly = true)
 public class PointServiceImpl implements PointService{
 
     private final UserService userService;
