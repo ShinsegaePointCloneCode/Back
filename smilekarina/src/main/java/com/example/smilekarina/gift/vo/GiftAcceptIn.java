@@ -8,6 +8,5 @@ import lombok.ToString;
 public class GiftAcceptIn {
 
     private Long giftId;
-    private Integer point;
 
 }

@@ -86,7 +86,6 @@ public class GiftController {
 
         GiftAcceptDto giftAcceptDto = GiftAcceptDto.builder()
                 .giftId(giftAcceptIn.getGiftId())
-                .point(giftAcceptIn.getPoint())
                 .userId(userId)
                 .build();
 
@@ -103,7 +102,6 @@ public class GiftController {
 
         GiftCancelDto giftCancelDto = GiftCancelDto.builder()
                 .giftId(giftCancelIn.getGiftId())
-                .point(giftCancelIn.getPoint())
                 .build();
 
         giftService.cancelGift(giftCancelDto);
