@@ -1,6 +1,7 @@
 package com.example.smilekarina.global.vo;
 
 import com.example.smilekarina.global.exception.ErrorStateCode;
+import com.example.smilekarina.user.exception.UserErrorStateCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,9 +12,15 @@ public class ErrorResponse {
     private int code;
     private String message;
 
-    public ErrorResponse(ErrorStateCode errorStateCode) {
-        this.isSuccess = errorStateCode.isSuccess();
-        this.code = errorStateCode.getCode();
-        this.message = errorStateCode.getMessage();
+    public ErrorResponse(ErrorStateCode e) {
+        this.isSuccess = e.isSuccess();
+        this.code = e.getCode();
+        this.message = e.getMessage();
+    }
+
+    public ErrorResponse(UserErrorStateCode e) {
+        this.isSuccess = e.isSuccess();
+        this.code = e.getCode();
+        this.message = e.getMessage();
     }
 }
