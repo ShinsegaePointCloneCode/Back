@@ -39,6 +39,8 @@ public class SecurityConfiguration {
 //                )
                 .authorizeHttpRequests(
                         authorizeHttpRequests -> authorizeHttpRequests
+                                .requestMatchers(org.springframework.web.cors.CorsUtils::isPreFlightRequest)
+                                .permitAll()
                                 .requestMatchers(
                                         "/api/v1/**",
                                         "/error",
@@ -69,13 +71,13 @@ public class SecurityConfiguration {
         return http.build();
     }
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders(List.of("*"));  // 모든 헤더 허용
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+    public CorsConfigurationSource corsConfigurationSource() {
+        return  request -> {
+            var cors = new org.springframework.web.cors.CorsConfiguration();
+            cors.setAllowedOriginPatterns(List.of("*"));
+            cors.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+            cors.setAllowedHeaders(List.of("*"));
+            return cors;
+        };
     }
 }
