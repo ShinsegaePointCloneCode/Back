@@ -2,13 +2,18 @@ package com.example.smilekarina.card.presentation;
 
 import com.example.smilekarina.card.application.CardService;
 import com.example.smilekarina.card.dto.AffiliateCardDto;
+import com.example.smilekarina.card.dto.OnlinePointCardDto;
 import com.example.smilekarina.card.dto.PointCardDto;
 import com.example.smilekarina.card.vo.AffiliateCardIn;
+import com.example.smilekarina.card.vo.BarcodePointCardOut;
+import com.example.smilekarina.card.vo.OnlinePointCardOut;
 import com.example.smilekarina.card.vo.PointCardIn;
+import com.example.smilekarina.gift.vo.GiftLastOut;
 import com.example.smilekarina.global.vo.ResponseOut;
 import com.example.smilekarina.user.application.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1")
 public class CardController {
 
+    private final ModelMapper modelMapper;
     private final UserService userService;
     private final CardService cardService;
 
@@ -65,6 +71,15 @@ public class CardController {
     /*
         온라인 카드 조회
      */
+    @GetMapping("/pointcard/online")
+    public ResponseEntity<ResponseOut<?>> getOnlinePointCard(@RequestHeader("Authorization") String token) {
+
+        Long userId = userService.getUserIdFromToken(token);
+
+        OnlinePointCardDto onlinePointCardDto = cardService.getOnlinePointCard(userId);
+        ResponseOut<?> responseOut = ResponseOut.success(modelMapper.map(onlinePointCardDto, OnlinePointCardOut.class));
+        return ResponseEntity.ok(responseOut);
+    }
 
     /*
         제휴 신용카드 조회
@@ -93,5 +108,24 @@ public class CardController {
     /*
         포인트카드 번호 조회(바코드 보기 위함)
      */
+    @GetMapping("/card/pointcard")
+    public ResponseEntity<ResponseOut<?>> getBarcodePointCard(@RequestHeader("Authorization") String token) {
+
+        Long userId = userService.getUserIdFromToken(token);
+
+        String cardNumber = cardService.getPointCardNumber(userId);
+
+        BarcodePointCardOut barcodePointCardOut = BarcodePointCardOut.builder()
+                .cardNumber(cardNumber)
+                .build();
+
+        ResponseOut<?> responseOut = ResponseOut.success(barcodePointCardOut);
+        return ResponseEntity.ok(responseOut);
+
+
+
+
+    }
+
 
 }
