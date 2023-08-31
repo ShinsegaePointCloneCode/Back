@@ -1,8 +1,12 @@
 package com.example.smilekarina.check.application;
 
 
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
+import java.util.List;
+
 
 public interface CheckService {
-//    void createCheck(String token, LocalDateTime time);
+    List<Integer> getCheck(String token);
+    void createCheck(String token, LocalDate time);
 }
