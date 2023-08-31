@@ -5,9 +5,11 @@ import com.example.smilekarina.card.domain.IssueTypeConverter;
 import com.example.smilekarina.card.domain.MileageCard;
 import com.example.smilekarina.card.domain.PointCard;
 import com.example.smilekarina.card.dto.AffiliateCardDto;
+import com.example.smilekarina.card.dto.OnlinePointCardDto;
 import com.example.smilekarina.card.dto.PointCardDto;
 import com.example.smilekarina.card.infrastructure.MileageCardRepository;
 import com.example.smilekarina.card.infrastructure.PointCardRepository;
+import com.example.smilekarina.point.domain.Point;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ public class CardServiceImpl implements CardService{
     private final MileageCardRepository mileageCardRepository;
 
     private static final String SAMSUNG = "삼성전자 포인트";
+    private static final String SHINSEGAEPOINTDOTCOM = "신세계포인트닷컴";
 
     // 신규 포인트 카드 등록
     @Override
@@ -66,6 +69,31 @@ public class CardServiceImpl implements CardService{
                     .build();
             mileageCardRepository.save(mileageCard);
         }
+    }
+
+    // 온라인 카드 조회
+    @Override
+    public OnlinePointCardDto getOnlinePointCard(Long userId) {
+
+        IssueType issueType = new IssueTypeConverter().convertToEntityAttribute(IssueType.ONLINE.getCode());
+
+        List<PointCard> onlinePointCardList = pointCardRepository.findByUserIdAndIssueType(userId, issueType);
+
+        // TODO list에서 dto로 꺼내는 작업 구현 마저 하기
+
+        return null;
+    }
+
+    // 포인트카드 번호 조회(바코드 보기 위함)
+    @Override
+    public String getPointCardNumber(Long userId) {
+
+        IssueType issueType = new IssueTypeConverter().convertToEntityAttribute(IssueType.ONLINE.getCode());
+
+        PointCard pointCard = pointCardRepository.findFirstByUserIdAndIssueTypeAndIssuePlaceOrderByCreatedDateDesc
+                (userId, issueType, SHINSEGAEPOINTDOTCOM);
+
+        return pointCard.getCardNumber();
     }
 
 
