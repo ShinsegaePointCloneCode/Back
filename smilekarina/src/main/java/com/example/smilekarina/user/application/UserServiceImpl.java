@@ -12,6 +12,8 @@ import com.example.smilekarina.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,6 +33,7 @@ public class UserServiceImpl implements UserService{
     private final UserDetailsService userDetailsService;
     private final JwtTokenProvider jwtTokenProvider;
     private final ModelMapper modelMapper;
+    private final AuthenticationManager authenticationManager;
     // 유저 추가 로직
     @Override
 //    @Transactional(readOnly = false)
@@ -101,7 +104,7 @@ public class UserServiceImpl implements UserService{
         }
     }
     @Override
-    public LogInDto loginUser(UserLoginIn userLoginIn) {
+    public LogInDto loginUser(UserLoginIn userLoginIn){
         UserDetails userDetails = userDetailsService.loadUserByUsername(userLoginIn.getLoginId());
         User user = userRepository.findByLoginId(userLoginIn.getLoginId()).orElse(null);
         // 유저가 존재하지 않거나 삭제한 유저가 아니면
