@@ -30,4 +30,22 @@ public class AgreeAdvertise{
     private Boolean TM;
     @Column(nullable = false, name = "user_id")
     private Long userId;
+    public void setOptionOne(Boolean optionOne) {
+        this.optionOne = optionOne;
+    }
+    public void setOptionTwo(Boolean optionTwo) {
+        this.optionTwo = optionTwo;
+    }
+    public void setAgreeEmail(Boolean agreeEmail) {
+        this.agreeEmail = agreeEmail;
+    }
+    public void setLetter(Boolean letter) {
+        this.letter = letter;
+    }
+    public void setDM(Boolean DM) {
+        this.DM = DM;
+    }
+    public void setTM(Boolean TM) {
+        this.TM = TM;
+    }
 }

@@ -82,10 +82,7 @@ public class UserController {
     @Operation(summary= "로그인 하기", description= "login id와 password로 로그인 하기", tags = { "User Controller" })
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody UserLoginIn userLoginIn) {
-
-//        log.info("Login request for user : {}", userLoginIn.getLoginId());
         LogInDto logInDto = userService.loginUser(userLoginIn);
-//        log.info(logInDto.getToken());
         String token = logInDto.getToken();
         LogInOut logInOut = modelMapper.map(logInDto, LogInOut.class);
 
@@ -114,27 +111,20 @@ public class UserController {
     }
     @Operation(summary= "비밀 번호 바꾸기", description= "인증을 했을 경우 비밀번호를 바꾸는 로직", tags = { "User Controller" })
     @PutMapping("/myinfo/changePwd")
-    public ResponseEntity<?> changePassword(@RequestHeader("Authorization") String token, @RequestBody ChangePasswordNewIn changePasswordNewIn) {
-        Long state = userService.changePassword(token, changePasswordNewIn.getOldPwd(), changePasswordNewIn.getNewPwd());
+    public ResponseEntity<?> changePassword(
+            @RequestHeader("Authorization") String token,
+            @RequestBody ChangePasswordNewIn changePasswordNewIn
+    ){
+        userService.changePassword(token, changePasswordNewIn.getOldPwd(), changePasswordNewIn.getNewPwd());
         // state 0 : 비밀번호 변경, 1 : 비밀번호가 이전 비밀번호와 동일, 2: 올바른 비밀번호가 아닌 경우
-        return switch (state.intValue()) {
-            case 0 -> ResponseEntity.ok(ResponseOut.success("비밀번호가 변경되었습니다."));
-            case 1 -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseOut.fail("비밀번호가 이전 비밀번호와 동일합니다."));
-            case 2 -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseOut.fail("올바른 비밀번호가 아닙니다."));
-            default ->
-                    ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseOut.fail("알 수 없는 오류가 발생했습니다."));
-        };
+        return ResponseEntity.ok(ResponseOut.success("비밀번호가 변경되었습니다."));
     }
+
+
     @Operation(summary= "비밀 번호 찾기", description= "인증을 안 했을 경우 비밀번호를 바꾸는 로직", tags = { "User Controller" })
     @PutMapping("/member/findPw")
-    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordIn changePasswordIn) {
-        Long state = userService.searchPassword(changePasswordIn.getLoginId(), changePasswordIn.getPassword());
-        // state 0 : 비밀번호 변경, 1 : 비밀번호가 이전 비밀번호와 동일, 2: 올바른 비밀번호가 아닌 경우
-        return switch (state.intValue()) {
-            case 0 -> ResponseEntity.ok(ResponseOut.success("비밀번호가 변경되었습니다."));
-            case 1 -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseOut.fail("비밀번호가 이전 비밀번호와 동일합니다."));
-            default ->
-                    ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseOut.fail("알 수 없는 오류가 발생했습니다."));
-        };
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordIn changePasswordIn){
+        userService.searchPassword(changePasswordIn.getLoginId(), changePasswordIn.getPassword());
+        return ResponseEntity.ok(ResponseOut.success("비밀번호가 변경되었습니다."));
     }
 }
