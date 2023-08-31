@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+//@org.springframework.transaction.annotation.Transactional(readOnly = true)
 public class ClubServiceImpl implements ClubService{
     private final UserService userService;
     private final ClubRepository clubRepository;

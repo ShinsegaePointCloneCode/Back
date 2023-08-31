@@ -16,13 +16,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
-    private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationProvider authendicationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
+    private final TokenEntryPoint tokenEntryPoint;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http
                 .csrf(CsrfConfigurer::disable) // CSRF 보안을 비활성화. API 서버로 사용하기 때문에 일반적으로 비활성화
 //                .authorizeHttpRequests(
@@ -34,8 +32,12 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(
                         authorizeHttpRequests -> authorizeHttpRequests
                                 .requestMatchers(
-                                        "",
-                                        "/api/v1/**",
+                                        "/error",
+                                        "/api/v1/login",
+                                        "/api/v1/user/join/cert",
+                                        "/api/v1/member/findPw",
+                                        "/api/v1/member/findIdPw",
+                                        // swagger
                                         "/swagger-ui/**",
                                         "/swagger-resources/**",
                                         "/api-docs/**") // "/api/v1/auth/**" 패턴에 일치하는 요청에 대해
@@ -47,9 +49,13 @@ public class SecurityConfiguration {
                         sessionManagement -> sessionManagement
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 ) // 세션을 생성하지 않음. JWT 인증이기 때문에 상태가 없는(stateless) 세션 정책을 사용합니다.
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(tokenEntryPoint))
                 .authenticationProvider(authendicationProvider) // 커스터마이징한 인증 제공자를 설정
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
                 // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 전에 추가합니다.
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+
 
         return http.build();
     }

@@ -23,7 +23,7 @@ public class AgreeController {
     @Operation(summary= "광고정보 수신관리 만들기"
             , description= "광고정보 수신관리 정보를 만듭니다.6개의 값을 넣으면 그 값이 저장됩니다"
             , tags = { "Event Controller" })
-    @PostMapping("/myinfo/infoRcvAgree")
+    @PutMapping("/myinfo/infoRcvAgree")
     public ResponseEntity<?> createAgreeAdvertise(@RequestHeader("Authorization") String token, @RequestBody AgreeAdvertiseIn agreeAdvertiseIn) {
         AgreeAdvertiseDto agreeAdvertiseDto = modelMapper.map(agreeAdvertiseIn,AgreeAdvertiseDto.class);
         agreeService.createAgreeAdvertise(token,agreeAdvertiseDto);

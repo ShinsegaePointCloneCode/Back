@@ -14,10 +14,10 @@ import com.example.smilekarina.point.dto.PointAddDto;
 import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.infrastructure.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -26,6 +26,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+//@Transactional(readOnly = true)
 public class GiftServiceImpl implements GiftService {
 
     private final UserService userService;
