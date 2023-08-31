@@ -10,7 +10,6 @@ import lombok.*;
 public class GiftAcceptDto {
 
     private Long giftId;
-    private Integer point;
     private Long userId;
 
 }
