@@ -16,7 +16,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
-    private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationProvider authendicationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final TokenEntryPoint tokenEntryPoint;
@@ -35,9 +34,10 @@ public class SecurityConfiguration {
                                 .requestMatchers(
                                         "/error",
                                         "/api/v1/login",
-                                        "/api/v1/signup",
+                                        "/api/v1/user/join/cert",
                                         "/api/v1/member/findPw",
                                         "/api/v1/member/findIdPw",
+                                        // swagger
                                         "/swagger-ui/**",
                                         "/swagger-resources/**",
                                         "/api-docs/**") // "/api/v1/auth/**" 패턴에 일치하는 요청에 대해
