@@ -20,7 +20,7 @@ import java.io.IOException;
 public class TokenEntryPoint implements AuthenticationEntryPoint {
     private final ObjectMapper objectMapper;
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         // 엑세스 토큰 만료될때 터짐
         response.setStatus(HttpStatus.FORBIDDEN.value());
         response.setContentType("application/json; charset=UTF-8");
