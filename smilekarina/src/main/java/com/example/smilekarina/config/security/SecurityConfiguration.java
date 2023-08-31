@@ -42,7 +42,6 @@ public class SecurityConfiguration {
                                 .requestMatchers(org.springframework.web.cors.CorsUtils::isPreFlightRequest)
                                 .permitAll()
                                 .requestMatchers(
-                                        "/api/v1/**",
                                         "/error",
                                         "/api/v1/login",
                                         "/api/v1/user/join/cert",
