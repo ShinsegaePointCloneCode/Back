@@ -36,6 +36,8 @@ public class SecurityConfiguration {
                                         "/error",
                                         "/api/v1/login",
                                         "/api/v1/signup",
+                                        "/api/v1/member/findPw",
+                                        "/api/v1/member/findIdPw",
                                         "/swagger-ui/**",
                                         "/swagger-resources/**",
                                         "/api-docs/**") // "/api/v1/auth/**" 패턴에 일치하는 요청에 대해
