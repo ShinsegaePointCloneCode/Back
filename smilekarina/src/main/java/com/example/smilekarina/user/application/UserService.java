@@ -22,6 +22,6 @@ public interface UserService {
     Long getUserId(String loginId);
     Long getUserIdFromToken(String token);
     String findID(String userName,String phone);
-    Long changePassword(String token, String oldPwd, String newPwd);
-    Long searchPassword(String loginId,String newPwd);
+    void changePassword(String token, String oldPwd, String newPwd);
+    void searchPassword(String loginId,String newPwd);
 }

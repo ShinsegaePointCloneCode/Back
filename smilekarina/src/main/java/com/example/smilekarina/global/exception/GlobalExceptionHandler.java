@@ -19,4 +19,13 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(ErrorStateCode.TOKEN_INVALID);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
+    /**
+    같은 날짜 출석
+    */
+    @ExceptionHandler(SameDayCheckException.class)
+    protected ResponseEntity<ErrorResponse> handlerSameDayCheck(SameDayCheckException ex) {
+        log.error("sameDayException", ex);
+        ErrorResponse errorResponse = new ErrorResponse(ErrorStateCode.SAMEDAYCHECK);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
 }

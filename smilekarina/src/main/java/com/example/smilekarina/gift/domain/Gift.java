@@ -40,10 +40,10 @@ public class Gift extends BaseEntity {
     @Column(nullable = false, name = "sender_point_id")
     private Long senderPointId;
 
-    @Column(name = "recipient_point_id")
-    private Long recipientPointId;
+    @Column(name = "result_point_id")
+    private Long resultPointId;
 
-    public void setRecipientPointId(Long recipientPointId) { this.recipientPointId = recipientPointId; }
+    public void setResultPointId(Long resultPointId) { this.resultPointId = resultPointId; }
     public void setGiftType(GiftType giftType) { this.giftType = giftType; }
 
 }

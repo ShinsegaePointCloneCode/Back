@@ -36,6 +36,7 @@ public class GiftServiceImpl implements GiftService {
 
     // 포인트 선물하기
     @Override
+    //    @Transactional(readOnly = false)
     public void registerGift(Long userId, GiftIn giftIn) {
 
         // 받는사람 로그인 아이디로 유저 아이디 추출
@@ -98,49 +99,53 @@ public class GiftServiceImpl implements GiftService {
 
     // 포인트 선물 수락
     @Override
+    //    @Transactional(readOnly = false)
     @Transactional
     public void acceptGift(GiftAcceptDto giftAcceptDto) {
 
-        // 포인트 테이블에 받는 사람의 적립 포인트 데이터 추가
-        PointAddDto pointAddDto = PointAddDto.builder()
-                .point(giftAcceptDto.getPoint())
-                .pointType(PointType.GIFT.getCode())
-                .used(false)
-                .userId(giftAcceptDto.getUserId())
-                .build();
-        Long pointId = pointService.registerPoint(pointAddDto);
-
-
-        // 선물 테이블의 선물 타입을 받음으로 변경하고, 받는사람 포인트id 등록
         Optional<Gift> gift = giftRepository.findById(giftAcceptDto.getGiftId());
 
         gift.ifPresent(modifiedGift -> {
+
+            // 포인트 테이블에 받는 사람의 적립 포인트 데이터 추가
+            PointAddDto pointAddDto = PointAddDto.builder()
+                    .point(modifiedGift.getPoint())
+                    .pointType(PointType.GIFT.getCode())
+                    .used(false)
+                    .userId(giftAcceptDto.getUserId())
+                    .build();
+            Long pointId = pointService.registerPoint(pointAddDto);
+
+            // 선물 테이블의 선물 타입을 받음으로 변경하고, 결과 포인트ID에 받는사람 포인트id를 등록
             GiftType giftType = new GiftTypeConverter().convertToEntityAttribute(GiftType.GET.getCode());
             modifiedGift.setGiftType(giftType);
-            modifiedGift.setRecipientPointId(pointId);
+            modifiedGift.setResultPointId(pointId);
         });
     }
 
     // 포인트 선물 거절
     @Override
+    //    @Transactional(readOnly = false)
     @Transactional
     public void cancelGift(GiftCancelDto giftCancelDto) {
 
-        // 선물 테이블의 선물 타입을 취소로 갱신
         Optional<Gift> gift = giftRepository.findById(giftCancelDto.getGiftId());
 
         gift.ifPresent(modifiedGift -> {
-            GiftType giftType = new GiftTypeConverter().convertToEntityAttribute(GiftType.CANCEL.getCode());
-            modifiedGift.setGiftType(giftType);
 
             // 포인트 테이블에 보낸 사람의 선물사용취소(적립) 포인트 데이터 추가
             PointAddDto pointAddDto = PointAddDto.builder()
-                    .point(giftCancelDto.getPoint())
+                    .point(modifiedGift.getPoint())
                     .pointType(PointType.CANCELGIFT.getCode())
                     .used(false)
                     .userId(modifiedGift.getGiftSenderId())
                     .build();
-            pointService.registerPoint(pointAddDto);
+            Long pointId = pointService.registerPoint(pointAddDto);
+
+            // 선물 테이블의 선물 타입을 취소로 변경하고, 결과 포인트ID에 보낸사람의 포인트 ID를 등록
+            GiftType giftType = new GiftTypeConverter().convertToEntityAttribute(GiftType.CANCEL.getCode());
+            modifiedGift.setGiftType(giftType);
+            modifiedGift.setResultPointId(pointId);
         });
     }
 

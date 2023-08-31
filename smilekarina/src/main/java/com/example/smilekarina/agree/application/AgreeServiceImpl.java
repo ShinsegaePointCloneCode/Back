@@ -20,7 +20,7 @@ import java.util.Optional;
 public class AgreeServiceImpl implements AgreeService{
     private final UserService userService;
     private final AgreeAdvertiseRepository agreeAdvertiseRepository;
-
+    private final ModelMapper modelMapper;
 
     @Override
     public void createAgreeAdvertise(String token, AgreeAdvertiseDto agreeAdvertiseDto) {
@@ -30,17 +30,14 @@ public class AgreeServiceImpl implements AgreeService{
             // agreeAdvertise edit
             editAgreeAdvertise(agreeAdvertise.get() ,userId, agreeAdvertiseDto);
         } else {
-            // agreeAdvertise save
+            // agreeAdvertise create
             createAgreeAdvertise(userId, agreeAdvertiseDto);
         }
     }
-
-
     @Override
     public AgreeAdvertiseOut getAgreeAdvertise(String token) {
         Long userId = userService.getUserIdFromToken(token);
-
-        return null;
+        return modelMapper.map(agreeAdvertiseRepository.findByUserId(userId),AgreeAdvertiseOut.class);
     }
 
     private void createAgreeAdvertise(Long userId, AgreeAdvertiseDto agreeAdvertiseDto) {
@@ -53,10 +50,27 @@ public class AgreeServiceImpl implements AgreeService{
                 .TM(agreeAdvertiseDto.getTM())
                 .userId(userId)
                 .build();
-        AgreeAdvertise savedAgreeAdvertise = agreeAdvertiseRepository.save(agreeAdvertise);
+        agreeAdvertiseRepository.save(agreeAdvertise);
     }
-    private void editAgreeAdvertise(AgreeAdvertise agreeAdvertise, Long userId, AgreeAdvertiseDto agreeAdvertiseDto) {
-
-
+    private void editAgreeAdvertise(AgreeAdvertise agreeAdvertise, Long userId, AgreeAdvertiseDto dto) {
+        if (dto.getOptionOne() != null) {
+            agreeAdvertise.setOptionOne(dto.getOptionOne());
+        }
+        if (dto.getOptionTwo() != null) {
+            agreeAdvertise.setOptionTwo(dto.getOptionTwo());
+        }
+        if (dto.getAgreeEmail() != null) {
+            agreeAdvertise.setAgreeEmail(dto.getAgreeEmail());
+        }
+        if (dto.getLetter() != null) {
+            agreeAdvertise.setLetter(dto.getLetter());
+        }
+        if (dto.getDM() != null) {
+            agreeAdvertise.setDM(dto.getDM());
+        }
+        if (dto.getTM() != null) {
+            agreeAdvertise.setTM(dto.getTM());
+        }
+        agreeAdvertiseRepository.save(agreeAdvertise);
     }
 }
