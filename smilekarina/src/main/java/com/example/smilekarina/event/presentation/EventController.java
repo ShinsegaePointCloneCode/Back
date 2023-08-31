@@ -23,24 +23,39 @@ public class EventController {
     public ResponseEntity<?>getIngEvent(@RequestParam(value="OrderType") Integer orderType,
                                         @RequestParam(value="pageNo") Integer pageNo,
                                         @RequestParam(value = "size")Integer size){
-        List<EventListOut> eventListOutList = eventService.checkIngEvent(orderType,pageNo,size);
+        List<EventListOut> eventIngListOut = eventService.checkIngEvent(orderType,pageNo,size);
         ResponseOut<?> responseOut = ResponseOut.success();
         return ResponseEntity.ok(responseOut);
     }
 
-
-   /*
-    @PostMapping("/test/insert")
-    public void test1(@RequestBody EventPartnerGetDto eventPartnerGetDto) {
-        eventService.createEventPartner(eventPartnerGetDto);
+    @GetMapping("/event/endevent")
+    public ResponseEntity<?>getIngEvent(@RequestParam(value="pageNo") Integer pageNo,
+                                        @RequestParam(value = "size")Integer size){
+        List<EventListOut> eventEndListOut =eventService.endEvent(pageNo,size);
+        ResponseOut<?> responseOut = ResponseOut.success();
+        return ResponseEntity.ok(responseOut);
     }
-
-    */
+/*
+    @PostMapping("/event/myEvent")
+    public ResponseEntity<?> myEvent(@RequestBody EventGetDto eventGetDto) {
+        eventService.myEvent(eventGetDto);
+        ResponseOut<?> responseOut = ResponseOut.success();
+        return ResponseEntity.ok(responseOut);
+    }
+ */
+    //query string 파라미터로 id 값에 해당하는 데이터 요청 -> 이야기해보기 string이 아니고 Long 으로 받으면 안되나용 ..?ㅎㅎㅎ
     @GetMapping("/event")
-    public ResponseEntity<?>detailEvent(@RequestParam(value = "eventNo")Integer eventNo){
-        EventGetDto eventGetDto =eventService.checkEvent(eventNo);
+    public ResponseEntity<?>detailEvent(@RequestParam(value = "eventNo")Long eventNo){
+        EventGetDto eventGetDto =eventService.getEvent(eventNo);
         ResponseOut<?> responseOut = ResponseOut.success(modelMapper.map(eventGetDto, EventOut.class));
         return ResponseEntity.ok(responseOut);
     }
 
+    @GetMapping("/benefits/myEvent")
+    public ResponseEntity<?>detailEvent(@RequestParam(value = "pageNo")Integer pageNo,
+                                        @RequestParam(value = "size") Integer size){
+        List<EventListOut> myEventListOut=eventService.myEventList(pageNo,size);
+        ResponseOut<?> responseOut =ResponseOut.success();
+        return ResponseEntity.ok(responseOut);
+    }
 }

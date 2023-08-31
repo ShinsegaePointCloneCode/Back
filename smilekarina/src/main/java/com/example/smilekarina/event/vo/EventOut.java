@@ -14,6 +14,7 @@ public class EventOut {
     private String eventHead;   //이벤트 제목
     private String linkedUrl;   //이벤트 연결
     private LocalDateTime reg_date;//이벤트 등록일
+    private LocalDateTime eventResultDate;
     private LocalDateTime eventStart;   //이벤트 시작일
     private LocalDateTime eventEnd; //이벤트 종료일
     private Long eventDetailImage;    //이벤트 썸네일

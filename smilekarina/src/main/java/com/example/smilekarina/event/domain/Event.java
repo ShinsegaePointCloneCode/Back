@@ -34,8 +34,8 @@ public class Event extends BaseEntity {
     private LocalDateTime eventStart;   //이벤트 시작일
     @Column(nullable = false, name="event_end")
     private LocalDateTime eventEnd; //이벤트 종료일
-    @Column(nullable = false, name="event_thumbnail")
-    private Long eventThumbnail;    //이벤트 썸네일
+    @Column(nullable = false, name="event_thumbnail",columnDefinition = "TEXT")
+    private String eventThumbnail;    //이벤트 썸네일
     /*
     @Column(nullable = false, name="event_type")
     private String eventType;   //이벤트 종류 - 포인트제공, 응모형, 쿠폰제공, url
