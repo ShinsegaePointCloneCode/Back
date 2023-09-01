@@ -39,8 +39,8 @@ public class SecurityConfiguration {
 //                )
                 .authorizeHttpRequests(
                         authorizeHttpRequests -> authorizeHttpRequests
-                                .requestMatchers(org.springframework.web.cors.CorsUtils::isPreFlightRequest)
-                                .permitAll()
+//                                .requestMatchers(org.springframework.web.cors.CorsUtils::isPreFlightRequest)
+//                                .permitAll()
                                 .requestMatchers(
                                         "/error",
                                         "/api/v1/login",
@@ -69,14 +69,14 @@ public class SecurityConfiguration {
 
         return http.build();
     }
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        return  request -> {
-            var cors = new org.springframework.web.cors.CorsConfiguration();
-            cors.setAllowedOriginPatterns(List.of("*"));
-            cors.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
-            cors.setAllowedHeaders(List.of("*"));
-            return cors;
-        };
-    }
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        return  request -> {
+//            var cors = new org.springframework.web.cors.CorsConfiguration();
+//            cors.setAllowedOriginPatterns(List.of("*"));
+//            cors.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+//            cors.setAllowedHeaders(List.of("*"));
+//            return cors;
+//        };
+//    }
 }
