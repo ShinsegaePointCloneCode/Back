@@ -29,7 +29,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(AbstractHttpConfigurer::disable)
+//                .cors(AbstractHttpConfigurer::disable)
                 .csrf(CsrfConfigurer::disable) // CSRF 보안을 비활성화. API 서버로 사용하기 때문에 일반적으로 비활성화
 //                .authorizeHttpRequests(
 //                        authorizeHttpRequests -> authorizeHttpRequests
@@ -42,7 +42,6 @@ public class SecurityConfiguration {
                                 .requestMatchers(org.springframework.web.cors.CorsUtils::isPreFlightRequest)
                                 .permitAll()
                                 .requestMatchers(
-                                        "/api/v1/**",
                                         "/error",
                                         "/api/v1/login",
                                         "/api/v1/user/join/cert",
