@@ -30,7 +30,6 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
 //                .cors(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.disable())
                 .csrf(CsrfConfigurer::disable) // CSRF 보안을 비활성화. API 서버로 사용하기 때문에 일반적으로 비활성화
 //                .authorizeHttpRequests(
 //                        authorizeHttpRequests -> authorizeHttpRequests
