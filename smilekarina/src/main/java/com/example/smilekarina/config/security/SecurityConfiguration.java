@@ -31,6 +31,7 @@ public class SecurityConfiguration {
         http
 //                .cors(AbstractHttpConfigurer::disable)
                 .csrf(CsrfConfigurer::disable) // CSRF 보안을 비활성화. API 서버로 사용하기 때문에 일반적으로 비활성화
+                .cors(corsConfig -> corsConfig.configurationSource(corsConfigurationSource()))
 //                .authorizeHttpRequests(
 //                        authorizeHttpRequests -> authorizeHttpRequests
 //                                .requestMatchers(
