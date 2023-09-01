@@ -43,6 +43,7 @@ public class SecurityConfiguration {
                                 .permitAll()
                                 .requestMatchers(
                                         "/error",
+                                        "/api/v1/**",
                                         "/api/v1/login",
                                         "/api/v1/user/join/cert",
                                         "/api/v1/member/findPw",
