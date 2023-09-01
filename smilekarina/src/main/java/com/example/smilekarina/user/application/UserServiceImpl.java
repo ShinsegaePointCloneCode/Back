@@ -187,25 +187,18 @@ public class UserServiceImpl implements UserService{
         if (loginId == null || newPwd == null) {
             throw new IllegalArgumentException("Login ID or new password 가 null입니다.");
         }
-
-        User user = userRepository.findByLoginId(loginId).orElse(null);
-        if (user == null) {
-            throw new IllegalArgumentException("유저를 찾을 수 없습니다.");
-        }
-
+        User user = userRepository.findByLoginId(loginId).orElseThrow(
+                () ->new TokenInvalidException(ErrorStateCode.TOKEN_INVALID));
         String oldPwd = user.getPassword();
-        if (oldPwd == null) {
-            throw new IllegalArgumentException("이전 비밀번호가 없습니다.");
-        }
 
         // 입력된 비밀번호가 이전 비밀번호와 일치하는 경우
         if ((user.getPrePassword() == null) || !new BCryptPasswordEncoder().matches(user.getPrePassword(), newPwd)) {
             user.setPassword(new BCryptPasswordEncoder().encode(newPwd));
             user.setPrePassword(oldPwd);
             userRepository.save(user);
-            return;
+        } else {
+            throw new SamePasswordException(UserErrorStateCode.SAMEPREPASSWORD);
         }
-        throw new SamePasswordException(UserErrorStateCode.SAMEPREPASSWORD);
     }
 
 }
