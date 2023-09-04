@@ -7,7 +7,8 @@ import lombok.Getter;
 public enum EventType implements CodeValue{
     POINT("PO","POINT"),
     PARTICIPATE("PA","PARTICIPATE"),
-    COUPON("CO","COUPON");
+    COUPON("CO","COUPON"),
+    URL("Url","URL");
 
     private final String code ;
     private final String value;

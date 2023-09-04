@@ -1,10 +1,7 @@
 package com.example.smilekarina.franchise.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
@@ -18,8 +15,8 @@ public class Franchise {
     private Integer id;     //가맹점 아이디
     @Column(nullable = false,name="franchise_name")
     private String franchiseName;   // 가맹점 이름
-    @Column(nullable = false, name="image_id")
-    private Long imageId;   // 이미지id
+    @Column(nullable = false, name="franchise_image")
+    private String franchiseImage;   // 이미지
     @Column(nullable = false, name="b_combine",columnDefinition = "boolean default false")
     private Boolean bCombine;   // 통합로그인 제공유무 : 유: true, 무 : false /default 값 : 무
     @Column(nullable = false, name="b_getted_point", columnDefinition = "boolean default false")

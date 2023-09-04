@@ -1,4 +1,10 @@
 package com.example.smilekarina.franchise.infrastructure;
 
-public interface BranchRepository {
+import com.example.smilekarina.franchise.domain.Branch;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface BranchRepository extends JpaRepository<Branch,Integer> {
+    List<Branch> findAll();
 }

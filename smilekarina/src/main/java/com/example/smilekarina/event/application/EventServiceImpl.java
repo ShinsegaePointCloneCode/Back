@@ -108,15 +108,17 @@ public class EventServiceImpl implements EventService{
 
     @Override
     public List<EventListOut> checkIngEvent(Integer orderType, Integer pageNo, Integer size) {
+        int page =pageNo -1;
         LocalDateTime currentTime =LocalDateTime.now();
         List<Event> ingEvents;
         if (orderType == 30) {
-            // OrderType이 30일 때, event_start 이후이고 event_end 이전인 데이터를 reg_date 기준으로 내림차순으로 가져옵니다.
+            // OrderType이 30일 때, event_start 이후이고 event_end 이전인 데이터를 reg_date 기준으로 내림차순
             ingEvents = eventRepository.findByEventStartAfterAndEventEndBeforeOrderByRegDateDesc(currentTime, currentTime);
         } else if (orderType == 40) {
-            // OrderType이 40일 때, event_start 이후이고 event_end 이전인 데이터를 event_end 기준으로 오름차순으로 가져옵니다.
+            // OrderType이 40일 때, event_start 이후이고 event_end 이전인 데이터를 event_end 기준으로 오름차순
             ingEvents = eventRepository.findByEventStartAfterAndEventEndBeforeOrderByEventEndAsc(currentTime, currentTime);
         }
+        //List<EventListOut> eventListOutList =ingEvents.getContent().stream()
         return null;
     }
 
