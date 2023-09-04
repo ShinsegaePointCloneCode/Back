@@ -1,8 +1,12 @@
 package com.example.smilekarina.card.application;
 
 import com.example.smilekarina.card.dto.AffiliateCardDto;
-import com.example.smilekarina.card.dto.OnlinePointCardDto;
 import com.example.smilekarina.card.dto.PointCardDto;
+import com.example.smilekarina.card.vo.CreditCardOut;
+import com.example.smilekarina.card.vo.OfflinePointCardOut;
+import com.example.smilekarina.card.vo.OnlinePointCardOut;
+
+import java.util.List;
 
 public interface CardService {
 
@@ -14,11 +18,13 @@ public interface CardService {
     void registerAffiliateCard(AffiliateCardDto affiliateCardDto);
 
     // 온라인 카드 조회
-    OnlinePointCardDto getOnlinePointCard(Long userId);
+    List<OnlinePointCardOut> getOnlinePointCardList(Long userId);
 
     // 제휴 신용카드 조회
+    List<CreditCardOut> getCreditCardList(Long userId);
 
     // 오프라인 카드 조회
+    List<OfflinePointCardOut> getOfflinePointCardList(Long userId);
 
 
     // 포인트카드 번호 조회(바코드 보기 위함)

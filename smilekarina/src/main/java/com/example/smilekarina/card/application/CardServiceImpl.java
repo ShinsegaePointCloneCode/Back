@@ -1,19 +1,19 @@
 package com.example.smilekarina.card.application;
 
-import com.example.smilekarina.card.domain.IssueType;
-import com.example.smilekarina.card.domain.IssueTypeConverter;
-import com.example.smilekarina.card.domain.MileageCard;
-import com.example.smilekarina.card.domain.PointCard;
+import com.example.smilekarina.card.domain.*;
 import com.example.smilekarina.card.dto.AffiliateCardDto;
-import com.example.smilekarina.card.dto.OnlinePointCardDto;
 import com.example.smilekarina.card.dto.PointCardDto;
+import com.example.smilekarina.card.infrastructure.CreditCardRepository;
 import com.example.smilekarina.card.infrastructure.MileageCardRepository;
 import com.example.smilekarina.card.infrastructure.PointCardRepository;
-import com.example.smilekarina.point.domain.Point;
+import com.example.smilekarina.card.vo.CreditCardOut;
+import com.example.smilekarina.card.vo.OfflinePointCardOut;
+import com.example.smilekarina.card.vo.OnlinePointCardOut;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,6 +22,7 @@ import java.util.List;
 public class CardServiceImpl implements CardService{
 
     private final PointCardRepository pointCardRepository;
+    private final CreditCardRepository creditCardRepository;
     private final MileageCardRepository mileageCardRepository;
 
     private static final String SAMSUNG = "삼성전자 포인트";
@@ -73,15 +74,75 @@ public class CardServiceImpl implements CardService{
 
     // 온라인 카드 조회
     @Override
-    public OnlinePointCardDto getOnlinePointCard(Long userId) {
+    public List<OnlinePointCardOut> getOnlinePointCardList(Long userId) {
 
         IssueType issueType = new IssueTypeConverter().convertToEntityAttribute(IssueType.ONLINE.getCode());
 
         List<PointCard> onlinePointCardList = pointCardRepository.findByUserIdAndIssueType(userId, issueType);
 
-        // TODO list에서 dto로 꺼내는 작업 구현 마저 하기
+        List<OnlinePointCardOut> dtoList = new ArrayList<>();
+        for(PointCard card : onlinePointCardList) {
+            OnlinePointCardOut out = OnlinePointCardOut.builder()
+                    .cardNumber(card.getCardNumber())
+                    .issuePlace(card.getIssuePlace())
+                    .createdDate(card.getCreatedDate())
+                    .build();
+            dtoList.add(out);
+        }
 
-        return null;
+        return dtoList;
+    }
+
+    // 제휴 신용카드 조회
+    @Override
+    public List<CreditCardOut> getCreditCardList(Long userId) {
+
+        List<CreditCard> creditCardList = creditCardRepository.findByUserId(userId);
+
+        if(creditCardList.isEmpty()) {
+            return null;
+        }
+
+        List<CreditCardOut> creditCardOutList = new ArrayList<>();
+        for(CreditCard card : creditCardList) {
+            CreditCardOut out = CreditCardOut.builder()
+                    .cardName(card.getCardName())
+                    .cardNumber(card.getCardNumber())
+                    .issuePlace(card.getIssuePlace())
+                    .createdDate(card.getCreatedDate())
+                    .build();
+
+            creditCardOutList.add(out);
+        }
+
+        return creditCardOutList;
+    }
+
+    // 오프라인 카드 조회
+    @Override
+    public List<OfflinePointCardOut> getOfflinePointCardList(Long userId) {
+
+        // TODO 포인트카드 조회하는 부분은 공통된 부분이 많기 때문에 private으로 메소드 하나 만들어서 해도 될 것 같다 추후 리팩토링 할 것
+
+        IssueType issueType = new IssueTypeConverter().convertToEntityAttribute(IssueType.OFFLINE.getCode());
+
+        List<PointCard> offlinePointCardList = pointCardRepository.findByUserIdAndIssueType(userId, issueType);
+
+        if(offlinePointCardList.isEmpty()) {
+            return null;
+        }
+
+        List<OfflinePointCardOut> dtoList = new ArrayList<>();
+        for(PointCard card : offlinePointCardList) {
+            OfflinePointCardOut out = OfflinePointCardOut.builder()
+                    .cardNumber(card.getCardNumber())
+                    .issuePlace(card.getIssuePlace())
+                    .createdDate(card.getCreatedDate())
+                    .build();
+            dtoList.add(out);
+        }
+
+        return dtoList;
     }
 
     // 포인트카드 번호 조회(바코드 보기 위함)

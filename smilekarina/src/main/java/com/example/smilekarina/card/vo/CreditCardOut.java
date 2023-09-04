@@ -1,18 +1,19 @@
-package com.example.smilekarina.card.dto;
+package com.example.smilekarina.card.vo;
+
 
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Builder
-@ToString
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OnlinePointCardDto {
+public class CreditCardOut {
 
+    private String cardName;
     private String cardNumber;
-    private String issueStore;
+    private String issuePlace;
     private LocalDateTime createdDate;
 
 }
