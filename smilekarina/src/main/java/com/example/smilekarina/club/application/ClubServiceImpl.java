@@ -1,14 +1,13 @@
 package com.example.smilekarina.club.application;
 
-import com.example.smilekarina.club.domain.Club;
-import com.example.smilekarina.club.domain.ClubList;
-import com.example.smilekarina.club.domain.ClubType;
+import com.example.smilekarina.club.domain.*;
 import com.example.smilekarina.club.infrastructure.ClubListRepository;
 import com.example.smilekarina.club.infrastructure.ClubRepository;
 import com.example.smilekarina.club.vo.*;
 import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.infrastructure.UserRepository;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -33,7 +31,7 @@ public class ClubServiceImpl implements ClubService{
     private final ClubRepository clubRepository;
     private final UserRepository userRepository;
     private final ClubListRepository clubListRepository;
-
+    private final JPAQueryFactory query;
     @Override
     public void registerClubForMomKids(String token, MomKidsIn momKidsIn) {
         Long userId = getUserIdFromToken(token);
@@ -127,17 +125,20 @@ public class ClubServiceImpl implements ClubService{
     @Override
     public MomKidsOut getMomKidsData(String token) {
         Long userId = getUserIdFromToken(token);
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + userId));
-        Club club = clubListRepository.findFirstByUserAndClub_ClubType(user, ClubType.BIZ)
-                .stream()
-                .findFirst()
-                .map(ClubList::getClub)
-                .orElse(null);
-        String[] values = new String[0];
-        if (club != null) {
-            values = club.getClubContent().split(",", -1);
+        QClub club = QClub.club;
+        QClubList clubList = QClubList.clubList;
+        String result = query
+                .select(club.clubContent)
+                .from(club)
+                .join(clubList)
+                .on(clubList.club.eq(club))
+                .where(clubList.user.id.eq(userId),
+                        club.clubType.eq(ClubType.MOMKIDS))
+                .fetchOne();
+        if(result == null) {
+            return MomKidsOut.builder().build();
         }
+        String[] values = result.split(",", -1);
         MomKidsOut.MomKidsOutBuilder builder = MomKidsOut.builder();
         builder.sexFirst(values[0].isEmpty() ? null : values[0])
                 .sexSecond(values[2].isEmpty() ? null : values[2]);
@@ -153,17 +154,21 @@ public class ClubServiceImpl implements ClubService{
     @Override
     public BizOut getBizData(String token) {
         Long userId = getUserIdFromToken(token);
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + userId));
-        Club club = clubListRepository.findFirstByUserAndClub_ClubType(user, ClubType.BIZ)
-                .stream()
-                .findFirst()
-                .map(ClubList::getClub)
-                .orElse(null);
-        String[] values = new String[0];
-        if (club != null) {
-            values = club.getClubContent().split(",", -1);
+        QClub club = QClub.club;
+        QClubList clubList = QClubList.clubList;
+        String result = query
+                .select(club.clubContent)
+                .from(club)
+                .join(clubList)
+                .on(clubList.club.eq(club))
+                .where(clubList.user.id.eq(userId),
+                        club.clubType.eq(ClubType.BIZ))
+                .fetchOne();
+        if(result == null) {
+            return BizOut.builder().build();
         }
+        String[] values = result.split(",", -1);
+
         return BizOut.builder()
                 .bizCompany(values[0].isEmpty() ? null : values[0])
                 .bizRegNumber(values[1].isEmpty() ? null : Integer.valueOf(values[1]))
@@ -177,17 +182,20 @@ public class ClubServiceImpl implements ClubService{
     @Override
     public CarOut getCarData(String token) {
         Long userId = getUserIdFromToken(token);
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + userId));
-        Club club = clubListRepository.findFirstByUserAndClub_ClubType(user, ClubType.BIZ)
-                .stream()
-                .findFirst()
-                .map(ClubList::getClub)
-                .orElse(null);
-        String[] values = new String[0];
-        if (club != null) {
-            values = club.getClubContent().split(",", -1);
+        QClub club = QClub.club;
+        QClubList clubList = QClubList.clubList;
+        String result = query
+                .select(club.clubContent)
+                .from(club)
+                .join(clubList)
+                .on(clubList.club.eq(club))
+                .where(clubList.user.id.eq(userId),
+                        club.clubType.eq(ClubType.CAR))
+                .fetchOne();
+        if(result == null) {
+            return CarOut.builder().build();
         }
+        String[] values = result.split(",", -1);
         return CarOut.builder()
                 .regionNumber(values[0].isEmpty() ? null : values[0])
                 .carNumber(values[1].isEmpty() ? null : Integer.valueOf(values[1]))

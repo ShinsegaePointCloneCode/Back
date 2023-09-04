@@ -31,9 +31,9 @@ public class JwtTokenProvider {
     }
     // JWT 토큰의 claims 부분에서 특정 claim을 추출합니다.
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        log.info("extractClaim method : {}",token);
+//        log.info("extractClaim method : {}",token);
         Claims claims = extractAllClaims(token);
-        log.info("Clims: {}",claims);
+//        log.info("Clims: {}",claims);
         return claimsResolver.apply(claims);
     }
 

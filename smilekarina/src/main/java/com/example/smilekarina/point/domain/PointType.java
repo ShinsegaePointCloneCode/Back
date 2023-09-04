@@ -5,15 +5,15 @@ import lombok.Getter;
 
 @Getter
 public enum PointType implements CodeValue {
-    SMARTRECEIPT("SM","스마트영수증적립"),
+    SMARTRECEIPT("SM","스마트영수증"),
     CONVERT("CO","전환"),
-    ACCEPT("AC","적립"),
+    GENERAL("GE","일반"),
     EVENT("EV", "이벤트"),
     GIFT("GF", "선물"),
     CHECK("CH","출석"),
     ROULETTE("RO","룰렛"),
-    CANCELGIFT("CA","선물사용취소");
-
+    CANCELGIFT("CA","선물사용취소"),
+    EXTINCTION ("EX", "소멸");
 
     private final String code;
     private final String value;

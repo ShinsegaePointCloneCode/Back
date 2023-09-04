@@ -6,22 +6,30 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
-    private final AuthenticationProvider authendicationProvider;
+    private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final TokenEntryPoint tokenEntryPoint;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+//                .cors(AbstractHttpConfigurer::disable)
                 .csrf(CsrfConfigurer::disable) // CSRF 보안을 비활성화. API 서버로 사용하기 때문에 일반적으로 비활성화
 //                .authorizeHttpRequests(
 //                        authorizeHttpRequests -> authorizeHttpRequests
@@ -31,6 +39,8 @@ public class SecurityConfiguration {
 //                )
                 .authorizeHttpRequests(
                         authorizeHttpRequests -> authorizeHttpRequests
+                                .requestMatchers(org.springframework.web.cors.CorsUtils::isPreFlightRequest)
+                                .permitAll()
                                 .requestMatchers(
                                         "/error",
                                         "/api/v1/login",
@@ -51,12 +61,22 @@ public class SecurityConfiguration {
                 ) // 세션을 생성하지 않음. JWT 인증이기 때문에 상태가 없는(stateless) 세션 정책을 사용합니다.
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(tokenEntryPoint))
-                .authenticationProvider(authendicationProvider) // 커스터마이징한 인증 제공자를 설정
+                .authenticationProvider(authenticationProvider) // 커스터마이징한 인증 제공자를 설정
                 // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 전에 추가합니다.
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 
 
         return http.build();
+    }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        return  request -> {
+            var cors = new org.springframework.web.cors.CorsConfiguration();
+            cors.setAllowedOriginPatterns(List.of("*"));
+            cors.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+            cors.setAllowedHeaders(List.of("*"));
+            return cors;
+        };
     }
 }

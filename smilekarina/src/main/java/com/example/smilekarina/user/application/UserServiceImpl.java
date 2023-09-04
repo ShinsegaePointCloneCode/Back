@@ -1,11 +1,17 @@
 package com.example.smilekarina.user.application;
 
+import com.example.smilekarina.agree.application.AgreeService;
+import com.example.smilekarina.agree.dto.AgreeAdvertiseDto;
 import com.example.smilekarina.config.security.JwtTokenProvider;
+import com.example.smilekarina.global.exception.ErrorStateCode;
+import com.example.smilekarina.global.exception.TokenInvalidException;
 import com.example.smilekarina.user.domain.Roll;
 import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.dto.LogInDto;
 import com.example.smilekarina.user.dto.UserGetDto;
 import com.example.smilekarina.user.dto.UserSignUpDto;
+import com.example.smilekarina.user.exception.SamePasswordException;
+import com.example.smilekarina.user.exception.UserErrorStateCode;
 import com.example.smilekarina.user.vo.UserLoginIn;
 import com.example.smilekarina.user.vo.UserModifyIn;
 import com.example.smilekarina.user.infrastructure.UserRepository;
@@ -17,6 +23,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,17 +35,16 @@ import java.util.*;
 @Slf4j
 //@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService{
-
     private final UserRepository userRepository;
     private final UserDetailsService userDetailsService;
     private final JwtTokenProvider jwtTokenProvider;
     private final ModelMapper modelMapper;
     private final AuthenticationManager authenticationManager;
+
     // 유저 추가 로직
     @Override
 //    @Transactional(readOnly = false)
-    public void createUser(UserSignUpDto userSignUpDto) {
-        log.info("craeteUser : {}",userSignUpDto);
+    public Long createUser(UserSignUpDto userSignUpDto) {
         UUID uuid = UUID.randomUUID();
         String uuidString = uuid.toString();
         String hashedPassword = new BCryptPasswordEncoder().encode(userSignUpDto.getPassword());
@@ -54,8 +60,8 @@ public class UserServiceImpl implements UserService{
                 .status(1)
                 .roll(Roll.USER)
                 .build();
-        log.info("savedUser : {}",user.getLoginId());
         userRepository.save(user);
+        return user.getId();
     }
 
     public UserGetDto getUserByLoginId(String loginId) {
@@ -73,7 +79,6 @@ public class UserServiceImpl implements UserService{
         return user.map(u -> modelMapper.map(user, UserGetDto.class))
                 .orElse(null);
     }
-
 
     @Override
     public List<UserGetDto> getAllUsers() {
@@ -105,22 +110,35 @@ public class UserServiceImpl implements UserService{
     }
     @Override
     public LogInDto loginUser(UserLoginIn userLoginIn){
-        UserDetails userDetails = userDetailsService.loadUserByUsername(userLoginIn.getLoginId());
-        User user = userRepository.findByLoginId(userLoginIn.getLoginId()).orElse(null);
-        // 유저가 존재하지 않거나 삭제한 유저가 아니면
-//        log.info("user : {} ", user);
-        if (user != null && (user.getStatus() == 1)) {
-            // password 확인
-            if(new BCryptPasswordEncoder().matches(userLoginIn.getPassword(), userDetails.getPassword())) {
-                // JWT 토큰 생성 및 반환
-                return LogInDto.builder()
-                        .userName(user.getName())
-                        .token(jwtTokenProvider.generateToken(userDetails))
-                        .UUID(user.getUUID())
-                        .build();
-            }
-        }
-        return null;
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(
+                    userLoginIn.getLoginId(),
+                    userLoginIn.getPassword()
+            )
+        );
+        User user = userRepository.findByLoginId(userLoginIn.getLoginId()).orElseThrow(() -> new NoSuchElementException("안잡혀요"));
+        String JwtToken = jwtTokenProvider.generateToken(user);
+        return LogInDto.builder()
+                .userName(user.getName())
+                .token(JwtToken)
+                .UUID(user.getUUID())
+                .build();
+//        UserDetails userDetails = userDetailsService.loadUserByUsername(userLoginIn.getLoginId());
+//        User user = userRepository.findByLoginId(userLoginIn.getLoginId()).orElse(null);
+//        // 유저가 존재하지 않거나 삭제한 유저가 아니면
+////        log.info("user : {} ", user);
+//        if (user != null && (user.getStatus() == 1)) {
+//            // password 확인
+//            if(new BCryptPasswordEncoder().matches(userLoginIn.getPassword(), userDetails.getPassword())) {
+//                // JWT 토큰 생성 및 반환
+//                return LogInDto.builder()
+//                        .userName(user.getName())
+//                        .token(jwtTokenProvider.generateToken(userDetails))
+//                        .UUID(user.getUUID())
+//                        .build();
+//            }
+//        }
+//        return null;
     }
     @Override
     public Long getUserId(String loginId) {
@@ -149,48 +167,39 @@ public class UserServiceImpl implements UserService{
 
     @Override
 //    @Transactional(readOnly = false)
-    public Long changePassword(String token, String oldPwd, String newPwd) {
+    public void changePassword(String token, String oldPwd, String newPwd) {
         String loginId = jwtTokenProvider.getLoginId(token.substring(7));
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginId);
 
         if(new BCryptPasswordEncoder().matches(oldPwd, userDetails.getPassword())) {
             // 비밀번호가 일치하는 경우
             log.info("비밀번호 일치해");
-            return changeUserPassword(loginId, newPwd);
-        } else {
-            return 2L;
+            changeUserPassword(loginId, newPwd);
         }
     }
 
     @Override
 //    @Transactional(readOnly = false)
-    public Long searchPassword(String loginId, String newPwd) {
-        return changeUserPassword(loginId, newPwd);
+    public void searchPassword(String loginId, String newPwd) {
+        changeUserPassword(loginId, newPwd);
     }
 
-    private Long changeUserPassword(String loginId, String newPwd) {
+    private void changeUserPassword(String loginId, String newPwd) {
         if (loginId == null || newPwd == null) {
-            throw new IllegalArgumentException("Login ID or new password cannot be null");
+            throw new IllegalArgumentException("Login ID or new password 가 null입니다.");
         }
-
-        User user = userRepository.findByLoginId(loginId).orElse(null);
-        if (user == null) {
-            throw new IllegalArgumentException("User not found with the provided login ID");
-        }
-
+        User user = userRepository.findByLoginId(loginId).orElseThrow(
+                () ->new TokenInvalidException(ErrorStateCode.TOKEN_INVALID));
         String oldPwd = user.getPassword();
-        if (oldPwd == null) {
-            throw new IllegalArgumentException("Stored password for user is null");
-        }
 
         // 입력된 비밀번호가 이전 비밀번호와 일치하는 경우
         if ((user.getPrePassword() == null) || !new BCryptPasswordEncoder().matches(user.getPrePassword(), newPwd)) {
             user.setPassword(new BCryptPasswordEncoder().encode(newPwd));
             user.setPrePassword(oldPwd);
             userRepository.save(user);
-            return 0L;
+        } else {
+            throw new SamePasswordException(UserErrorStateCode.SAMEPREPASSWORD);
         }
-        return 1L;
     }
 
 }
