@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OnlinePointCardOut {
+public class OfflinePointCardOut {
 
     private String cardNumber;
     private String issuePlace;
