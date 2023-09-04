@@ -29,7 +29,7 @@ public class Coupon {
     @Column(nullable = false, name="coupon_type")
     private Boolean couponType; //쿠폰 유형 ex)  True-퍼센트, False-금액
     @Column(nullable = false,name="coupon_discount")
-    private Float couponDiscount; //쿠폰 할인액 ex) 퍼센트일경우 :20 / 금액일 경우 : 2000
+    private Double couponDiscount; //쿠폰 할인액 ex) 퍼센트일경우 :20 / 금액일 경우 : 2000
     @Column(nullable = false,name = "coupon_precaution",columnDefinition = "TEXT")
     private String couponPrecaution;    //유의사항
     @Column(nullable = false, name="coupon_img", columnDefinition = "TEXT")

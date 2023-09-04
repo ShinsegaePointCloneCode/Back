@@ -20,8 +20,10 @@ public class CouponPartner {
     private Long id; //쿠폰제휴사 id
     @Column(nullable = false,length = 75,name = "coupon_used_name")
     private String couponUsedName;   //쿠폰사용처 이름 ex)스피드메이트 전국지점
-    @Column(nullable = false, name="down_image_url")
-    private Long downImageUrl;  //쿠폰 사용처 이미지 -> 쿠폰 이미지 바로 아래에 있는 이미지
-    @Column(nullable = false,name="circl_image_url")    //쿠폰 사용처 이미지 -> 쿠폰 원형속 이미지
-    private Long circleImageUrl;
+    @Column(nullable = false, name="down_image_url",columnDefinition = "TEXT")
+    private String downImageUrl;  //쿠폰 사용처 이미지 -> 쿠폰 이미지 바로 아래에 있는 이미지
+    @Column(nullable = false,name="circl_image_url",columnDefinition = "TEXT")    //쿠폰 사용처 이미지 -> 쿠폰 원형속 이미지
+    private String circleImageUrl;
+    @Column(nullable = false,name="coupon_merchandise",length = 45)
+    private String couponMerchandise;   //쿠폰 적용 가맹점
 }
