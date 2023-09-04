@@ -7,6 +7,8 @@ import com.example.smilekarina.point.dto.PointGetDto;
 import com.example.smilekarina.point.vo.PointIn;
 import com.example.smilekarina.point.vo.PointOut;
 import com.example.smilekarina.point.vo.PointPasswordModifyIn;
+import com.example.smilekarina.point.vo.UsablePointOut;
+import com.example.smilekarina.user.application.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +23,12 @@ import java.util.List;
 public class PointController {
 
     private final PointService pointService;
+    private final UserService userService;
 
     /*
         포인트 비밀번호 변경
      */
-    @PutMapping("/user/pointpwdChg")
+    @PatchMapping("/user/pointpwdChg")
     public ResponseEntity<?> changePointPassword(@RequestHeader("Authorization") String token,
                                                  @RequestBody PointPasswordModifyIn pointPasswordModifyIn) {
 
@@ -34,22 +37,33 @@ public class PointController {
         return ResponseEntity.ok(responseOut);
     }
 
-//    /*
-//        헤더 포인트 조회
-//     */
-//    @GetMapping("/point/widget/{UUID}")
-//    public ResponseEntity<?> getPointWidget(@PathVariable String UUID) {
-//
-//        // TODO 일단 uuid 받는다고 가정하고 구현함. 나중에 토큰에서 받은값으로 유저정보 얻는 처리로 수정예정
-////        String uuid = "f5f3737a-fabb-4492-a27c-4262bb1c2d51";
-//
-//        // TODO 적립예정 포인트는 사용가능포인트에서 제외 해야함
-//
-//        Integer usablePoint = pointService.getUsablePoint(UUID);
-//        ResponseOut<?> responseOut = ResponseOut.success(usablePoint);
-//        return ResponseEntity.ok(responseOut);
-//    }
-//
+    /*
+        포인트 내역 상단
+     */
+    @GetMapping("/point/usablepoint")
+    public ResponseEntity<?> getPointWidget(@RequestHeader("Authorization") String token) {
+
+        Long userId = userService.getUserIdFromToken(token);
+
+        Integer usablePoint = pointService.getUsablePoint(userId);
+
+        UsablePointOut usablePointOut = UsablePointOut.builder()
+                .totalPoint(usablePoint)
+                .build();
+
+        ResponseOut<?> responseOut = ResponseOut.success(usablePointOut);
+        return ResponseEntity.ok(responseOut);
+    }
+
+
+
+
+
+
+
+
+
+
 //    /*
 //        테스트 데이터 넣기용
 //     */
