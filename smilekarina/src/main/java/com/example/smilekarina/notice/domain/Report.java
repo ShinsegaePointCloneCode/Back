@@ -24,6 +24,7 @@ public class Report extends BaseEntity {
     private Long id;    //1:1 상담 아이디
     // 답변이 달리기 전까진 대분류 소분류 제목 내용 수정이 가능
     // 답변이 달리면 user는 수정 X
+
     @Column(nullable = false, length = 30, name = "big_option")
     private String bigOption;   //대분류
     @Column(nullable = false, length = 30, name = "small_option")

@@ -16,7 +16,7 @@ public class CreateEventDto {
     private LocalDateTime regDate;
     private LocalDateTime eventStart;   //이벤트 시작일
     private LocalDateTime eventEnd; //이벤트 종료일
-    private Long eventThumbnail;    //이벤트 썸네일
+    private String eventThumbnail;    //이벤트 썸네일
     private String eventType;   //이벤트 종류
     private String eventBenefit;
     private LocalDateTime eventResultDate;
