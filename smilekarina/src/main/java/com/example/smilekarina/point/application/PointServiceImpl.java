@@ -3,17 +3,24 @@ package com.example.smilekarina.point.application;
 import com.example.smilekarina.point.domain.Point;
 import com.example.smilekarina.point.domain.PointType;
 import com.example.smilekarina.point.domain.PointTypeConverter;
+import com.example.smilekarina.point.domain.QPoint;
 import com.example.smilekarina.point.dto.PointAddDto;
 import com.example.smilekarina.point.dto.PointPasswordCheckDto;
 import com.example.smilekarina.point.infrastructure.PointRepository;
 import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.infrastructure.UserRepository;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -25,25 +32,29 @@ public class PointServiceImpl implements PointService{
     private final UserService userService;
     private final PointRepository pointRepository;
     private final UserRepository userRepository;
+    private final JPAQueryFactory query;
 
+    // 사용가능포인트 조회
     @Override
-    public Integer getUsablePoint(String UUID) {
+    public Integer getUsablePoint(Long userId) {
 
-//        // 포인트를 조회하기 위해 유저정보(객체)를 가져오기
-//        Optional<User> user = userRepository.findByUUID(UUID);
-//
-//        if(!user.isPresent()) {
-//            throw new IllegalArgumentException();
-//        }
-//
-//        Optional<Point> point = pointRepository.findFirstByUserAndCreatedDateBeforeOrderByIdDesc(user.get(), LocalDateTime.now());
-//
-//        if(!point.isPresent()) {
-//            throw new IllegalArgumentException();
-//        }
-//
-//        return point.get().getTotalPoint();
-        return null;
+        User user = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);;
+
+        // 1. 해당 유저의 제일 마지막에 등록된 포인트 데이터의 전체포인트값 가져오기
+        Point lastPoint = pointRepository.findFirstByUserOrderByIdDesc(user);
+
+        // 아직포인트가 한번도 등록된 적이 없다면 0을 return
+        if(lastPoint == null) {
+            return 0;
+        }
+
+        Integer lastTotalPoint = lastPoint.getTotalPoint();
+
+        // 2. 오늘 기준으로 [스마트영수증], [일반] 으로 적립된 데이터 합계 가져오기
+        Integer addExpectedPoint = getAddExpectedPoint(user);
+
+        // 1.의 값 - 2.값을 계산해서 return
+        return lastTotalPoint - addExpectedPoint;
     }
 
     // 포인트 생성
@@ -110,6 +121,37 @@ public class PointServiceImpl implements PointService{
             modifiedUser.setPointPassword(pointPassword);
         });
     }
+
+    // 적립예정포인트 조회
+    private Integer getAddExpectedPoint(User user) {
+
+        QPoint point = QPoint.point1;
+
+        PointType general = new PointTypeConverter().convertToEntityAttribute(PointType.GENERAL.getCode());
+        PointType smartReceipt = new PointTypeConverter().convertToEntityAttribute(PointType.SMARTRECEIPT.getCode());
+
+        LocalDateTime today = LocalDateTime.of(LocalDate.now(), LocalTime.of(0,0,0));
+
+        // QueryDSL에서 sum은 Long타입으로 반환한다.
+        Long addExpectedPoint = query
+                .select(point.point.longValue().sum())
+                .from(point)
+                .where(point.user.eq(user))
+                .where(point.pointType.eq(general).or(point.pointType.eq(smartReceipt)))
+                .where(point.used.eq(false))
+                .where(point.createdDate.after(today))
+                .fetchOne();
+
+        if(addExpectedPoint == null) {
+            return 0;
+        }
+
+        return addExpectedPoint.intValue();
+    }
+
+
+
+
 
     // 밑에는 강사님 코드 참고용 ************************************
 

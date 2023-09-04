@@ -9,7 +9,7 @@ import java.util.List;
 public interface PointService {
 
     // 사용가능포인트 조회
-    Integer getUsablePoint(String UUID);
+    Integer getUsablePoint(Long userId);
 
     // 포인트 데이터 등록하기
     Long registerPoint(PointAddDto pointAddDto);

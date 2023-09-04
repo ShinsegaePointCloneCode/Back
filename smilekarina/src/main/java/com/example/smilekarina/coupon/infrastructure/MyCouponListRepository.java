@@ -8,5 +8,5 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MyCouponListRepository extends JpaRepository<MyCouponList, Long> {
-    List<MyCouponList> findByCouponEndAfter(LocalDateTime now);
+
 }
