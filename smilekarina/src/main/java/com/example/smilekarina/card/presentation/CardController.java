@@ -2,13 +2,8 @@ package com.example.smilekarina.card.presentation;
 
 import com.example.smilekarina.card.application.CardService;
 import com.example.smilekarina.card.dto.AffiliateCardDto;
-import com.example.smilekarina.card.dto.OnlinePointCardDto;
 import com.example.smilekarina.card.dto.PointCardDto;
-import com.example.smilekarina.card.vo.AffiliateCardIn;
-import com.example.smilekarina.card.vo.BarcodePointCardOut;
-import com.example.smilekarina.card.vo.OnlinePointCardOut;
-import com.example.smilekarina.card.vo.PointCardIn;
-import com.example.smilekarina.gift.vo.GiftLastOut;
+import com.example.smilekarina.card.vo.*;
 import com.example.smilekarina.global.vo.ResponseOut;
 import com.example.smilekarina.user.application.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -72,37 +69,59 @@ public class CardController {
         온라인 카드 조회
      */
     @GetMapping("/pointcard/online")
-    public ResponseEntity<ResponseOut<?>> getOnlinePointCard(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<ResponseOut<?>> getOnlineCard(@RequestHeader("Authorization") String token) {
 
         Long userId = userService.getUserIdFromToken(token);
 
-        OnlinePointCardDto onlinePointCardDto = cardService.getOnlinePointCard(userId);
-        ResponseOut<?> responseOut = ResponseOut.success(modelMapper.map(onlinePointCardDto, OnlinePointCardOut.class));
+        List<OnlinePointCardOut> onlinePointCardDtolist = cardService.getOnlinePointCardList(userId);
+        ResponseOut<?> responseOut = ResponseOut.success(onlinePointCardDtolist);
         return ResponseEntity.ok(responseOut);
     }
 
     /*
         제휴 신용카드 조회
      */
+    @GetMapping("/pointcard/credit")
+    public ResponseEntity<ResponseOut<?>> getCreditCard(@RequestHeader("Authorization") String token) {
+
+        Long userId = userService.getUserIdFromToken(token);
+
+        List<CreditCardOut> creditCardOutList = cardService.getCreditCardList(userId);
+        ResponseOut<?> responseOut = ResponseOut.success(creditCardOutList);
+        return ResponseEntity.ok(responseOut);
+    }
 
     /*
         오프라인 카드 조회
      */
+    @GetMapping("/pointcard/offline")
+    public ResponseEntity<ResponseOut<?>> getOfflineCard(@RequestHeader("Authorization") String token) {
+
+        Long userId = userService.getUserIdFromToken(token);
+
+        List<OfflinePointCardOut> offlinePointCardOutList = cardService.getOfflinePointCardList(userId);
+        ResponseOut<?> responseOut = ResponseOut.success(offlinePointCardOutList);
+        return ResponseEntity.ok(responseOut);
+    }
 
     /*
-        제휴 포인트 카드 조회
+        제휴 포인트 카드 조회 (화면구현유무에 따라 작업예정)
      */
 
     /*
-        제휴 마일리지 카드 조회
+        제휴 마일리지 카드 조회 (화면구현유무에 따라 작업예정)
      */
 
     /*
-        제휴 카드 수정 - API명세서에도 추가필요
+        제휴 카드 수정 - API명세서에도 추가필요(화면구현유무에 따라 추가예정)
      */
 
     /*
-        제휴 카드 삭제 - API명세서에도 추가필요
+        제휴 카드 삭제 - API명세서에도 추가필요(화면구현유무에 따라 추가예정)
+     */
+
+    /*
+        대표 카드 수정 - API명세서에도 추가필요(화면구현유무에 따라 추가예정)
      */
 
     /*
