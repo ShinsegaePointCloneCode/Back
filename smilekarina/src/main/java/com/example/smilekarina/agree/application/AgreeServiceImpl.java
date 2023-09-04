@@ -11,6 +11,7 @@ import com.example.smilekarina.agree.infrastructure.AgreeServiceManageRepository
 import com.example.smilekarina.agree.vo.AgreeAdvertiseOut;
 import com.example.smilekarina.agree.vo.AgreeServiceManageOut;
 import com.example.smilekarina.user.application.UserService;
+import com.example.smilekarina.user.domain.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -40,13 +41,20 @@ public class AgreeServiceImpl implements AgreeService{
     public void createAgreeAdvertise(String token, AgreeAdvertiseDto agreeAdvertiseDto) {
         Long userId = userService.getUserIdFromToken(token);
         Optional<AgreeAdvertise> agreeAdvertise = agreeAdvertiseRepository.findByUserId(userId);
-        if (agreeAdvertise.isPresent()) {
+        if (agreeAdvertise.isPresent() && agreeAdvertise != null) {
             // agreeAdvertise edit
+            log.info(" ==> edit"+ agreeAdvertise);
             editAdvertise(agreeAdvertise.get(), agreeAdvertiseDto);
         } else {
             // agreeAdvertise create
+            log.info(" ==> create" + agreeAdvertiseDto);
             createAdvertise(userId, agreeAdvertiseDto);
         }
+    }
+    @Override
+//    @Transactional(readOnly = false)
+    public void createAgreeAdvertiseByUser(Long userId, AgreeAdvertiseDto agreeAdvertiseDto) {
+        createAdvertise(userId, agreeAdvertiseDto);
     }
     @Override
     public AgreeAdvertiseOut getAgreeAdvertise(String token) {
@@ -119,8 +127,8 @@ public class AgreeServiceImpl implements AgreeService{
                 .optionTwo(agreeAdvertiseDto.getOptionTwo())
                 .agreeEmail(agreeAdvertiseDto.getAgreeEmail())
                 .letter(agreeAdvertiseDto.getLetter())
-                .DM(agreeAdvertiseDto.getDM())
-                .TM(agreeAdvertiseDto.getTM())
+                .DM(agreeAdvertiseDto.getDm())
+                .TM(agreeAdvertiseDto.getTm())
                 .userId(userId)
                 .build();
         agreeAdvertiseRepository.save(agreeAdvertise);
@@ -130,8 +138,8 @@ public class AgreeServiceImpl implements AgreeService{
         agreeAdvertise.setOptionTwo(dto.getOptionTwo());
         agreeAdvertise.setAgreeEmail(dto.getAgreeEmail());
         agreeAdvertise.setLetter(dto.getLetter());
-        agreeAdvertise.setDM(dto.getDM());
-        agreeAdvertise.setTM(dto.getTM());
+        agreeAdvertise.setDM(dto.getDm());
+        agreeAdvertise.setTM(dto.getTm());
         agreeAdvertiseRepository.save(agreeAdvertise);
     }
 }

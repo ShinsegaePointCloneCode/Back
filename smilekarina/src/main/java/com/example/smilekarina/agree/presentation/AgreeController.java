@@ -11,6 +11,7 @@ import com.example.smilekarina.global.vo.ResponseOut;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +32,7 @@ public class AgreeController {
     @PutMapping("/myinfo/infoRcvAgree")
     public ResponseEntity<?> createAgreeAdvertise(@RequestHeader("Authorization") String token,
                                                   @RequestBody AgreeAdvertiseIn agreeAdvertiseIn) {
-        AgreeAdvertiseDto agreeAdvertiseDto = modelMapper.map(agreeAdvertiseIn,AgreeAdvertiseDto.class);
-        agreeService.createAgreeAdvertise(token,agreeAdvertiseDto);
+        agreeService.createAgreeAdvertise(token,modelMapper.map(agreeAdvertiseIn,AgreeAdvertiseDto.class));
         ResponseOut<?> responseOut = ResponseOut.success();
         return ResponseEntity.ok(responseOut);
     }
