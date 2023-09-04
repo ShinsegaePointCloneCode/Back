@@ -1,5 +1,7 @@
 package com.example.smilekarina.user.presentation;
 
+import com.example.smilekarina.agree.application.AgreeService;
+import com.example.smilekarina.agree.dto.AgreeAdvertiseDto;
 import com.example.smilekarina.global.vo.ResponseOut;
 import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.dto.LogInDto;
@@ -20,6 +22,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.token.TokenService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.View;
 
@@ -32,10 +35,8 @@ import org.springframework.web.servlet.View;
 public class UserController {
     private final ModelMapper modelMapper;
     private final UserService userService;
-
+    private final AgreeService agreeService;
 //    private final RedisService redisService;
-
-
     @Operation(summary = "회원 추가 요청", description = "회원을 등록합니다.", tags = { "User Controller" })
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK",
@@ -44,10 +45,13 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "NOT FOUND"),
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR")
     })
+    @Transactional
     @PostMapping("/user/join/cert")
-    public ResponseEntity<?> createUser(@RequestBody UserSignUpIn userSignUpIn) {
-        log.info("INPUT Object Data is : {}" , userSignUpIn);
-        userService.createUser(modelMapper.map(userSignUpIn, UserSignUpDto.class));
+    public ResponseEntity<?> createUser(@RequestBody UserAgreeSignUpIn userAgreeSignUpIn) {
+        Long userId = userService.createUser(modelMapper.map(userAgreeSignUpIn.getUserSignUpIn(), UserSignUpDto.class));
+        log.info("userid : " + userId);
+        agreeService.createAgreeAdvertiseByUser(userId,
+                modelMapper.map(userAgreeSignUpIn.getAgreeAdvertiseIn(), AgreeAdvertiseDto.class));
         return ResponseEntity.ok(ResponseOut.success());
     }
 

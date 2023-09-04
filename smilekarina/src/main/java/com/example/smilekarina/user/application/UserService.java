@@ -1,5 +1,6 @@
 package com.example.smilekarina.user.application;
 
+import com.example.smilekarina.agree.dto.AgreeAdvertiseDto;
 import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.dto.LogInDto;
 import com.example.smilekarina.user.dto.UserGetDto;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    void createUser(UserSignUpDto userSignUpDto);
+    Long createUser(UserSignUpDto userSignUpDto);
     UserGetDto getUserByLoginId(String loginId);
     UserGetDto getUserByUUID(String UUID);
     List<UserGetDto> getAllUsers();
