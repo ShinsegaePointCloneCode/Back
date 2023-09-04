@@ -1,5 +1,7 @@
 package com.example.smilekarina.user.application;
 
+import com.example.smilekarina.agree.application.AgreeService;
+import com.example.smilekarina.agree.dto.AgreeAdvertiseDto;
 import com.example.smilekarina.config.security.JwtTokenProvider;
 import com.example.smilekarina.global.exception.ErrorStateCode;
 import com.example.smilekarina.global.exception.TokenInvalidException;
@@ -42,8 +44,7 @@ public class UserServiceImpl implements UserService{
     // 유저 추가 로직
     @Override
 //    @Transactional(readOnly = false)
-    public void createUser(UserSignUpDto userSignUpDto) {
-        log.info("craeteUser : {}",userSignUpDto);
+    public Long createUser(UserSignUpDto userSignUpDto) {
         UUID uuid = UUID.randomUUID();
         String uuidString = uuid.toString();
         String hashedPassword = new BCryptPasswordEncoder().encode(userSignUpDto.getPassword());
@@ -59,8 +60,8 @@ public class UserServiceImpl implements UserService{
                 .status(1)
                 .roll(Roll.USER)
                 .build();
-        log.info("savedUser : {}",user.getLoginId());
         userRepository.save(user);
+        return user.getId();
     }
 
     public UserGetDto getUserByLoginId(String loginId) {
