@@ -7,15 +7,16 @@ import com.example.smilekarina.point.domain.QPoint;
 import com.example.smilekarina.point.dto.PointAddDto;
 import com.example.smilekarina.point.dto.PointPasswordCheckDto;
 import com.example.smilekarina.point.infrastructure.PointRepository;
+import com.example.smilekarina.point.vo.PointInfoOut;
 import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.infrastructure.UserRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 //@org.springframework.transaction.annotation.Transactional(readOnly = true)
 public class PointServiceImpl implements PointService{
 
@@ -38,23 +40,44 @@ public class PointServiceImpl implements PointService{
     @Override
     public Integer getUsablePoint(Long userId) {
 
-        User user = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);;
+        User user = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
 
-        // 1. 해당 유저의 제일 마지막에 등록된 포인트 데이터의 전체포인트값 가져오기
-        Point lastPoint = pointRepository.findFirstByUserOrderByIdDesc(user);
+        return getUsablePoint(user);
 
-        // 아직포인트가 한번도 등록된 적이 없다면 0을 return
-        if(lastPoint == null) {
-            return 0;
-        }
+        // TODO 밑에 private 메서드로 빼서 커밋전에 삭제할 것
+//        // 1. 해당 유저의 제일 마지막에 등록된 포인트 데이터의 전체포인트값 가져오기
+//        Point lastPoint = pointRepository.findFirstByUserOrderByIdDesc(user);
+//
+//        // 아직포인트가 한번도 등록된 적이 없다면 0을 return
+//        if(lastPoint == null) {
+//            return 0;
+//        }
+//
+//        Integer lastTotalPoint = lastPoint.getTotalPoint();
+//
+//        // 2. 오늘 기준으로 [스마트영수증], [일반] 으로 적립된 데이터 합계 가져오기
+//        Integer addExpectedPoint = getAddExpectedPoint(user);
+//
+//        // 1.의 값 - 2.값을 계산해서 return
+//        return lastTotalPoint - addExpectedPoint;
+    }
 
-        Integer lastTotalPoint = lastPoint.getTotalPoint();
+    // 포인트 내역 상단 조회
+    @Override
+    public PointInfoOut getPointInfo(Long userId) {
 
-        // 2. 오늘 기준으로 [스마트영수증], [일반] 으로 적립된 데이터 합계 가져오기
-        Integer addExpectedPoint = getAddExpectedPoint(user);
+        User user = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
 
-        // 1.의 값 - 2.값을 계산해서 return
-        return lastTotalPoint - addExpectedPoint;
+        // 사용가능 포인트 조회
+        Integer usablPoint = getUsablePoint(user);
+        // 적립예정 포인트 조회
+        Integer addPoint = getAddExpectedPoint(user);
+
+        // 다음달 소멸예정 포인트 조회
+
+        // 다다음달 소멸예정 포인트 조회
+
+        return null;
     }
 
     // 포인트 생성
@@ -122,6 +145,27 @@ public class PointServiceImpl implements PointService{
         });
     }
 
+    // 사용가능포인트 조회
+    private Integer getUsablePoint(User user) {
+
+        // 1. 해당 유저의 제일 마지막에 등록된 포인트 데이터의 전체포인트값 가져오기
+        Point lastPoint = pointRepository.findFirstByUserOrderByIdDesc(user);
+
+        // 아직포인트가 한번도 등록된 적이 없다면 0을 return
+        if(lastPoint == null) {
+            return 0;
+        }
+
+        Integer lastTotalPoint = lastPoint.getTotalPoint();
+
+        // 2. 오늘 기준으로 [스마트영수증], [일반] 으로 적립된 데이터 합계 가져오기
+        Integer addExpectedPoint = getAddExpectedPoint(user);
+
+        // 1.의 값 - 2.값을 계산해서 return
+        return lastTotalPoint - addExpectedPoint;
+    }
+
+
     // 적립예정포인트 조회
     private Integer getAddExpectedPoint(User user) {
 
@@ -147,6 +191,14 @@ public class PointServiceImpl implements PointService{
         }
 
         return addExpectedPoint.intValue();
+    }
+
+    // 소멸예정포인트 조회
+    private Integer getExtinction(User user) {
+
+
+
+        return 0;
     }
 
 
