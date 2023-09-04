@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Entity
 @Getter
 @Builder
@@ -48,4 +51,5 @@ public class AgreeAdvertise{
     public void setTM(Boolean TM) {
         this.TM = TM;
     }
+
 }
