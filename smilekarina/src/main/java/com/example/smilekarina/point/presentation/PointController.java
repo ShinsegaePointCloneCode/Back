@@ -19,6 +19,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/v1")
 public class PointController {
 
@@ -38,7 +39,7 @@ public class PointController {
     }
 
     /*
-        포인트 내역 상단
+        사용가능 포인트 조회
      */
     @GetMapping("/point/usablepoint")
     public ResponseEntity<?> getPointWidget(@RequestHeader("Authorization") String token) {
@@ -55,6 +56,21 @@ public class PointController {
         return ResponseEntity.ok(responseOut);
     }
 
+    /*
+        포인트 내역 상단
+     */
+    @GetMapping("/point/pointinfo")
+    public ResponseEntity<?> getPointInfo(@RequestHeader("Authorization") String token) {
+
+
+
+        ResponseOut<?> responseOut = ResponseOut.success();
+        return ResponseEntity.ok(responseOut);
+    }
+
+    /*
+        포인트 리스트 조회
+     */
 
 
 
