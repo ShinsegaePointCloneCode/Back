@@ -24,11 +24,4 @@ public interface PointService {
     // 포인트 비밀번호 수정
     void modifyPointPassword(String token, String pointPassword);
 
-
-
-
-    // 밑에는 강사님코드 (참고용) *******************************
-//    void createPoint(PointAddDto pointAddDto);
-//    List<PointGetDto> getPointByUser(Long userId);
-
 }
