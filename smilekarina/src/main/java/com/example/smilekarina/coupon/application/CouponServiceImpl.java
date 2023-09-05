@@ -7,6 +7,7 @@ import com.example.smilekarina.coupon.infrastructure.CouponPartnerRepository;
 import com.example.smilekarina.coupon.infrastructure.CouponRepository;
 import com.example.smilekarina.coupon.infrastructure.MyCouponListRepository;
 import com.example.smilekarina.coupon.vo.CouponAllSearchOut;
+import com.example.smilekarina.coupon.vo.CouponGetIn;
 import com.example.smilekarina.user.application.UserService;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -18,10 +19,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
-
-import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -115,5 +115,33 @@ public class CouponServiceImpl implements CouponService{
                 .fetchOne();
         if (count == null) count = 0L;
         return new PageImpl<>(couponAllSearchOut,pageable,count);
+    }
+    @Override
+    public void createMyCoupon(String token, CouponGetIn couponGetIn) {
+        Long userId = userService.getUserIdFromToken(token);
+        Coupon coupon = couponRepository.findById(couponGetIn.getCouponId()).orElse(null);
+        String couponNumber = generateRandomNumber(20);
+        MyCouponList myCouponList = MyCouponList.builder()
+                .useStatus(true)
+                .coupon(coupon)
+                .couponNumber(couponNumber)
+                .userId(userId)
+                .build();
+        myCouponListRepository.save(myCouponList);
+    }
+    @Override
+    public void deleteMyCoupon(String token, CouponGetIn couponGetIn) {
+        Long userId = userService.getUserIdFromToken(token);
+        List<MyCouponList> deleteList = myCouponListRepository.findByCouponIdAndUserId(couponGetIn.getCouponId(), userId);
+        myCouponListRepository.deleteAll(deleteList);
+    }
+
+    private String generateRandomNumber(int length) {
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            sb.append(random.nextInt(10)); // 0 ~ 9 사이의 숫자
+        }
+        return sb.toString();
     }
 }
