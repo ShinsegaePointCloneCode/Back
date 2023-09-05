@@ -52,6 +52,7 @@ public class SecurityConfiguration {
                                         "/api/v1/event/**",
                                         "/cscenter/notice",
                                         "/cscenter/faq",
+                                        "/api/v1/auth/**",
                                         // swagger
                                         "/swagger-ui/**",
                                         "/swagger-resources/**",

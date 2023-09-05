@@ -1,12 +1,14 @@
 package com.example.smilekarina.coupon.application;
 
 import com.example.smilekarina.coupon.domain.*;
+import com.example.smilekarina.coupon.dto.CouponDto;
 import com.example.smilekarina.coupon.dto.CouponPartnerDto;
 import com.example.smilekarina.coupon.infrastructure.CouponPartnerRepository;
 import com.example.smilekarina.coupon.infrastructure.CouponRepository;
 import com.example.smilekarina.coupon.infrastructure.MyCouponListRepository;
 import com.example.smilekarina.coupon.vo.CouponAllSearchOut;
 import com.example.smilekarina.user.application.UserService;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -32,30 +34,6 @@ public class CouponServiceImpl implements CouponService{
     private final UserService userService;
     private final JPAQueryFactory query;
 
-//    @Override
-//    public List<?> checkIngCoupon(Integer pageNo, Integer size, String orderType) {
-//        LocalDateTime currentTime = LocalDateTime.now();
-//        List<Coupon> ingCoupon;
-//        if(orderType.equals("DESC")){
-//            //마감임박
-//            ingCoupon=couponRepository.findByCouponStartAfterAndCouponEndOrderByCouponEndDesc(currentTime,currentTime);
-//        } else if(orderType.equals("ASC")){
-//            //최신순
-//            ingCoupon=couponRepository.findByCouponStartAfterAndCouponEndOrderByCouponEndAsc(currentTime,currentTime);
-//        }
-//        return null;
-//    }
-//    @Override
-//    public List<?> endCoupon(String searchType, Integer pageNo, Integer size) {
-//        LocalDateTime now = LocalDateTime.now();
-//        List<Coupon> endCoupon;
-//        if(searchType.equals("EXPIRED")){
-//            endCoupon=couponRepository.findByCouponEndAfter(now);
-//        //} else if (searchType.equals("USED")) {
-////            endCoupon=couponRepository.
-//        }
-//        return null;
-//    }
     @Override
     public void createPartner(CouponPartnerDto dto) {
         CouponPartner couponPartner = CouponPartner.builder()
@@ -66,9 +44,26 @@ public class CouponServiceImpl implements CouponService{
                 .build();
         couponPartnerRepository.save(couponPartner);
     }
+    @Override
+    public void createCoupon(CouponDto dto) {
+//        log.info(String.valueOf(dto.getCouponPartnerId()));
+        CouponPartner couponPartner = couponPartnerRepository.findById(dto.getCouponPartnerId()).orElse(null);
+//        log.info(String.valueOf(couponPartner.getId()));
+        Coupon coupon = Coupon.builder()
+                .couponName(dto.getCouponName())
+                .couponStart(dto.getCouponStart())
+                .couponEnd(dto.getCouponEnd())
+                .couponImg(dto.getCouponImg())
+                .couponType(dto.getCouponType())
+                .couponDiscount(dto.getCouponDiscount())
+                .couponPrecaution(dto.getCouponPrecaution())
+                .couponPartner(couponPartner)
+                .build();
+        couponRepository.save(coupon);
+    }
 
     @Override
-    public Page<CouponAllSearchOut> getAllCoupon(String orderType, String token, Pageable pageable) {
+    public Page<CouponAllSearchOut> getAllCouponWithUser(Integer orderType, String token, Pageable pageable) {
         QCoupon coupon = QCoupon.coupon;
         QCouponPartner couponPartner = QCouponPartner.couponPartner;
         QMyCouponList myCouponList = QMyCouponList.myCouponList;
@@ -76,6 +71,11 @@ public class CouponServiceImpl implements CouponService{
         Long userId = userService.getUserIdFromToken(token);
         // 쿠폰 기간에서 order Type마다 다르게 배열 한다.
         // useStatus는 userId에 해당하는 userStatus를 사용한다.
+        OrderSpecifier<?> orderSpecifier = switch (orderType) {
+            case 30 -> coupon.id.asc();
+            case 40 -> coupon.couponEnd.desc();
+            default -> coupon.couponStart.asc();  // 기본 정렬
+        };
         List<CouponAllSearchOut> couponAllSearchOut = query
                 .select(Projections.constructor(CouponAllSearchOut.class,
                     couponPartner.partnerName,
@@ -99,7 +99,7 @@ public class CouponServiceImpl implements CouponService{
                         coupon.couponEnd.goe(now),
                         myCouponList.userId.eq(userId)
                         )
-                .orderBy(coupon.couponStart.asc())
+                .orderBy(orderSpecifier)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
