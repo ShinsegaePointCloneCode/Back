@@ -22,7 +22,7 @@ public class EventController {
     private final ModelMapper modelMapper;
     @GetMapping("/event/ingevent")
     public ResponseEntity<?>getIngEvent(@RequestParam(value="OrderType") Integer orderType,
-                                        @RequestParam(value="pageNo") Integer pageNo,
+                                        @RequestParam(value="page") Integer pageNo,
                                         @RequestParam(value = "size")Integer size){
         List<EventListOut> eventIngListOut = eventService.checkIngEvent(orderType,pageNo,size);
         ResponseOut<?> responseOut = ResponseOut.success();
@@ -30,7 +30,7 @@ public class EventController {
     }
 
     @GetMapping("/event/endevent")
-    public ResponseEntity<?>getEndEvent(@RequestParam(value="pageNo") Integer pageNo,
+    public ResponseEntity<?>getEndEvent(@RequestParam(value="page") Integer pageNo,
                                         @RequestParam(value = "size")Integer size){
         List<EventListOut> eventEndListOut =eventService.endEvent(pageNo,size);
         ResponseOut<?> responseOut = ResponseOut.success();
@@ -53,7 +53,7 @@ public class EventController {
     }
 
     @GetMapping("/benefits/myEvent")
-    public ResponseEntity<?>detailMyEvent(@RequestParam(value = "pageNo")Integer pageNo,
+    public ResponseEntity<?>detailMyEvent(@RequestParam(value = "page")Integer pageNo,
                                         @RequestParam(value = "size") Integer size){
         List<EventListOut> myEventListOut=eventService.myEventList(pageNo,size);
         ResponseOut<?> responseOut =ResponseOut.success();
