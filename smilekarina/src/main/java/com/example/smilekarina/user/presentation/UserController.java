@@ -7,7 +7,6 @@ import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.dto.LogInDto;
 import com.example.smilekarina.user.dto.UserGetDto;
 import com.example.smilekarina.user.dto.UserSignUpDto;
-import com.example.smilekarina.user.infrastructure.UserRepository;
 import com.example.smilekarina.user.vo.*;
 //import com.example.smilekarina.utils.redis.application.RedisService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,13 +17,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.View;
 
 
 @RestController
@@ -49,11 +45,11 @@ public class UserController {
     @PostMapping("/user/join/cert")
     public ResponseEntity<?> createUser(@RequestBody UserAgreeSignUpIn userAgreeSignUpIn) {
         Long userId = userService.createUser(modelMapper.map(userAgreeSignUpIn.getUserSignUpIn(), UserSignUpDto.class));
-        log.info("userid : " + userId);
         agreeService.createAgreeAdvertiseByUser(userId,
                 modelMapper.map(userAgreeSignUpIn.getAgreeAdvertiseIn(), AgreeAdvertiseDto.class));
-        return ResponseEntity.ok(ResponseOut.success());
+        return ResponseEntity.ok(ResponseOut.success(userSignUpOutCreate(userAgreeSignUpIn)));
     }
+
 
     @Operation(summary= "회원 정보 가져오기", description= "token으로 회원정보를 가져온다.", tags = { "User Controller" })
     @GetMapping("/user")
@@ -123,12 +119,32 @@ public class UserController {
         // state 0 : 비밀번호 변경, 1 : 비밀번호가 이전 비밀번호와 동일, 2: 올바른 비밀번호가 아닌 경우
         return ResponseEntity.ok(ResponseOut.success("비밀번호가 변경되었습니다."));
     }
-
-
     @Operation(summary= "비밀 번호 찾기", description= "인증을 안 했을 경우 비밀번호를 바꾸는 로직", tags = { "User Controller" })
     @PutMapping("/member/findPw")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordIn changePasswordIn){
         userService.searchPassword(changePasswordIn.getLoginId(), changePasswordIn.getPassword());
         return ResponseEntity.ok(ResponseOut.success("비밀번호가 변경되었습니다."));
+    }
+    @Operation(summary= "회원 탈퇴", description= "회원을 탈퇴한다.", tags = { "User Controller" })
+    @PutMapping("/withdrawal")
+    public ResponseEntity<?> withdrawalUser(@RequestHeader("Authorization") String token) {
+        userService.withdrawal(token);
+        return ResponseEntity.ok(ResponseOut.success());
+    }
+
+    private UserSignUpOut userSignUpOutCreate(UserAgreeSignUpIn userAgreeSignUpIn) {
+        return UserSignUpOut.builder()
+                .loginId(userAgreeSignUpIn.getUserSignUpIn().getLoginId())
+                .email(userAgreeSignUpIn.getUserSignUpIn().getEmail())
+                .userName(userAgreeSignUpIn.getUserSignUpIn().getUserName())
+                .phone(userAgreeSignUpIn.getUserSignUpIn().getPhone())
+                .address(userAgreeSignUpIn.getUserSignUpIn().getAddress())
+                .optionOne(userAgreeSignUpIn.getAgreeAdvertiseIn().getOptionOne())
+                .optionTwo(userAgreeSignUpIn.getAgreeAdvertiseIn().getOptionTwo())
+                .agreeEmail(userAgreeSignUpIn.getAgreeAdvertiseIn().getAgreeEmail())
+                .letter(userAgreeSignUpIn.getAgreeAdvertiseIn().getLetter())
+                .tm(userAgreeSignUpIn.getAgreeAdvertiseIn().getTm())
+                .dm(userAgreeSignUpIn.getAgreeAdvertiseIn().getDm())
+                .build();
     }
 }

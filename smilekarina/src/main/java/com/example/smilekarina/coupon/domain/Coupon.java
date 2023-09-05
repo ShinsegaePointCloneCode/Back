@@ -27,7 +27,7 @@ public class Coupon {
 //    @Column(nullable = false,name="coupon_num")
 //    private Integer couponNum;  //쿠폰 수량
     @Column(nullable = false, name="coupon_type")
-    private Boolean couponType; //쿠폰 유형 ex)  True-퍼센트, False-금액
+    private Integer couponType; //쿠폰 유형 ex) 2-교환, 1-퍼센트, 0-금액
     @Column(nullable = false,name="coupon_discount")
     private Double couponDiscount; //쿠폰 할인액 ex) 퍼센트일경우 :20 / 금액일 경우 : 2000
     @Column(nullable = false,name = "coupon_precaution",columnDefinition = "TEXT")
