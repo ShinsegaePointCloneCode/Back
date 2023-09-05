@@ -24,7 +24,7 @@ public class PointController {
     /*
         포인트 비밀번호 변경
      */
-    @PatchMapping("/user/pointpwdChg")
+    @PutMapping("/user/pointpwdChg")
     public ResponseEntity<?> changePointPassword(@RequestHeader("Authorization") String token,
                                                  @RequestBody PointPasswordModifyIn pointPasswordModifyIn) {
 
