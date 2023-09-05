@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface CouponRepository extends JpaRepository<Coupon,Long> {
     List<Coupon> findByCouponStartAfterAndCouponEndOrderByCouponEndDesc(LocalDateTime eventStart, LocalDateTime eventEnd);
-
     List<Coupon> findByCouponStartAfterAndCouponEndOrderByCouponEndAsc(LocalDateTime eventStart, LocalDateTime eventEnd);
-
     List<Coupon> findByCouponEndAfter(LocalDateTime now);
 }

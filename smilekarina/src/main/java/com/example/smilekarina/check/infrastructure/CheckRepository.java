@@ -12,5 +12,5 @@ import java.util.Optional;
 
 public interface CheckRepository extends JpaRepository<CheckPoint, Long> {
     List<CheckPoint> findByUserIdAndCheckDateBetween(Long userId, LocalDate createdDate, LocalDate createdDate2);
-    Optional<CheckPoint> findFirstByUserIdOrderByCntDate(Long userId);
+    Optional<CheckPoint> findFirstByUserIdOrderByCntDateDesc(Long userId);
 }

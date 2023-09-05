@@ -44,7 +44,7 @@ public class CheckServiceImpl implements CheckService {
 //    @Transactional(readOnly = false)
     public void createCheck(String token, LocalDate time) {
         Long userId = userService.getUserIdFromToken(token);
-        Optional<CheckPoint> checkPoint = checkRepository.findFirstByUserIdOrderByCntDate(userId);
+        Optional<CheckPoint> checkPoint = checkRepository.findFirstByUserIdOrderByCntDateDesc(userId);
         if (checkPoint.isPresent()) {
             update(userId, checkPoint.get(), time);
         } else {
@@ -53,7 +53,6 @@ public class CheckServiceImpl implements CheckService {
     }
 
     private void update(Long userId, CheckPoint lastPoint, LocalDate time) {
-        LocalDate now = LocalDate.now();
         // 차이를 계산
         int dayDifference = time.getDayOfMonth() - lastPoint.getCheckDate().getDayOfMonth();
         // 계산 로직
@@ -83,6 +82,7 @@ public class CheckServiceImpl implements CheckService {
                     .checkDate(time)
                     .build();
             checkRepository.save(checkPoint);
+            pushPoint(userId, 1);
         }
     }
 
