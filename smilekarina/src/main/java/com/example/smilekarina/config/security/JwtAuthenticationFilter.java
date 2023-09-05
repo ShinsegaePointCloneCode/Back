@@ -28,7 +28,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // 필터 과정
     private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;
-    private final TokenEntryPoint tokenEntryPoint;
     @Override
     protected void doFilterInternal(
             @NonNull
