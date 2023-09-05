@@ -26,10 +26,8 @@ public class MyCouponList {
     private LocalDateTime downloadDate; //쿠폰다운로드일
     @Column(nullable = false, length = 30, name = "coupon_number")
     private String couponNumber;    //쿠폰 번호
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private User user;  //user id
+    @Column(nullable = false, name = "user_id")
+    private Long userId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private Coupon coupon;  //coupon id
