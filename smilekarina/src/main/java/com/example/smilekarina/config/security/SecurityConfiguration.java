@@ -47,6 +47,11 @@ public class SecurityConfiguration {
                                         "/api/v1/user/join/cert",
                                         "/api/v1/member/findPw",
                                         "/api/v1/member/findIdPw",
+                                        "/api/v1/join",
+                                        "/api/v1/couponPage/**",
+                                        "/api/v1/event/**",
+                                        "/cscenter/notice",
+                                        "/cscenter/faq",
                                         // swagger
                                         "/swagger-ui/**",
                                         "/swagger-resources/**",

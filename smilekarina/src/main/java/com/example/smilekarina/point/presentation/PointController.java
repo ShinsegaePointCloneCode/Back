@@ -2,12 +2,7 @@ package com.example.smilekarina.point.presentation;
 
 import com.example.smilekarina.global.vo.ResponseOut;
 import com.example.smilekarina.point.application.PointService;
-import com.example.smilekarina.point.dto.PointAddDto;
-import com.example.smilekarina.point.dto.PointGetDto;
-import com.example.smilekarina.point.vo.PointIn;
-import com.example.smilekarina.point.vo.PointOut;
-import com.example.smilekarina.point.vo.PointPasswordModifyIn;
-import com.example.smilekarina.point.vo.UsablePointOut;
+import com.example.smilekarina.point.vo.*;
 import com.example.smilekarina.user.application.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,9 +57,9 @@ public class PointController {
     @GetMapping("/point/pointinfo")
     public ResponseEntity<?> getPointInfo(@RequestHeader("Authorization") String token) {
 
-
-
-        ResponseOut<?> responseOut = ResponseOut.success();
+        Long userId = userService.getUserIdFromToken(token);
+        PointInfoOut pointInfoOut = pointService.getPointInfo(userId);
+        ResponseOut<?> responseOut = ResponseOut.success(pointInfoOut);
         return ResponseEntity.ok(responseOut);
     }
 
@@ -93,39 +88,5 @@ public class PointController {
 //                .userId(pointIn.getUserId())
 //                .build();
 //        pointService.registerPoint(pointAddDto);
-//    }
-
-
-
-
-
-
-    // 밑에는 참고 코드(강사님 코드)*****************************************
-
-//    @PostMapping("/point")
-//    void addPoint(@RequestBody PointIn pointIn) {
-//        log.info("INPUT Object Data is : {}" , pointIn);
-//        PointAddDto pointAddDto = PointAddDto.builder()
-//                .pointType(pointIn.getPointType())
-//                .point(pointIn.getPoint())
-//                .used(pointIn.getUsed())
-//                .loginId(pointIn.getLoginId())
-//                .build();
-//        pointService.createPoint(pointAddDto);
-//    }
-//
-//    @GetMapping("/point/{userId}")
-//    public List<PointOut> getPointByUser(@PathVariable Long userId) {
-//        log.info("INPUT userId is : {}" , userId);
-//        List<PointGetDto> pointListByUser = pointService.getPointByUser(userId);
-//        List<PointOut> pointOutList = pointListByUser.stream().map(pointGetDto -> {
-//            return PointOut.builder()
-//                    .pointType(pointGetDto.getPointType())
-//                    .point(pointGetDto.getPoint())
-//                    .used(pointGetDto.getUsed())
-//                    .build();
-//        }).toList();
-//        log.info("OUTPUT pointOutList is : {}" , pointOutList);
-//        return pointOutList;
 //    }
 }
