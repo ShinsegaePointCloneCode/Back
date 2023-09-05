@@ -1,7 +1,5 @@
 package com.example.smilekarina.user.application;
 
-import com.example.smilekarina.agree.application.AgreeService;
-import com.example.smilekarina.agree.dto.AgreeAdvertiseDto;
 import com.example.smilekarina.config.security.JwtTokenProvider;
 import com.example.smilekarina.global.exception.ErrorStateCode;
 import com.example.smilekarina.global.exception.TokenInvalidException;
@@ -23,9 +21,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.*;
@@ -184,6 +181,14 @@ public class UserServiceImpl implements UserService{
 //    @Transactional(readOnly = false)
     public void searchPassword(String loginId, String newPwd) {
         changeUserPassword(loginId, newPwd);
+    }
+
+    @Override
+    public void withdrawal(String token) {
+        String loginId = jwtTokenProvider.getLoginId(token.substring(7));
+        User user = userRepository.findByLoginId(loginId).orElse(null);
+        Objects.requireNonNull(user).setStatus(3);
+        userRepository.save(user);
     }
 
     private void changeUserPassword(String loginId, String newPwd) {
