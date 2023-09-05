@@ -31,4 +31,8 @@ public class MyCouponList {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private Coupon coupon;  //coupon id
+    public void setUseStatus(Boolean useStatus) {
+        this.useStatus = useStatus;
+    }
+
 }

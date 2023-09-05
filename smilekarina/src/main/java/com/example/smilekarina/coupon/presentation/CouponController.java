@@ -34,9 +34,16 @@ public class CouponController {
         return ResponseEntity.ok(ResponseOut.success());
     }
     @PostMapping("/benefits/myCoupon")
-    public ResponseEntity<?> couponToMine(@RequestHeader("Authorization") String token, @RequestBody CouponGetIn couponGetIn) {
+    public ResponseEntity<?> couponToMine(@RequestHeader("Authorization") String token,
+                                          @RequestBody CouponGetIn couponGetIn) {
         // 쿠폰 등록하면 해당 쿠폰을 내 쿠폰함에서 가져다 쓸수 있게 구현
-
+        couponService.createMyCoupon(token,couponGetIn);
+        return ResponseEntity.ok(ResponseOut.success());
+    }
+    @DeleteMapping("/benefits/myCoupon")
+    public ResponseEntity<?> couponDeleteFromMine(@RequestHeader("Authorization") String token,
+                                                  @RequestBody CouponGetIn couponGetIn) {
+        couponService.deleteMyCoupon(token,couponGetIn);
         return ResponseEntity.ok(ResponseOut.success());
     }
 
