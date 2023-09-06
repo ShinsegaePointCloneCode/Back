@@ -58,6 +58,7 @@ public class User extends BaseEntity implements UserDetails {
     }
     public void setPointPassword(String pointPassword) { this.pointPassword = pointPassword; }
 //     security impl
+    public void setStatus(Integer status) { this.status = status; }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(roll.name()));
