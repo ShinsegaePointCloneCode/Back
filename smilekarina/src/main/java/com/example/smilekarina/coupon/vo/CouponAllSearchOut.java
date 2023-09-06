@@ -1,6 +1,5 @@
 package com.example.smilekarina.coupon.vo;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
