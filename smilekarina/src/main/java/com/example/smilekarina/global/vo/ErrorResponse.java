@@ -8,18 +8,18 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ErrorResponse {
-    private Boolean isSuccess;
+    private Boolean success;
     private int code;
     private String message;
 
     public ErrorResponse(ErrorStateCode e) {
-        this.isSuccess = e.isSuccess();
+        this.success = e.isSuccess();
         this.code = e.getCode();
         this.message = e.getMessage();
     }
 
     public ErrorResponse(UserErrorStateCode e) {
-        this.isSuccess = e.isSuccess();
+        this.success = e.isSuccess();
         this.code = e.getCode();
         this.message = e.getMessage();
     }
