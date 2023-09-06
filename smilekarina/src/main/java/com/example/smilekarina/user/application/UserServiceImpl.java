@@ -119,6 +119,11 @@ public class UserServiceImpl implements UserService{
         );
         User user = userRepository.findByLoginId(userLoginIn.getLoginId())
                 .orElseThrow(() -> new NoSuchElementException("없는 유저 입니다."));
+        if(user.getStatus() == 3) {
+            throw new NoSuchElementException("탈퇴한 유저 입니다.");
+        } else if (user.getStatus() == 2) {
+            throw new NoSuchElementException("휴먼 유저 입니다.");
+        }
         String JwtToken = jwtTokenProvider.generateToken(user);
         return LogInDto.builder()
                 .userName(user.getName())
@@ -187,6 +192,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    //    @Transactional(readOnly = false)
     public void withdrawal(String token) {
         String loginId = jwtTokenProvider.getLoginId(token.substring(7));
         User user = userRepository.findByLoginId(loginId).orElse(null);

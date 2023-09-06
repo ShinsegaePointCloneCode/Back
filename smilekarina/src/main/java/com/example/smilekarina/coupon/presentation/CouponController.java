@@ -30,6 +30,12 @@ public class CouponController {
         Page<CouponAllSearchOut> couponData = couponService.getAllCouponWithUser(orderType,token,pageable);
         return ResponseEntity.ok(ResponseOut.success(couponData));
     }
+    @GetMapping("/couponPage/notLogged/{orderType}")
+    public ResponseEntity<?> couponAllSearchNoUser(@PathVariable(value = "orderType")Integer orderType,
+                                             Pageable pageable) {
+        Page<CouponAllSearchOut> couponData = couponService.getAllCoupon(orderType,pageable);
+        return ResponseEntity.ok(ResponseOut.success(couponData));
+    }
     @GetMapping("/benefits/myCoupon/{orderType}")
     public ResponseEntity<?> myCouponAllSearch(@PathVariable(value = "orderType")Integer orderType,
                                              @RequestHeader("Authorization") String token,

@@ -78,7 +78,16 @@ public class CouponServiceImpl implements CouponService{
         Long count = getCount(QCoupon.coupon, now);
         return new PageImpl<>(couponAllSearchOut, pageable, count);
     }
-
+    @Override
+    public Page<CouponAllSearchOut> getAllCoupon(Integer orderType, Pageable pageable) {
+        LocalDateTime now = LocalDateTime.now();
+        OrderSpecifier<?> orderSpecifier = getOrderSpecifier(QCoupon.coupon, orderType);
+        List<CouponAllSearchOut> couponAllSearchOut = fetchNoUserCoupons(
+                QCoupon.coupon, QCouponPartner.couponPartner, QMyCouponList.myCouponList,
+                now, true, orderSpecifier, pageable);
+        Long count = getCount(QCoupon.coupon, now);
+        return new PageImpl<>(couponAllSearchOut, pageable, count);
+    }
 
     @Override
     public Page<CouponAllSearchOut> getAllMyCoupon(Integer orderType, String token, Pageable pageable) {
@@ -114,7 +123,9 @@ public class CouponServiceImpl implements CouponService{
                 .map(Optional::get)
                 .forEach(coupon -> generateCoupon(coupon, userId));
     }
-    
+
+
+
     // 타입에 따른 정렬 기준
     private OrderSpecifier<?> getOrderSpecifier(QCoupon coupon, Integer orderType) {
         return switch (orderType) {
@@ -124,9 +135,10 @@ public class CouponServiceImpl implements CouponService{
         };
     }
 
-    private List<CouponAllSearchOut> fetchCoupons(QCoupon coupon, QCouponPartner couponPartner, QMyCouponList myCouponList, LocalDateTime now, Long userId, Boolean includeAll, OrderSpecifier<?> orderSpecifier, Pageable pageable) {
+    private List<CouponAllSearchOut> fetchCoupons(
+            QCoupon coupon, QCouponPartner couponPartner, QMyCouponList myCouponList,
+            LocalDateTime now, Long userId, Boolean includeAll, OrderSpecifier<?> orderSpecifier, Pageable pageable) {
         BooleanExpression baseCondition = coupon.couponStart.loe(now).and(coupon.couponEnd.goe(now));
-
         BooleanExpression userCondition = includeAll ? null : myCouponList.userId.eq(userId);
 
         return query.select(Projections.constructor(CouponAllSearchOut.class,
@@ -148,6 +160,35 @@ public class CouponServiceImpl implements CouponService{
                 .leftJoin(myCouponList).on(myCouponList.coupon.id.eq(coupon.id), myCouponList.userId.eq(userId))
                 .where(baseCondition)
                 .where(userCondition)
+                .orderBy(orderSpecifier)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+    }
+    private List<CouponAllSearchOut> fetchNoUserCoupons(
+            QCoupon coupon, QCouponPartner couponPartner, QMyCouponList myCouponList,
+            LocalDateTime now,  Boolean includeAll, OrderSpecifier<?> orderSpecifier, Pageable pageable) {
+        BooleanExpression baseCondition = coupon.couponStart.loe(now).and(coupon.couponEnd.goe(now));
+
+
+        return query.select(Projections.constructor(CouponAllSearchOut.class,
+                        couponPartner.partnerName,
+                        couponPartner.imageUrl,
+                        couponPartner.imageUrlCircle,
+                        couponPartner.couponMerchandise,
+                        coupon.id,
+                        coupon.couponName,
+                        coupon.couponStart,
+                        coupon.couponEnd,
+                        coupon.couponImg,
+                        coupon.couponPrecaution,
+                        myCouponList.useStatus,
+                        myCouponList.couponNumber
+                ))
+                .from(coupon)
+                .leftJoin(coupon.couponPartner, couponPartner)
+                .leftJoin(myCouponList).on(myCouponList.coupon.id.eq(coupon.id))
+                .where(baseCondition)
                 .orderBy(orderSpecifier)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

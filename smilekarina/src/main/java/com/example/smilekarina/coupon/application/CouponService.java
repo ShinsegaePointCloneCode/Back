@@ -16,4 +16,5 @@ public interface CouponService {
     void createMyCoupon(String token, Long couponId);
     Page<CouponAllSearchOut> getAllMyCoupon(Integer orderType, String token, Pageable pageable);
     void createAllMyCoupon(String token, List<Long> couponList);
+    Page<CouponAllSearchOut> getAllCoupon(Integer orderType, Pageable pageable);
 }
