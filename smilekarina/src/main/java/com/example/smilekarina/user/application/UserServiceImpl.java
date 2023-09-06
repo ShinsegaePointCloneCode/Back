@@ -198,10 +198,10 @@ public class UserServiceImpl implements UserService{
     public void authenticatePassword(String token, AuthenticatePasswordIn authenticatePasswordIn) {
         String loginId = jwtTokenProvider.getLoginId(token.substring(7));
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginId);
-        try {
-            // 비밀번호가 일치하는 경우
-            new BCryptPasswordEncoder().matches(authenticatePasswordIn.getPassword(), userDetails.getPassword());
-        } catch (Exception e) {
+        // 비밀번호가 일치하는 경우
+        if(new BCryptPasswordEncoder().matches(authenticatePasswordIn.getPassword(), userDetails.getPassword())) {
+            return;
+        } else {
             throw new NoPasswordException(UserErrorStateCode.NOPASSWORD);
         }
     }
