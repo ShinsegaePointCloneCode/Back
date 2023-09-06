@@ -76,6 +76,7 @@ public class CouponServiceImpl implements CouponService{
             case 40 -> coupon.couponEnd.desc();
             default -> coupon.couponStart.asc();  // 기본 정렬
         };
+        log.info("쿼리 시작==>" + now);
         List<CouponAllSearchOut> couponAllSearchOut = query
                 .select(Projections.constructor(CouponAllSearchOut.class,
                     couponPartner.partnerName,
@@ -96,21 +97,20 @@ public class CouponServiceImpl implements CouponService{
                 .leftJoin(myCouponList).on(myCouponList.coupon.id.eq(coupon.id))
                 .where(
                         coupon.couponStart.loe(now),
-                        coupon.couponEnd.goe(now),
-                        myCouponList.userId.eq(userId)
+                        coupon.couponEnd.goe(now)
                         )
                 .orderBy(orderSpecifier)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+        log.info(String.valueOf(couponAllSearchOut.size()));
         Long count = query
                 .select(coupon.count())
                 .from(coupon)
                 .leftJoin(myCouponList).on(myCouponList.coupon.id.eq(coupon.id))
                 .where(
                         coupon.couponStart.loe(now),
-                        coupon.couponEnd.goe(now),
-                        myCouponList.userId.eq(userId)
+                        coupon.couponEnd.goe(now)
                 )
                 .fetchOne();
         if (count == null) count = 0L;

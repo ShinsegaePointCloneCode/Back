@@ -7,7 +7,7 @@ import lombok.*;
 @Getter
 @Setter
 public class ResponseOut<T> {
-    private boolean isSuccess;
+    private boolean success;
     private int code;
     private T result;
 

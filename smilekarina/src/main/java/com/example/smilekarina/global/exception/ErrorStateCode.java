@@ -16,7 +16,7 @@ public enum ErrorStateCode {
     SAMEDAYCHECK(false,4100,"동일한 출석요청입니다."),
     SUCCESS(true,200, "성공");
 
-    private final boolean isSuccess;
+    private final boolean success;
     private final int code;
     private final String message;
 

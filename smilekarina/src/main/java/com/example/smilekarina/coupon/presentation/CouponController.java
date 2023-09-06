@@ -31,7 +31,7 @@ public class CouponController {
                                              @RequestHeader("Authorization") String token,
                                              Pageable pageable) {
         Page<CouponAllSearchOut> couponData = couponService.getAllCouponWithUser(orderType,token,pageable);
-        return ResponseEntity.ok(ResponseOut.success());
+        return ResponseEntity.ok(ResponseOut.success(couponData));
     }
     @PostMapping("/benefits/myCoupon")
     public ResponseEntity<?> couponToMine(@RequestHeader("Authorization") String token,
