@@ -11,6 +11,7 @@ import com.example.smilekarina.coupon.vo.CouponGetIn;
 import com.example.smilekarina.user.application.UserService;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -64,78 +68,113 @@ public class CouponServiceImpl implements CouponService{
 
     @Override
     public Page<CouponAllSearchOut> getAllCouponWithUser(Integer orderType, String token, Pageable pageable) {
-        QCoupon coupon = QCoupon.coupon;
-        QCouponPartner couponPartner = QCouponPartner.couponPartner;
-        QMyCouponList myCouponList = QMyCouponList.myCouponList;
         LocalDateTime now = LocalDateTime.now();
         Long userId = userService.getUserIdFromToken(token);
-        // 쿠폰 기간에서 order Type마다 다르게 배열 한다.
-        // useStatus는 userId에 해당하는 userStatus를 사용한다.
-        OrderSpecifier<?> orderSpecifier = switch (orderType) {
+        OrderSpecifier<?> orderSpecifier = getOrderSpecifier(QCoupon.coupon, orderType);
+//        log.info("쿼리 시작==>" + now);
+        List<CouponAllSearchOut> couponAllSearchOut = fetchCoupons(
+                QCoupon.coupon, QCouponPartner.couponPartner, QMyCouponList.myCouponList,
+                now, userId, true, orderSpecifier, pageable);
+        Long count = getCount(QCoupon.coupon, now);
+        return new PageImpl<>(couponAllSearchOut, pageable, count);
+    }
+
+
+    @Override
+    public Page<CouponAllSearchOut> getAllMyCoupon(Integer orderType, String token, Pageable pageable) {
+        // 현재 시간
+        LocalDateTime now = LocalDateTime.now();
+        Long userId = userService.getUserIdFromToken(token);
+        // 정렬 타입 정의
+        OrderSpecifier<?> orderSpecifier = getOrderSpecifier(QCoupon.coupon, orderType);
+        List<CouponAllSearchOut> couponAllSearchOut = fetchCoupons(
+                QCoupon.coupon, QCouponPartner.couponPartner, QMyCouponList.myCouponList,
+                now, userId, false, orderSpecifier, pageable);
+        Long count = getCount(QCoupon.coupon, now);
+        return new PageImpl<>(couponAllSearchOut, pageable, count);
+    }
+
+    @Override
+    public void createMyCoupon(String token, Long couponId) {
+        Long userId = userService.getUserIdFromToken(token);
+        Coupon coupon = couponRepository.findById(couponId).orElse(null);
+        // todo : 유효성 검사
+        generateCoupon(coupon,userId);
+
+    }
+
+    @Override
+    public void createAllMyCoupon(String token, List<Long> couponList) {
+        Long userId = userService.getUserIdFromToken(token);
+        // 최대 20개 이하
+        // todo : 유효성 검사
+        couponList.stream()
+                .map(couponRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .forEach(coupon -> generateCoupon(coupon, userId));
+    }
+    
+    // 타입에 따른 정렬 기준
+    private OrderSpecifier<?> getOrderSpecifier(QCoupon coupon, Integer orderType) {
+        return switch (orderType) {
             case 30 -> coupon.id.asc();
             case 40 -> coupon.couponEnd.desc();
             default -> coupon.couponStart.asc();  // 기본 정렬
         };
-        log.info("쿼리 시작==>" + now);
-        List<CouponAllSearchOut> couponAllSearchOut = query
-                .select(Projections.constructor(CouponAllSearchOut.class,
-                    couponPartner.partnerName,
-                    couponPartner.imageUrl,
-                    couponPartner.imageUrlCircle,
-                    couponPartner.couponMerchandise,
-                    coupon.id,
-                    coupon.couponName,
-                    coupon.couponStart,
-                    coupon.couponEnd,
-                    coupon.couponImg,
-                    coupon.couponPrecaution,
-                    myCouponList.useStatus,
-                    myCouponList.couponNumber
+    }
+
+    private List<CouponAllSearchOut> fetchCoupons(QCoupon coupon, QCouponPartner couponPartner, QMyCouponList myCouponList, LocalDateTime now, Long userId, Boolean includeAll, OrderSpecifier<?> orderSpecifier, Pageable pageable) {
+        BooleanExpression baseCondition = coupon.couponStart.loe(now).and(coupon.couponEnd.goe(now));
+
+        BooleanExpression userCondition = includeAll ? null : myCouponList.userId.eq(userId);
+
+        return query.select(Projections.constructor(CouponAllSearchOut.class,
+                        couponPartner.partnerName,
+                        couponPartner.imageUrl,
+                        couponPartner.imageUrlCircle,
+                        couponPartner.couponMerchandise,
+                        coupon.id,
+                        coupon.couponName,
+                        coupon.couponStart,
+                        coupon.couponEnd,
+                        coupon.couponImg,
+                        coupon.couponPrecaution,
+                        myCouponList.useStatus,
+                        myCouponList.couponNumber
                 ))
                 .from(coupon)
                 .leftJoin(coupon.couponPartner, couponPartner)
-                .leftJoin(myCouponList).on(myCouponList.coupon.id.eq(coupon.id))
-                .where(
-                        coupon.couponStart.loe(now),
-                        coupon.couponEnd.goe(now)
-                        )
+                .leftJoin(myCouponList).on(myCouponList.coupon.id.eq(coupon.id), myCouponList.userId.eq(userId))
+                .where(baseCondition)
+                .where(userCondition)
                 .orderBy(orderSpecifier)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-        log.info(String.valueOf(couponAllSearchOut.size()));
-        Long count = query
-                .select(coupon.count())
-                .from(coupon)
-                .leftJoin(myCouponList).on(myCouponList.coupon.id.eq(coupon.id))
-                .where(
-                        coupon.couponStart.loe(now),
-                        coupon.couponEnd.goe(now)
-                )
-                .fetchOne();
-        if (count == null) count = 0L;
-        return new PageImpl<>(couponAllSearchOut,pageable,count);
     }
-    @Override
-    public void createMyCoupon(String token, CouponGetIn couponGetIn) {
-        Long userId = userService.getUserIdFromToken(token);
-        Coupon coupon = couponRepository.findById(couponGetIn.getCouponId()).orElse(null);
+    // 페이지 네이션 카운트(쿠폰)
+    private Long getCount(QCoupon coupon, LocalDateTime now) {
+        Long count = query.select(coupon.count())
+                .from(coupon)
+                .leftJoin(QMyCouponList.myCouponList).on(QMyCouponList.myCouponList.coupon.id.eq(coupon.id))
+                .where(coupon.couponStart.loe(now), coupon.couponEnd.goe(now))
+                .fetchOne();
+        return count == null ? 0L : count;
+    }
+    // 쿠폰 생성
+    private void generateCoupon(Coupon coupon, Long userId) {
         String couponNumber = generateRandomNumber(20);
         MyCouponList myCouponList = MyCouponList.builder()
-                .useStatus(true)
+                .useStatus(false)
                 .coupon(coupon)
                 .couponNumber(couponNumber)
                 .userId(userId)
+                .downloadDate(LocalDateTime.now())
                 .build();
         myCouponListRepository.save(myCouponList);
     }
-    @Override
-    public void deleteMyCoupon(String token, CouponGetIn couponGetIn) {
-        Long userId = userService.getUserIdFromToken(token);
-        List<MyCouponList> deleteList = myCouponListRepository.findByCouponIdAndUserId(couponGetIn.getCouponId(), userId);
-        myCouponListRepository.deleteAll(deleteList);
-    }
-
+    // 바코드 번호 추출(외부 서비스)
     private String generateRandomNumber(int length) {
         Random random = new Random();
         StringBuilder sb = new StringBuilder();
