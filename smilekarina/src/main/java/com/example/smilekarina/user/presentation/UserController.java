@@ -50,7 +50,6 @@ public class UserController {
         return ResponseEntity.ok(ResponseOut.success(userSignUpOutCreate(userAgreeSignUpIn)));
     }
 
-
     @Operation(summary= "회원 정보 가져오기", description= "token으로 회원정보를 가져온다.", tags = { "User Controller" })
     @GetMapping("/user")
     public ResponseEntity<ResponseOut<?>> getUserByUUID(@RequestHeader("Authorization") String token) {
@@ -130,6 +129,19 @@ public class UserController {
     public ResponseEntity<?> withdrawalUser(@RequestHeader("Authorization") String token) {
         userService.withdrawal(token);
         return ResponseEntity.ok(ResponseOut.success());
+    }
+
+    @Operation(summary= "비밀번호 인증", description= "token와 password로 비밀번호 인증하기", tags = { "User Controller" })
+    @PostMapping("/withdrawal/check/")
+    public ResponseEntity<?> authenticatePassword(@RequestHeader("Authorization") String token,
+                                                  @RequestBody AuthenticatePasswordIn authenticatePasswordIn) {
+
+        userService.authenticatePassword(token,authenticatePasswordIn);
+        if (token != null && !token.isEmpty()) {
+            return ResponseEntity.ok(ResponseOut.success());
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseOut.fail());
+        }
     }
 
     private UserSignUpOut userSignUpOutCreate(UserAgreeSignUpIn userAgreeSignUpIn) {
