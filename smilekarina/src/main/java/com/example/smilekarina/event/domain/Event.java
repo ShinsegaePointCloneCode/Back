@@ -34,7 +34,7 @@ public class Event extends BaseEntity {
     private LocalDateTime eventStart;   //이벤트 시작일
     @Column(nullable = false, name="event_end")
     private LocalDateTime eventEnd; //이벤트 종료일
-    @Column(nullable = false, name="event_thumbnail",columnDefinition = "TEXT")
+    @Column(nullable = false, name="event_thumbnail")
     private String eventThumbnail;    //이벤트 썸네일
     /*
     @Column(nullable = false, name="event_type")

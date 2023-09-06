@@ -1,5 +1,6 @@
 package com.example.smilekarina.event.presentation;
 import com.example.smilekarina.event.application.EventService;
+import com.example.smilekarina.event.dto.EventListGetDto;
 import com.example.smilekarina.event.vo.EventListOut;
 import com.example.smilekarina.global.vo.ResponseOut;
 import com.example.smilekarina.event.dto.EventGetDto;
@@ -21,7 +22,7 @@ public class EventController {
     private final ModelMapper modelMapper;
     @GetMapping("/event/ingevent")
     public ResponseEntity<?>getIngEvent(@RequestParam(value="OrderType") Integer orderType,
-                                        @RequestParam(value="pageNo") Integer pageNo,
+                                        @RequestParam(value="page") Integer pageNo,
                                         @RequestParam(value = "size")Integer size){
         List<EventListOut> eventIngListOut = eventService.checkIngEvent(orderType,pageNo,size);
         ResponseOut<?> responseOut = ResponseOut.success();
@@ -29,7 +30,7 @@ public class EventController {
     }
 
     @GetMapping("/event/endevent")
-    public ResponseEntity<?>getIngEvent(@RequestParam(value="pageNo") Integer pageNo,
+    public ResponseEntity<?>getEndEvent(@RequestParam(value="page") Integer pageNo,
                                         @RequestParam(value = "size")Integer size){
         List<EventListOut> eventEndListOut =eventService.endEvent(pageNo,size);
         ResponseOut<?> responseOut = ResponseOut.success();
@@ -52,10 +53,16 @@ public class EventController {
     }
 
     @GetMapping("/benefits/myEvent")
-    public ResponseEntity<?>detailEvent(@RequestParam(value = "pageNo")Integer pageNo,
+    public ResponseEntity<?>detailMyEvent(@RequestParam(value = "page")Integer pageNo,
                                         @RequestParam(value = "size") Integer size){
         List<EventListOut> myEventListOut=eventService.myEventList(pageNo,size);
         ResponseOut<?> responseOut =ResponseOut.success();
+        return ResponseEntity.ok(responseOut);
+    }
+    @GetMapping("/event/1")
+    public ResponseEntity<?>event1(){
+        List<EventListGetDto> eventListGetDtoList =eventService.getAllEvent();
+        ResponseOut<?> responseOut =ResponseOut.success(eventListGetDtoList);
         return ResponseEntity.ok(responseOut);
     }
 }

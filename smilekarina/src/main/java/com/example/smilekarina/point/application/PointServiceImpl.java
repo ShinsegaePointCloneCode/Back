@@ -29,7 +29,7 @@ import java.util.Optional;
 @Slf4j
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 //@org.springframework.transaction.annotation.Transactional(readOnly = true)
-public class PointServiceImpl implements PointService{
+public class  PointServiceImpl implements PointService{
 
     private final UserService userService;
     private final PointRepository pointRepository;
