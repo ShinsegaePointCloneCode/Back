@@ -132,7 +132,7 @@ public class UserController {
     }
 
     @Operation(summary= "비밀번호 인증", description= "token와 password로 비밀번호 인증하기", tags = { "User Controller" })
-    @PostMapping("/withdrawal/check/")
+    @PostMapping("/withdrawal/check")
     public ResponseEntity<?> authenticatePassword(@RequestHeader("Authorization") String token,
                                                   @RequestBody AuthenticatePasswordIn authenticatePasswordIn) {
 
