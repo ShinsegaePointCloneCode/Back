@@ -24,8 +24,8 @@ public class Gift extends BaseEntity {
     @Column(name = "gift_message", columnDefinition = "TEXT")
     private String giftMessage;
 
-    @Column(name = "image_id")
-    private Long imageId;
+    @Column(name = "gift_image", columnDefinition = "TEXT")
+    private String giftImage;
 
     @Column(nullable = false, name = "gift_sender_id")
     private Long giftSenderId;

@@ -143,5 +143,21 @@ public class GiftController {
         return ResponseEntity.ok(responseOut);
     }
 
+    /*
+        선물 메시지 조회
+     */
+    @GetMapping("/gift/content")
+    public ResponseEntity<?> getGiftMessage(@RequestHeader("Authorization") String token,
+                                            @RequestParam(value="giftId") Long giftId) {
+
+
+        GiftMessageOut getGiftMessage = giftService.getGiftMessage(giftId);
+
+        ResponseOut<?> responseOut = ResponseOut.success(getGiftMessage);
+        return ResponseEntity.ok(responseOut);
+
+    }
+
+
 
 }

@@ -6,10 +6,7 @@ import com.example.smilekarina.gift.domain.GiftTypeConverter;
 import com.example.smilekarina.gift.domain.QGift;
 import com.example.smilekarina.gift.dto.*;
 import com.example.smilekarina.gift.infrastructure.GiftRepository;
-import com.example.smilekarina.gift.vo.GiftDetailListOut;
-import com.example.smilekarina.gift.vo.GiftIn;
-import com.example.smilekarina.gift.vo.GiftListOut;
-import com.example.smilekarina.gift.vo.GiftPointDetailOut;
+import com.example.smilekarina.gift.vo.*;
 import com.example.smilekarina.point.application.PointService;
 import com.example.smilekarina.point.domain.Point;
 import com.example.smilekarina.point.domain.PointType;
@@ -68,7 +65,7 @@ public class GiftServiceImpl implements GiftService {
         Gift gift = Gift.builder()
                 .giftRecipientId(recipientId)
                 .giftMessage(giftIn.getGiftMessage())
-                .imageId(giftIn.getImageId())
+                .giftImage(giftIn.getGiftImage())
                 .giftSenderId(userId)
                 .giftType(giftType)
                 .point(giftIn.getPoint())
@@ -281,6 +278,18 @@ public class GiftServiceImpl implements GiftService {
         return GiftPointDetailOut.builder()
                 .pointType(point.getPointType().getCode())
                 .used(point.getUsed())
+                .build();
+    }
+
+    // 선물 메세지 조회
+    @Override
+    public GiftMessageOut getGiftMessage(Long giftId) {
+
+        Gift gift = giftRepository.findById(giftId).orElseThrow(() -> new NoSuchElementException("Gift not found"));
+
+        return GiftMessageOut.builder()
+                .giftMessage(gift.getGiftMessage())
+                .giftImage(gift.getGiftImage())
                 .build();
     }
 

@@ -16,6 +16,7 @@ public class GiftLastOut {
     private String senderName;
     private Integer point;
     private String giftMessage;
+    private String giftImage;
     private LocalDateTime createdDate;
 
 }

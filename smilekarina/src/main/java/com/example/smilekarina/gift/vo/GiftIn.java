@@ -8,7 +8,7 @@ import lombok.ToString;
 public class GiftIn {
 
     private Integer point;
-    private Long imageId;
+    private String giftImage;
     private String giftMessage;
     private String pointPassword;
     private String recipientLoginId;
