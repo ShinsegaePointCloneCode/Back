@@ -30,8 +30,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*", allowedHeaders = "*")
-//@Transactional(readOnly = true)
+@Transactional(readOnly = true)
 public class AgreeServiceImpl implements AgreeService{
     private final UserService userService;
     private final AgreeAdvertiseRepository agreeAdvertiseRepository;
@@ -39,7 +38,7 @@ public class AgreeServiceImpl implements AgreeService{
     private final ModelMapper modelMapper;
 
     @Override
-//    @Transactional(readOnly = false)
+    @Transactional(readOnly = false)
     public void createAgreeAdvertise(String token, AgreeAdvertiseDto agreeAdvertiseDto) {
         Long userId = userService.getUserIdFromToken(token);
         Optional<AgreeAdvertise> agreeAdvertise = agreeAdvertiseRepository.findByUserId(userId);
@@ -54,7 +53,7 @@ public class AgreeServiceImpl implements AgreeService{
         }
     }
     @Override
-//    @Transactional(readOnly = false)
+    @Transactional(readOnly = false)
     public void createAgreeAdvertiseByUser(Long userId, AgreeAdvertiseDto agreeAdvertiseDto) {
         createAdvertise(userId, agreeAdvertiseDto);
     }
@@ -65,7 +64,7 @@ public class AgreeServiceImpl implements AgreeService{
     }
 
     @Override
-//    @Transactional(readOnly = false)
+    @Transactional(readOnly = false)
     public void createAgreeServiceManage(String token, AgreeServiceManageDto agreeServiceManageDto) {
         Long userId = userService.getUserIdFromToken(token);
         Optional<AgreeServiceManage> agreeServiceManage = agreeServiceManageRepository.findByUserIdAndAgreeType(userId, agreeServiceManageDto.getAgreeType());

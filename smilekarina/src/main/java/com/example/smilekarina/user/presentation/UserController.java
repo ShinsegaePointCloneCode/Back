@@ -96,6 +96,14 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseOut.fail());
         }
     }
+    @Operation(summary= "포인트 선물 인증", description= "포인트 선물 기록을 가져와서 그사람의 아이디와 이름을 준다.",
+            tags = { "User Controller" })
+    @GetMapping("/user/checkuser")
+    public ResponseEntity<?> checkOtherUser(@RequestBody CheckUserIn checkUserIn) {
+        CheckUserOut checkUserOut = userService.getOtherUserInfo(checkUserIn);
+
+        return ResponseEntity.ok(ResponseOut.success());
+    }
     @Operation(summary= "아이디 찾기", description= "userName과 폰번호로 id 찾기", tags = { "User Controller" })
     @GetMapping("/member/findIdPw")
     public ResponseEntity<?> authenticateUser(@RequestParam("userName") String userName,

@@ -8,26 +8,23 @@ import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.infrastructure.UserRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
-
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Optional;
 
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*", allowedHeaders = "*")
-//@org.springframework.transaction.annotation.Transactional(readOnly = true)
+@Transactional(readOnly = false)
 public class ClubServiceImpl implements ClubService{
     private final UserService userService;
     private final ClubRepository clubRepository;
@@ -108,7 +105,8 @@ public class ClubServiceImpl implements ClubService{
     }
 
     @Override
-    @Transactional
+    @jakarta.transaction.Transactional
+    @Transactional(readOnly = true)
     public void clear(String token, ClubType clubType) {
         Long userId = userService.getUserIdFromToken(token);
         User user = userRepository.findById(userId)
@@ -125,6 +123,7 @@ public class ClubServiceImpl implements ClubService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public MomKidsOut getMomKidsData(String token) {
         Long userId = getUserIdFromToken(token);
         QClub club = QClub.club;
@@ -154,6 +153,7 @@ public class ClubServiceImpl implements ClubService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BizOut getBizData(String token) {
         Long userId = getUserIdFromToken(token);
         QClub club = QClub.club;
@@ -182,6 +182,7 @@ public class ClubServiceImpl implements ClubService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CarOut getCarData(String token) {
         Long userId = getUserIdFromToken(token);
         QClub club = QClub.club;
@@ -205,6 +206,7 @@ public class ClubServiceImpl implements ClubService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public AllStateOut getClubState(String token) {
         Long userId = getUserIdFromToken(token);
         User user = userRepository.findById(userId)
