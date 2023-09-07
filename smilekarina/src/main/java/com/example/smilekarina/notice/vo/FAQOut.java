@@ -1,14 +1,12 @@
-package com.example.smilekarina.notice.dto;
+package com.example.smilekarina.notice.vo;
 
 import lombok.*;
 
+@Data
 @Builder
-@ToString
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FAQGetDto {
+public class FAQOut {
     private String bigOption;
     private String smallOption;
     private String faqTitle;

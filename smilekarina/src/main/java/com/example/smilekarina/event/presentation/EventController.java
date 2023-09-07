@@ -3,11 +3,12 @@ import com.example.smilekarina.event.application.EventService;
 import com.example.smilekarina.event.dto.EventListGetDto;
 import com.example.smilekarina.event.vo.EventListOut;
 import com.example.smilekarina.global.vo.ResponseOut;
-import com.example.smilekarina.event.dto.EventGetDto;
 import com.example.smilekarina.event.vo.EventOut;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +21,11 @@ import java.util.List;
 public class EventController {
     private final EventService eventService;
     private final ModelMapper modelMapper;
-    @GetMapping("/event/ingevent")
-    public ResponseEntity<?>getIngEvent(@RequestParam(value="OrderType") Integer orderType,
-                                        @RequestParam(value="page") Integer pageNo,
-                                        @RequestParam(value = "size")Integer size){
-        List<EventListOut> eventIngListOut = eventService.checkIngEvent(orderType,pageNo,size);
-        ResponseOut<?> responseOut = ResponseOut.success();
+    @GetMapping("/event/ingevent/{orderType}")
+    public ResponseEntity<?> getIngEvent(@PathVariable(value = "orderType") Integer orderType,
+                                         Pageable pageable){
+        Page<EventListOut> eventIngListOut = eventService.checkIngEvent(orderType, pageable);
+        ResponseOut<?> responseOut = ResponseOut.success(eventIngListOut);
         return ResponseEntity.ok(responseOut);
     }
 
@@ -37,7 +37,7 @@ public class EventController {
         return ResponseEntity.ok(responseOut);
     }
 /*
-    @PostMapping("/event/myEvent")
+    @PostMapping("/benefits/myEvent")
     public ResponseEntity<?> myEvent(@RequestBody EventGetDto eventGetDto) {
         eventService.myEvent(eventGetDto);
         ResponseOut<?> responseOut = ResponseOut.success();
@@ -45,12 +45,15 @@ public class EventController {
     }
  */
     //query string 파라미터로 id 값에 해당하는 데이터 요청 -> 이야기해보기 string이 아니고 Long 으로 받으면 안되나용 ..?ㅎㅎㅎ
+
     @GetMapping("/event")
     public ResponseEntity<?>detailEvent(@RequestParam(value = "eventNo")Long eventNo){
-        EventGetDto eventGetDto =eventService.getEvent(eventNo);
-        ResponseOut<?> responseOut = ResponseOut.success(modelMapper.map(eventGetDto, EventOut.class));
+        EventOut eventOut =eventService.getEvent(eventNo);
+        ResponseOut<?> responseOut = ResponseOut.success(modelMapper.map(eventOut, EventOut.class));
         return ResponseEntity.ok(responseOut);
     }
+
+
 
     @GetMapping("/benefits/myEvent")
     public ResponseEntity<?>detailMyEvent(@RequestParam(value = "page")Integer pageNo,

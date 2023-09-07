@@ -1,4 +1,6 @@
 package com.example.smilekarina.franchise.application;
+import com.example.smilekarina.franchise.dto.FranchiseDto;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 
 import com.example.smilekarina.franchise.domain.Branch;
@@ -32,16 +34,20 @@ public class FranchiseServiceImpl implements FranchiseService{
     }
 
     @Override
-    public Page<FranchiseOut> findstorelist(Pageable pageable) {
+    public Page<FranchiseOut> findstorelist(FranchiseDto franchiseDto, Pageable pageable) {
         QBranch branch =QBranch.branch;
         QFranchise franchise =QFranchise.franchise;
+
         List<FranchiseOut> FranchiseOut = query
                 .select(Projections.constructor(FranchiseOut.class,
                         branch,
                         franchise.franchiseImage, franchise.franchiseName))
                 .from(branch)
                 .leftJoin(branch.franchise, franchise)
-                .where(branch.franchise.eq(franchise))
+                .where(branch.franchise.eq(franchise),
+                        franchise.franchiseName.eq(franchiseDto.getFranchise_name()),
+                        branch.sidoName.eq(franchiseDto.getSidoNm()),
+                        branch.gugunName.eq(franchiseDto.getGugunName()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

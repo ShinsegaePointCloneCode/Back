@@ -1,5 +1,6 @@
 package com.example.smilekarina.event.dto;
 
+import com.example.smilekarina.event.domain.EventDetailImage;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -13,10 +14,9 @@ public class EventGetDto {
     private Long eventId;
     private String eventHead;   //이벤트 제목
     private String linkedUrl;   //이벤트 연결
-    private LocalDateTime reg_date;
+    private LocalDateTime regDate;
     private LocalDateTime eventResultDate;
     private LocalDateTime eventStart;   //이벤트 시작일
-    private LocalDateTime eventEnd; //이벤트 종료일
-    private Long eventDetailImage;    //이벤트 이미지
+    private LocalDateTime eventEnd; //이벤트 종료
     private String eventType;   //이벤트 종류
 }
