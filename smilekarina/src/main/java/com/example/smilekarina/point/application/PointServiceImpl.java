@@ -12,10 +12,10 @@ import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.infrastructure.UserRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.time.LocalDate;
@@ -28,7 +28,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-//@org.springframework.transaction.annotation.Transactional(readOnly = true)
+@Transactional(readOnly = true)
 public class  PointServiceImpl implements PointService{
 
     private final UserService userService;
@@ -69,6 +69,7 @@ public class  PointServiceImpl implements PointService{
 
     // 포인트 생성
     @Override
+    @Transactional(readOnly = false)
     public Long registerPoint(PointAddDto pointAddDto) {
 
         User user = userRepository.findById(pointAddDto.getUserId()).orElseThrow(IllegalArgumentException::new);
@@ -117,7 +118,8 @@ public class  PointServiceImpl implements PointService{
 
     // 포인트 비밀번호 수정
     @Override
-    @Transactional
+    @Transactional(readOnly = false)
+    @jakarta.transaction.Transactional
     public void modifyPointPassword(String token, String pointPassword) {
 
         // 토큰 정보에서 userId 값 가져 오기

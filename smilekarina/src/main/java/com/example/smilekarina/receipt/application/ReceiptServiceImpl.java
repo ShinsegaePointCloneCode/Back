@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-//@Transactional(readOnly = true)
+@Transactional(readOnly = true)
 public class ReceiptServiceImpl implements ReceiptService{
 
     private final UserService userService;
@@ -26,6 +26,7 @@ public class ReceiptServiceImpl implements ReceiptService{
 
     // 영수증 인증 완료 후 적립
     @Override
+    @Transactional(readOnly = false)
     public void registerSmartReceipt(String token, SmartReceiptPointIn smartReceiptPointIn) {
 
         // 토큰 정보에서 userId 값 가져 오기
