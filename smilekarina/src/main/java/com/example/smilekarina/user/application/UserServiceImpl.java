@@ -103,6 +103,7 @@ public class UserServiceImpl implements UserService{
             if (null != userModifyIn.getEmail()) {
                 modifiedUser.setEmail(userModifyIn.getEmail());
             }
+            userRepository.save(modifiedUser);
         });
 
         // User 객체가 존재하지 않을 경우 예외 발생
