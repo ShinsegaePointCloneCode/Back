@@ -1,5 +1,4 @@
-package com.example.smilekarina.franchise.vo;
-
+package com.example.smilekarina.franchise.dto;
 import lombok.*;
 
 @Getter
@@ -7,7 +6,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FranchiseIn {
+public class FranchiseDto {
     private String franchiseName;
     private String sidoNm;
     private String gugunName;

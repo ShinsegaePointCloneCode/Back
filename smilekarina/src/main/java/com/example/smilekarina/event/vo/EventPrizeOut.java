@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EventPrizeOut {
-    //private Integer rowNum;
+    private Integer rowNum;
     private Long prizeId;
     private String eventHead;   //이벤트 제목
     private String linkedUrl;   //이벤트 연결
@@ -17,6 +17,5 @@ public class EventPrizeOut {
     private LocalDateTime eventStart;   //이벤트 시작일
     private LocalDateTime eventEnd; //이벤트 종료일
     private LocalDateTime eventResultDate;
-    private Long eventDetailImage;    //이벤트 썸네일
     private String eventType;   //이벤트 종류
 }

@@ -1,11 +1,13 @@
 package com.example.smilekarina.franchise.application;
+import com.example.smilekarina.franchise.dto.FranchiseDto;
+import com.example.smilekarina.franchise.vo.RegionOut;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 
-import com.example.smilekarina.franchise.domain.Branch;
+
 import com.example.smilekarina.franchise.domain.QBranch;
 import com.example.smilekarina.franchise.domain.QFranchise;
-import com.example.smilekarina.franchise.infrastructure.BranchRepository;
-import com.example.smilekarina.franchise.infrastructure.FranchiseRepository;
 import com.example.smilekarina.franchise.vo.FranchiseOut;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -15,30 +17,78 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class FranchiseServiceImpl implements FranchiseService{
-    private final BranchRepository branchRepository;
-    private final FranchiseRepository franchiseRepository;
     private final JPAQueryFactory query;
 
     @Override
-    public List<FranchiseOut> findStore() {
-        List<Branch> getAllMarkers=branchRepository.findAll();
-        return null;
-    }
-
-    @Override
-    public Page<FranchiseOut> findstorelist(Pageable pageable) {
+    public Page<RegionOut> findStore(FranchiseDto franchiseDto, Pageable pageable) {
         QBranch branch =QBranch.branch;
         QFranchise franchise =QFranchise.franchise;
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        // 동적 쿼리 조건 추가
+        if (StringUtils.hasText(franchiseDto.getFranchiseName())) {
+            builder.and(franchise.franchiseName.eq(franchiseDto.getFranchiseName()));
+        }
+        if (StringUtils.hasText(franchiseDto.getSidoNm())) {
+            builder.and(branch.sidoName.eq(franchiseDto.getSidoNm()));
+        }
+        if (StringUtils.hasText(franchiseDto.getGugunName())) {
+            builder.and(branch.gugunName.eq(franchiseDto.getGugunName()));
+        }
+
+        // 조건들을 AND 연산자로 결합
+        Predicate finalPredicate = builder.getValue();
+
+        List<RegionOut> RegionOut = query
+                .select(Projections.constructor(RegionOut.class,
+                        franchise.franchiseName,
+                        branch.sidoName,
+                        branch.gugunName,
+                        branch.branchName,
+                        branch.branchAddress
+                        ))
+                .from(branch)
+                .leftJoin(branch.franchise, franchise)
+                .where(branch.franchise.eq(franchise),finalPredicate)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+        Long count = query
+                .select(franchise.count())
+                .from(franchise)
+                .fetchOne();
+        if (count == null) count = 0L;
+        return new PageImpl<>(RegionOut,pageable,count);
+
+    }
+
+
+
+    @Override
+    public Page<FranchiseOut> findStoreList(Pageable pageable) {
+        QBranch branch =QBranch.branch;
+        QFranchise franchise =QFranchise.franchise;
+
         List<FranchiseOut> FranchiseOut = query
                 .select(Projections.constructor(FranchiseOut.class,
-                        branch,
-                        franchise.franchiseImage, franchise.franchiseName))
+                        franchise.franchiseName,
+                        franchise.franchiseImage,
+                        branch.branchName,
+                        branch.branchAddress,
+                        branch.branchLatitude,
+                        branch.branchLontitude
+                        ))
                 .from(branch)
                 .leftJoin(branch.franchise, franchise)
                 .where(branch.franchise.eq(franchise))

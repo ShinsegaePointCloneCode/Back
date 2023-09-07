@@ -1,10 +1,13 @@
 package com.example.smilekarina.event.vo;
 
-import lombok.Getter;
+import lombok.*;
 
 @Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class EventParticipateIn {
     Long eventId;
-    String UUID;
     Boolean prize_bool;
 }
