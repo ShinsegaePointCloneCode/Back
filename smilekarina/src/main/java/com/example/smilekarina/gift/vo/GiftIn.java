@@ -12,5 +12,6 @@ public class GiftIn {
     private String giftMessage;
     private String pointPassword;
     private String recipientLoginId;
+    private String recipientName;
 
 }
