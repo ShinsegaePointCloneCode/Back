@@ -8,8 +8,10 @@ import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.dto.LogInDto;
 import com.example.smilekarina.user.dto.UserGetDto;
 import com.example.smilekarina.user.dto.UserSignUpDto;
+import com.example.smilekarina.user.exception.NoPasswordException;
 import com.example.smilekarina.user.exception.SamePasswordException;
 import com.example.smilekarina.user.exception.UserErrorStateCode;
+import com.example.smilekarina.user.vo.AuthenticatePasswordIn;
 import com.example.smilekarina.user.vo.UserLoginIn;
 import com.example.smilekarina.user.vo.UserModifyIn;
 import com.example.smilekarina.user.infrastructure.UserRepository;
@@ -115,7 +117,13 @@ public class UserServiceImpl implements UserService{
                     userLoginIn.getPassword()
             )
         );
-        User user = userRepository.findByLoginId(userLoginIn.getLoginId()).orElseThrow(() -> new NoSuchElementException("안잡혀요"));
+        User user = userRepository.findByLoginId(userLoginIn.getLoginId())
+                .orElseThrow(() -> new NoSuchElementException("없는 유저 입니다."));
+        if(user.getStatus() == 3) {
+            throw new NoSuchElementException("탈퇴한 유저 입니다.");
+        } else if (user.getStatus() == 2) {
+            throw new NoSuchElementException("휴먼 유저 입니다.");
+        }
         String JwtToken = jwtTokenProvider.generateToken(user);
         return LogInDto.builder()
                 .userName(user.getName())
@@ -184,11 +192,24 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    //    @Transactional(readOnly = false)
     public void withdrawal(String token) {
         String loginId = jwtTokenProvider.getLoginId(token.substring(7));
         User user = userRepository.findByLoginId(loginId).orElse(null);
         Objects.requireNonNull(user).setStatus(3);
         userRepository.save(user);
+    }
+
+    @Override
+    public void authenticatePassword(String token, AuthenticatePasswordIn authenticatePasswordIn) {
+        String loginId = jwtTokenProvider.getLoginId(token.substring(7));
+        UserDetails userDetails = userDetailsService.loadUserByUsername(loginId);
+        // 비밀번호가 일치하는 경우
+        if(new BCryptPasswordEncoder().matches(authenticatePasswordIn.getPassword(), userDetails.getPassword())) {
+            return;
+        } else {
+            throw new NoPasswordException(UserErrorStateCode.NOPASSWORD);
+        }
     }
 
     private void changeUserPassword(String loginId, String newPwd) {

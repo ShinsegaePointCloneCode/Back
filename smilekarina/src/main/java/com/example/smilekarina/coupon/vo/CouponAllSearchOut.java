@@ -1,8 +1,11 @@
 package com.example.smilekarina.coupon.vo;
 
+import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+
+@Getter
 @Setter
 public class CouponAllSearchOut {
     //coupon partner
@@ -20,5 +23,32 @@ public class CouponAllSearchOut {
     // my coupon list
     private Boolean useStatus;
     private String couponNumber;
+    public CouponAllSearchOut(
+            String partnerName,
+            String imageUrl,
+            String imageUrlCircle,
+            String couponMerchandise,
+            Long couponId,
+            String couponName,
+            LocalDateTime couponStart,
+            LocalDateTime couponEnd,
+            String couponImg,
+            String couponPrecaution,
+            Boolean useStatus,
+            String couponNumber
+    ) {
 
+        this.partnerName = partnerName;
+        this.imageUrl = imageUrl;
+        this.imageUrlCircle = imageUrlCircle;
+        this.couponMerchandise = couponMerchandise;
+        this.couponId = couponId;
+        this.couponName = couponName;
+        this.couponStart = couponStart;
+        this.couponEnd = couponEnd;
+        this.couponImg = couponImg;
+        this.couponPrecaution = couponPrecaution;
+        this.useStatus = useStatus;
+        this.couponNumber = couponNumber;
+    }
 }

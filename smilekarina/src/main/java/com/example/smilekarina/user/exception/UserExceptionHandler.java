@@ -30,5 +30,14 @@ public class UserExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(UserErrorStateCode.SAMEPREPASSWORD);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
+    /**
+     동일 비밀번호
+     */
+    @ExceptionHandler(NoPasswordException.class)
+    protected ResponseEntity<ErrorResponse> handlePreSameDay(NoPasswordException ex) {
+        log.error("NoPasswordException", ex);
+    ErrorResponse errorResponse = new ErrorResponse(UserErrorStateCode.NOPASSWORD);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
 
 }

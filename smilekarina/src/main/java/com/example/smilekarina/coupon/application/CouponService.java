@@ -13,6 +13,8 @@ public interface CouponService {
     void createPartner(CouponPartnerDto map);
     void createCoupon(CouponDto map);
     Page<CouponAllSearchOut> getAllCouponWithUser(Integer orderType, String token, Pageable pageable);
-    void createMyCoupon(String token, CouponGetIn couponGetIn);
-    void deleteMyCoupon(String token, CouponGetIn couponGetIn);
+    void createMyCoupon(String token, Long couponId);
+    Page<CouponAllSearchOut> getAllMyCoupon(Integer orderType, String token, Pageable pageable);
+    void createAllMyCoupon(String token, List<Long> couponList);
+    Page<CouponAllSearchOut> getAllCoupon(Integer orderType, Pageable pageable);
 }

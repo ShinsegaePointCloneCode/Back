@@ -4,10 +4,7 @@ package com.example.smilekarina.coupon.presentation;
 import com.example.smilekarina.coupon.application.CouponService;
 import com.example.smilekarina.coupon.dto.CouponDto;
 import com.example.smilekarina.coupon.dto.CouponPartnerDto;
-import com.example.smilekarina.coupon.vo.CouponAllSearchOut;
-import com.example.smilekarina.coupon.vo.CouponGetIn;
-import com.example.smilekarina.coupon.vo.CouponIn;
-import com.example.smilekarina.coupon.vo.CouponPartnerIn;
+import com.example.smilekarina.coupon.vo.*;
 import com.example.smilekarina.gift.vo.GiftIn;
 import com.example.smilekarina.global.vo.ResponseOut;
 import lombok.RequiredArgsConstructor;
@@ -31,22 +28,35 @@ public class CouponController {
                                              @RequestHeader("Authorization") String token,
                                              Pageable pageable) {
         Page<CouponAllSearchOut> couponData = couponService.getAllCouponWithUser(orderType,token,pageable);
-        return ResponseEntity.ok(ResponseOut.success());
+        return ResponseEntity.ok(ResponseOut.success(couponData));
+    }
+    @GetMapping("/couponPage/notLogged/{orderType}")
+    public ResponseEntity<?> couponAllSearchNoUser(@PathVariable(value = "orderType")Integer orderType,
+                                             Pageable pageable) {
+        Page<CouponAllSearchOut> couponData = couponService.getAllCoupon(orderType,pageable);
+        return ResponseEntity.ok(ResponseOut.success(couponData));
+    }
+    @GetMapping("/benefits/myCoupon/{orderType}")
+    public ResponseEntity<?> myCouponAllSearch(@PathVariable(value = "orderType")Integer orderType,
+                                             @RequestHeader("Authorization") String token,
+                                             Pageable pageable) {
+        Page<CouponAllSearchOut> couponData = couponService.getAllMyCoupon(orderType,token,pageable);
+        return ResponseEntity.ok(ResponseOut.success(couponData));
     }
     @PostMapping("/benefits/myCoupon")
     public ResponseEntity<?> couponToMine(@RequestHeader("Authorization") String token,
                                           @RequestBody CouponGetIn couponGetIn) {
         // 쿠폰 등록하면 해당 쿠폰을 내 쿠폰함에서 가져다 쓸수 있게 구현
-        couponService.createMyCoupon(token,couponGetIn);
+        couponService.createMyCoupon(token,couponGetIn.getCouponId());
         return ResponseEntity.ok(ResponseOut.success());
     }
-    @DeleteMapping("/benefits/myCoupon")
-    public ResponseEntity<?> couponDeleteFromMine(@RequestHeader("Authorization") String token,
-                                                  @RequestBody CouponGetIn couponGetIn) {
-        couponService.deleteMyCoupon(token,couponGetIn);
+    @PostMapping("/benefits/couponDownAll")
+    public ResponseEntity<?> allCouponToMine(@RequestHeader("Authorization") String token,
+                                          @RequestBody AllCouponGetIn allCouponGetIn) {
+        // 쿠폰 등록하면 해당 쿠폰을 내 쿠폰함에서 가져다 쓸수 있게 구현
+        couponService.createAllMyCoupon(token,allCouponGetIn.getCouponList());
         return ResponseEntity.ok(ResponseOut.success());
     }
-
 
     // admin 용도
     @PostMapping("/auth/coupon/partner")
