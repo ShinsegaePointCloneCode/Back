@@ -12,6 +12,7 @@ import com.example.smilekarina.user.exception.NoPasswordException;
 import com.example.smilekarina.user.exception.SamePasswordException;
 import com.example.smilekarina.user.exception.UserErrorStateCode;
 import com.example.smilekarina.user.vo.AuthenticatePasswordIn;
+import com.example.smilekarina.user.vo.FindIDOut;
 import com.example.smilekarina.user.vo.UserLoginIn;
 import com.example.smilekarina.user.vo.UserModifyIn;
 import com.example.smilekarina.user.infrastructure.UserRepository;
@@ -165,11 +166,13 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public String findID(String userName, String phone) {
-        return userRepository
-                .findByPhoneAndUserName(phone, userName)
-                .map(User::getLoginId)
-                .orElse(null);
+    public FindIDOut findID(String userName, String phone) {
+        User user = userRepository.findByPhoneAndUserName(phone, userName).orElseThrow(() ->
+                new NoSuchElementException("해당 유저가 없습니다."));
+        return FindIDOut.builder()
+                .loginId(user.getLoginId())
+                .address(user.getAddress())
+                .build();
     }
 
     @Override
@@ -211,7 +214,7 @@ public class UserServiceImpl implements UserService{
             throw new NoPasswordException(UserErrorStateCode.NOPASSWORD);
         }
     }
-
+//    @Transactional(readOnly = false)
     private void changeUserPassword(String loginId, String newPwd) {
         if (loginId == null || newPwd == null) {
             throw new IllegalArgumentException("Login ID or new password 가 null입니다.");
