@@ -35,7 +35,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-//@Transactional(readOnly = true)
+@Transactional(readOnly = true)
 public class GiftServiceImpl implements GiftService {
 
     private final UserService userService;
@@ -47,7 +47,7 @@ public class GiftServiceImpl implements GiftService {
 
     // 포인트 선물하기
     @Override
-    //    @Transactional(readOnly = false)
+    @Transactional(readOnly = false)
     public void registerGift(Long userId, GiftIn giftIn) {
 
         // 받는사람 로그인 아이디로 유저 아이디 추출
@@ -110,8 +110,8 @@ public class GiftServiceImpl implements GiftService {
 
     // 포인트 선물 수락
     @Override
-    //    @Transactional(readOnly = false)
-    @Transactional
+    @Transactional(readOnly = false)
+    @jakarta.transaction.Transactional
     public void acceptGift(GiftAcceptDto giftAcceptDto) {
 
         Optional<Gift> gift = giftRepository.findById(giftAcceptDto.getGiftId());
@@ -136,8 +136,8 @@ public class GiftServiceImpl implements GiftService {
 
     // 포인트 선물 거절
     @Override
-    //    @Transactional(readOnly = false)
-    @Transactional
+    @Transactional(readOnly = false)
+    @jakarta.transaction.Transactional
     public void cancelGift(GiftCancelDto giftCancelDto) {
 
         Optional<Gift> gift = giftRepository.findById(giftCancelDto.getGiftId());
