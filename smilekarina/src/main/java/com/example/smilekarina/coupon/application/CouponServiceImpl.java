@@ -7,7 +7,6 @@ import com.example.smilekarina.coupon.infrastructure.CouponPartnerRepository;
 import com.example.smilekarina.coupon.infrastructure.CouponRepository;
 import com.example.smilekarina.coupon.infrastructure.MyCouponListRepository;
 import com.example.smilekarina.coupon.vo.CouponAllSearchOut;
-import com.example.smilekarina.coupon.vo.CouponGetIn;
 import com.example.smilekarina.user.application.UserService;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -25,14 +24,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*", allowedHeaders = "*")
-//@Transactional(readOnly = true)
+@Transactional(readOnly = true)
 public class CouponServiceImpl implements CouponService{
     private final CouponRepository couponRepository;
     private final CouponPartnerRepository couponPartnerRepository;
@@ -41,7 +38,7 @@ public class CouponServiceImpl implements CouponService{
     private final JPAQueryFactory query;
 
     @Override
-//    @Transactional(readOnly = false)
+    @Transactional(readOnly = false)
     public void createPartner(CouponPartnerDto dto) {
         CouponPartner couponPartner = CouponPartner.builder()
                 .partnerName(dto.getPartnerName())
@@ -52,7 +49,7 @@ public class CouponServiceImpl implements CouponService{
         couponPartnerRepository.save(couponPartner);
     }
     @Override
-//    @Transactional(readOnly = false)
+    @Transactional(readOnly = false)
     public void createCoupon(CouponDto dto) {
 //        log.info(String.valueOf(dto.getCouponPartnerId()));
         CouponPartner couponPartner = couponPartnerRepository.findById(dto.getCouponPartnerId()).orElse(null);
@@ -108,7 +105,7 @@ public class CouponServiceImpl implements CouponService{
     }
 
     @Override
-//    @Transactional(readOnly = false)
+    @Transactional(readOnly = false)
     public void createMyCoupon(String token, Long couponId) {
         Long userId = userService.getUserIdFromToken(token);
         Coupon coupon = couponRepository.findById(couponId).orElse(null);
@@ -118,7 +115,7 @@ public class CouponServiceImpl implements CouponService{
     }
 
     @Override
-//    @Transactional(readOnly = false)
+    @Transactional(readOnly = false)
     public void createAllMyCoupon(String token, List<Long> couponList) {
         Long userId = userService.getUserIdFromToken(token);
         // 최대 20개 이하

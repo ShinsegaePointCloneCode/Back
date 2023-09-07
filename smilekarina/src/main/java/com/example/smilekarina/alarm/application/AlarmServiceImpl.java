@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-//@Transactional(readOnly = true)
+@Transactional(readOnly = true)
 public class AlarmServiceImpl implements AlarmService{
     private final AlarmRepository alarmRepository;
 

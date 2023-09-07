@@ -11,10 +11,7 @@ import com.example.smilekarina.user.dto.UserSignUpDto;
 import com.example.smilekarina.user.exception.NoPasswordException;
 import com.example.smilekarina.user.exception.SamePasswordException;
 import com.example.smilekarina.user.exception.UserErrorStateCode;
-import com.example.smilekarina.user.vo.AuthenticatePasswordIn;
-import com.example.smilekarina.user.vo.FindIDOut;
-import com.example.smilekarina.user.vo.UserLoginIn;
-import com.example.smilekarina.user.vo.UserModifyIn;
+import com.example.smilekarina.user.vo.*;
 import com.example.smilekarina.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.ErrorResponse;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.*;
@@ -34,8 +31,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*", allowedHeaders = "*")
-//@Transactional(readOnly = true)
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final UserDetailsService userDetailsService;
@@ -45,7 +41,7 @@ public class UserServiceImpl implements UserService{
 
     // 유저 추가 로직
     @Override
-//    @Transactional(readOnly = false)
+    @Transactional(readOnly = false)
     public Long createUser(UserSignUpDto userSignUpDto) {
         UUID uuid = UUID.randomUUID();
         String uuidString = uuid.toString();
@@ -88,7 +84,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-//    @Transactional(readOnly = false)
+    @Transactional(readOnly = false)
     public void modify(String token, UserModifyIn userModifyIn) {
         String loginId = jwtTokenProvider.getLoginId(token.substring(7));
         Optional<User> optionalUser = userRepository.findByLoginId(loginId);
@@ -177,7 +173,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-//    @Transactional(readOnly = false)
+    @Transactional(readOnly = false)
     public void changePassword(String token, String oldPwd, String newPwd) {
         String loginId = jwtTokenProvider.getLoginId(token.substring(7));
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginId);
@@ -190,13 +186,13 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-//    @Transactional(readOnly = false)
+    @Transactional(readOnly = false)
     public void searchPassword(String loginId, String newPwd) {
         changeUserPassword(loginId, newPwd);
     }
 
     @Override
-    //    @Transactional(readOnly = false)
+    @Transactional(readOnly = false)
     public void withdrawal(String token) {
         String loginId = jwtTokenProvider.getLoginId(token.substring(7));
         User user = userRepository.findByLoginId(loginId).orElse(null);
@@ -215,7 +211,18 @@ public class UserServiceImpl implements UserService{
             throw new NoPasswordException(UserErrorStateCode.NOPASSWORD);
         }
     }
-//    @Transactional(readOnly = false)
+
+    @Override
+    public CheckUserOut getOtherUserInfo(CheckUserIn checkUserIn) {
+        User user = userRepository.findByPhoneAndUserName(checkUserIn.getPhone(),checkUserIn.getUserName())
+                .orElseThrow(()-> new NoSuchElementException("해당 유저가 중복됩니다"));
+        return CheckUserOut.builder()
+                .userLoginId(user.getLoginId())
+                .userName(user.getName())
+                .build();
+    }
+
+    //    @Transactional(readOnly = false)
     private void changeUserPassword(String loginId, String newPwd) {
         if (loginId == null || newPwd == null) {
             throw new IllegalArgumentException("Login ID or new password 가 null입니다.");

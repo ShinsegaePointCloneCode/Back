@@ -1,11 +1,9 @@
 package com.example.smilekarina.point.application;
 
-import com.example.smilekarina.point.domain.Point;
-import com.example.smilekarina.point.domain.PointType;
-import com.example.smilekarina.point.domain.PointTypeConverter;
-import com.example.smilekarina.point.domain.QPoint;
+import com.example.smilekarina.point.domain.*;
 import com.example.smilekarina.point.dto.PointAddDto;
 import com.example.smilekarina.point.dto.PointPasswordCheckDto;
+import com.example.smilekarina.point.infrastructure.ExtinctionPointRepository;
 import com.example.smilekarina.point.infrastructure.PointRepository;
 import com.example.smilekarina.point.vo.PointInfoOut;
 import com.example.smilekarina.user.application.UserService;
@@ -34,6 +32,7 @@ public class  PointServiceImpl implements PointService{
     private final UserService userService;
     private final PointRepository pointRepository;
     private final UserRepository userRepository;
+    private final ExtinctionPointRepository extinctionPointRepository;
     private final JPAQueryFactory query;
 
     // 사용가능포인트 조회
@@ -54,18 +53,31 @@ public class  PointServiceImpl implements PointService{
         Integer usablPoint = getUsablePoint(user);
         // 적립예정 포인트 조회
         Integer addPoint = getAddExpectedPoint(user);
-        // 다음달 소멸예정 포인트 조회
-        Integer extPoint = getExtinction(user,24L);
-        // 다다음달 소멸예정 포인트 조회
-        Integer extNextPoint = getExtinction(user,23L);
+        // extictionPoint에서 받아온다. 혹시 null 이면 0을 반환한다.
+        ExtinctionPoint extinctionPoint = extinctionPointRepository.findByUpdateDateAndUserId(LocalDate.now(),userId)
+                .orElse(null);
+        if (extinctionPoint == null) {
+            return PointInfoOut.builder()
+                    .totalPoint(usablPoint)
+                    .addPoint(addPoint)
+                    .extPoint(0)
+                    .extNextPoint(0)
+                    .build();
+        } else {
+            // 다음달 소멸예정 포인트 조회
+            Integer extPoint = extinctionPoint.getThisExtinctionPoint();
+            // 다다음달 소멸예정 포인트 조회
+            Integer extNextPoint = extinctionPoint.getNextExtictionPoint();
 
-        return PointInfoOut.builder()
-                .totalPoint(usablPoint)
-                .addPoint(addPoint)
-                .extPoint(extPoint)
-                .extNextPoint(extNextPoint)
-                .build();
+            return PointInfoOut.builder()
+                    .totalPoint(usablPoint)
+                    .addPoint(addPoint)
+                    .extPoint(extPoint)
+                    .extNextPoint(extNextPoint)
+                    .build();
+        }
     }
+
 
     // 포인트 생성
     @Override
