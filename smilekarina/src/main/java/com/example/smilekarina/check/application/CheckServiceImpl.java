@@ -29,8 +29,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*", allowedHeaders = "*")
-//@Transactional(readOnly = true)
+@Transactional(readOnly = true)
 public class CheckServiceImpl implements CheckService {
     private final UserService userService;
     private final CheckRepository checkRepository;
@@ -49,7 +48,7 @@ public class CheckServiceImpl implements CheckService {
     }
     @Override
     @jakarta.transaction.Transactional
-//    @Transactional(readOnly = false)
+    @Transactional(readOnly = false)
     public void createCheck(String token, LocalDate time) {
         Long userId = userService.getUserIdFromToken(token);
         Optional<CheckPoint> checkPoint = checkRepository.findFirstByUserIdOrderByCntDateDesc(userId);

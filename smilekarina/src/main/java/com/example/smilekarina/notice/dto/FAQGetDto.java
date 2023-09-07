@@ -12,6 +12,5 @@ public class FAQGetDto {
     private String bigOption;
     private String smallOption;
     private String faqTitle;
-    private String faqContent;
     private String faqAnswer;
 }

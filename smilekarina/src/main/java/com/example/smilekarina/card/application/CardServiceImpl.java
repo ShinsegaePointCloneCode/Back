@@ -12,6 +12,7 @@ import com.example.smilekarina.card.vo.OnlinePointCardOut;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class CardServiceImpl implements CardService{
 
     private final PointCardRepository pointCardRepository;
@@ -30,12 +32,14 @@ public class CardServiceImpl implements CardService{
 
     // 신규 포인트 카드 등록
     @Override
+    @Transactional(readOnly = false)
     public void registerPointCard(PointCardDto pointCardDto) {
         createPointCard(pointCardDto);
     }
 
     // 제휴 멤버십 카드 등록
     @Override
+    @Transactional(readOnly = false)
     public void registerAffiliateCard(AffiliateCardDto affiliateCardDto) {
 
         // 삼성전자 포인트인 경우에는 포인트카드 테이블에 등록

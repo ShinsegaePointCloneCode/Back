@@ -3,10 +3,7 @@ package com.example.smilekarina.user.application;
 import com.example.smilekarina.user.dto.LogInDto;
 import com.example.smilekarina.user.dto.UserGetDto;
 import com.example.smilekarina.user.dto.UserSignUpDto;
-import com.example.smilekarina.user.vo.AuthenticatePasswordIn;
-import com.example.smilekarina.user.vo.FindIDOut;
-import com.example.smilekarina.user.vo.UserLoginIn;
-import com.example.smilekarina.user.vo.UserModifyIn;
+import com.example.smilekarina.user.vo.*;
 
 import java.util.List;
 
@@ -25,4 +22,5 @@ public interface UserService {
     void searchPassword(String loginId,String newPwd);
     void withdrawal(String token);
     void authenticatePassword(String token, AuthenticatePasswordIn authenticatePasswordIn);
+    CheckUserOut getOtherUserInfo(CheckUserIn checkUserIn);
 }

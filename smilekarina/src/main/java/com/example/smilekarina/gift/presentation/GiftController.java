@@ -4,10 +4,8 @@ import com.example.smilekarina.gift.application.GiftService;
 import com.example.smilekarina.gift.dto.GiftAcceptDto;
 import com.example.smilekarina.gift.dto.GiftCancelDto;
 import com.example.smilekarina.gift.dto.GiftLastDto;
-import com.example.smilekarina.gift.vo.GiftAcceptIn;
-import com.example.smilekarina.gift.vo.GiftCancelIn;
-import com.example.smilekarina.gift.vo.GiftIn;
-import com.example.smilekarina.gift.vo.GiftLastOut;
+import com.example.smilekarina.gift.dto.GiftSearchConditionDto;
+import com.example.smilekarina.gift.vo.*;
 import com.example.smilekarina.global.vo.ResponseOut;
 import com.example.smilekarina.point.application.PointService;
 import com.example.smilekarina.point.dto.PointPasswordCheckDto;
@@ -15,6 +13,7 @@ import com.example.smilekarina.user.application.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -112,6 +111,53 @@ public class GiftController {
     /*
         포인트 선물 리스트 조회
      */
+    @GetMapping("/point/pointGiftList")
+    public ResponseEntity<?> getPointGiftList(@RequestHeader("Authorization") String token,
+                                              @RequestParam(value="giftGb") String giftGb,
+                                              Pageable pageable) {
+
+        Long userId = userService.getUserIdFromToken(token);
+
+        GiftSearchConditionDto giftSearchConditionDto = GiftSearchConditionDto.builder()
+                .userId(userId)
+                .giftGb(giftGb)
+                .page(pageable.getPageNumber())
+                .size(pageable.getPageSize())
+                .offset(pageable.getOffset())
+                .build();
+
+        GiftListOut giftListOut = giftService.getPointGiftList(giftSearchConditionDto);
+        ResponseOut<?> responseOut = ResponseOut.success(giftListOut);
+        return ResponseEntity.ok(responseOut);
+    }
+
+    /*
+        포인트 선물하기 하단 리스트 상세조회
+     */
+    @GetMapping("/point/pointGiftListDetail")
+    public ResponseEntity<?> getPointGiftListDetail(@RequestHeader("Authorization") String token,
+                                                    @RequestParam(value="pointId") Long pointId) {
+
+        GiftPointDetailOut giftPointDetailOut = giftService.getGiftPointDetail(pointId);
+        ResponseOut<?> responseOut = ResponseOut.success(giftPointDetailOut);
+        return ResponseEntity.ok(responseOut);
+    }
+
+    /*
+        선물 메시지 조회
+     */
+    @GetMapping("/gift/content")
+    public ResponseEntity<?> getGiftMessage(@RequestHeader("Authorization") String token,
+                                            @RequestParam(value="giftId") Long giftId) {
+
+
+        GiftMessageOut getGiftMessage = giftService.getGiftMessage(giftId);
+
+        ResponseOut<?> responseOut = ResponseOut.success(getGiftMessage);
+        return ResponseEntity.ok(responseOut);
+
+    }
+
 
 
 }
