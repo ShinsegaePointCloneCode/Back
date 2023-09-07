@@ -1,7 +1,10 @@
 package com.example.smilekarina.check.application;
 
 import com.example.smilekarina.check.domain.CheckPoint;
+import com.example.smilekarina.check.domain.Roulette;
 import com.example.smilekarina.check.infrastructure.CheckRepository;
+import com.example.smilekarina.check.infrastructure.RouletteRepository;
+import com.example.smilekarina.check.vo.RouletteCheckOut;
 import com.example.smilekarina.global.exception.ErrorStateCode;
 import com.example.smilekarina.global.exception.SameDayCheckException;
 import com.example.smilekarina.point.application.PointService;
@@ -13,7 +16,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.ErrorResponseException;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
+import javax.naming.NoPermissionException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -23,10 +29,12 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 //@Transactional(readOnly = true)
 public class CheckServiceImpl implements CheckService {
     private final UserService userService;
     private final CheckRepository checkRepository;
+    private final RouletteRepository rouletteRepository;
     private final PointService pointService;
 
     @Override
@@ -50,6 +58,38 @@ public class CheckServiceImpl implements CheckService {
         } else {
             create(userId, time);
         }
+    }
+
+    @Override
+    public void createRoulette(String token, Integer point) {
+        Long userId = userService.getUserIdFromToken(token);
+        LocalDate now = LocalDate.now();
+        Optional<Roulette> rouletteValue = rouletteRepository.findByRouletteDateAndUserId(now,userId);
+        if(rouletteValue.isPresent()) {
+            throw new NoSuchElementException("중복 룰렛되고 있습니다.");
+        } else {
+            Roulette roulette = Roulette.builder()
+                    .userId(userId)
+                    .rouletteDate(now)
+                    .build();
+            rouletteRepository.save(roulette);
+            pushPoint(userId, point);
+        }
+    }
+
+    @Override
+    public RouletteCheckOut getRoulette(String token) {
+        Long userId = userService.getUserIdFromToken(token);
+        LocalDate now = LocalDate.now();
+        Optional<Roulette> rouletteValue = rouletteRepository.findByRouletteDateAndUserId(now,userId);
+        if(rouletteValue.isPresent()) {
+            return RouletteCheckOut.builder()
+                    .rouletteCheck(false)
+                    .build();
+        }
+        return RouletteCheckOut.builder()
+                .rouletteCheck(true)
+                .build();
     }
 
     private void update(Long userId, CheckPoint lastPoint, LocalDate time) {
