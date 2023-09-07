@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+//@Transactional(readOnly = true)
 public class CouponServiceImpl implements CouponService{
     private final CouponRepository couponRepository;
     private final CouponPartnerRepository couponPartnerRepository;
@@ -39,6 +41,7 @@ public class CouponServiceImpl implements CouponService{
     private final JPAQueryFactory query;
 
     @Override
+//    @Transactional(readOnly = false)
     public void createPartner(CouponPartnerDto dto) {
         CouponPartner couponPartner = CouponPartner.builder()
                 .partnerName(dto.getPartnerName())
@@ -49,6 +52,7 @@ public class CouponServiceImpl implements CouponService{
         couponPartnerRepository.save(couponPartner);
     }
     @Override
+//    @Transactional(readOnly = false)
     public void createCoupon(CouponDto dto) {
 //        log.info(String.valueOf(dto.getCouponPartnerId()));
         CouponPartner couponPartner = couponPartnerRepository.findById(dto.getCouponPartnerId()).orElse(null);
@@ -104,6 +108,7 @@ public class CouponServiceImpl implements CouponService{
     }
 
     @Override
+//    @Transactional(readOnly = false)
     public void createMyCoupon(String token, Long couponId) {
         Long userId = userService.getUserIdFromToken(token);
         Coupon coupon = couponRepository.findById(couponId).orElse(null);
@@ -113,6 +118,7 @@ public class CouponServiceImpl implements CouponService{
     }
 
     @Override
+//    @Transactional(readOnly = false)
     public void createAllMyCoupon(String token, List<Long> couponList) {
         Long userId = userService.getUserIdFromToken(token);
         // 최대 20개 이하

@@ -2,6 +2,7 @@ package com.example.smilekarina.user.presentation;
 
 import com.example.smilekarina.agree.application.AgreeService;
 import com.example.smilekarina.agree.dto.AgreeAdvertiseDto;
+import com.example.smilekarina.agree.vo.AgreeAdvertiseIn;
 import com.example.smilekarina.global.vo.ResponseOut;
 import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.dto.LogInDto;
@@ -51,7 +52,7 @@ public class UserController {
     }
 
     @Operation(summary= "회원 정보 가져오기", description= "token으로 회원정보를 가져온다.", tags = { "User Controller" })
-    @GetMapping("/user")
+    @GetMapping("/user ")
     public ResponseEntity<ResponseOut<?>> getUserByUUID(@RequestHeader("Authorization") String token) {
         UserGetDto userGetDto = userService.getUserDtoFromToken(token);
         log.info("OUTPUT userGetDto is : {}" , userGetDto);
@@ -99,14 +100,13 @@ public class UserController {
     @GetMapping("/member/findIdPw")
     public ResponseEntity<?> authenticateUser(@RequestParam("userName") String userName,
                                               @RequestParam("phone") String phone ) {
-        String loginId = userService.findID(userName,phone);
-        if (loginId== null) {
+        FindIDOut findIDOut = userService.findID(userName,phone);
+        if (findIDOut.getLoginId() == null) {
             // 아이디를 찾을 수 없을 때
             ResponseOut<?> responseOut = ResponseOut.fail();
             return ResponseEntity.ok(responseOut);
         }
-        ResponseOut<?> responseOut = ResponseOut.success(loginId);
-        return ResponseEntity.ok(responseOut);
+        return ResponseEntity.ok(ResponseOut.success(findIDOut));
     }
     @Operation(summary= "비밀 번호 바꾸기", description= "인증을 했을 경우 비밀번호를 바꾸는 로직", tags = { "User Controller" })
     @PutMapping("/myinfo/changePwd")
@@ -145,18 +145,20 @@ public class UserController {
     }
 
     private UserSignUpOut userSignUpOutCreate(UserAgreeSignUpIn userAgreeSignUpIn) {
+        AgreeAdvertiseIn ad = userAgreeSignUpIn.getAgreeAdvertiseIn();
+        UserSignUpIn us = userAgreeSignUpIn.getUserSignUpIn();
         return UserSignUpOut.builder()
-                .loginId(userAgreeSignUpIn.getUserSignUpIn().getLoginId())
-                .email(userAgreeSignUpIn.getUserSignUpIn().getEmail())
-                .userName(userAgreeSignUpIn.getUserSignUpIn().getUserName())
-                .phone(userAgreeSignUpIn.getUserSignUpIn().getPhone())
-                .address(userAgreeSignUpIn.getUserSignUpIn().getAddress())
-                .optionOne(userAgreeSignUpIn.getAgreeAdvertiseIn().getOptionOne())
-                .optionTwo(userAgreeSignUpIn.getAgreeAdvertiseIn().getOptionTwo())
-                .agreeEmail(userAgreeSignUpIn.getAgreeAdvertiseIn().getAgreeEmail())
-                .letter(userAgreeSignUpIn.getAgreeAdvertiseIn().getLetter())
-                .tm(userAgreeSignUpIn.getAgreeAdvertiseIn().getTm())
-                .dm(userAgreeSignUpIn.getAgreeAdvertiseIn().getDm())
+                .loginId(us.getLoginId())
+                .email(us.getEmail())
+                .userName(us.getUserName())
+                .phone(us.getPhone())
+                .address(us.getAddress())
+                .optionOne(ad.getOptionOne())
+                .optionTwo(ad.getOptionTwo())
+                .agreeEmail(ad.getAgreeEmail())
+                .letter(ad.getLetter())
+                .tm(ad.getTm())
+                .dm(ad.getDm())
                 .build();
     }
 }
