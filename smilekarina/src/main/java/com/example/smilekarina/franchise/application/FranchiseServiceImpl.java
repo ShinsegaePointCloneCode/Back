@@ -52,11 +52,12 @@ public class FranchiseServiceImpl implements FranchiseService{
 
         List<RegionOut> RegionOut = query
                 .select(Projections.constructor(RegionOut.class,
+                        franchise.franchiseName,
                         branch.sidoName,
                         branch.gugunName,
                         branch.branchName,
-                        branch.branchAddress,
-                        franchise.franchiseName))
+                        branch.branchAddress
+                        ))
                 .from(branch)
                 .leftJoin(branch.franchise, franchise)
                 .where(branch.franchise.eq(franchise),finalPredicate)
