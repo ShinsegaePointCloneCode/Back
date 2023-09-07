@@ -2,13 +2,14 @@ package com.example.smilekarina.franchise.vo;
 
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FranchiseIn {
+public class RegionOut {
     private String franchiseName;
-    private String sidoNm;
+    private String sidoName;
     private String gugunName;
+    private String branchName;
+    private String branchAddress;
 }

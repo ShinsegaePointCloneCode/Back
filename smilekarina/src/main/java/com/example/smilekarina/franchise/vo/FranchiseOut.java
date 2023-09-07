@@ -10,15 +10,11 @@ import lombok.*;
 public class FranchiseOut {
     private String franchiseName;
     private String franchiseImage;
-    private String sidoName;
-    private String gugunName;
     private String branchName;
     private String branchAddress;
     private Double branchLatitude;
     private Double branchLontitude;
     public FranchiseOut(Branch branch, String franchiseImage, String franchiseName) {
-        this.sidoName = branch.getSidoName();
-        this.gugunName = branch.getGugunName();
         this.branchName = branch.getBranchName();
         this.branchAddress = branch.getBranchAddress();
         this.branchLatitude = branch.getBranchLatitude();

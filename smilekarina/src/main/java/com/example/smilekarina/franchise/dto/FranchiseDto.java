@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FranchiseDto {
-    private String franchise_name;
+    private String franchiseName;
     private String sidoNm;
     private String gugunName;
 }

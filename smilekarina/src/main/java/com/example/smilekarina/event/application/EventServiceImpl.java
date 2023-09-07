@@ -9,6 +9,7 @@ import com.example.smilekarina.event.vo.EventOut;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.time.LocalDateTime;
@@ -30,7 +32,7 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @Slf4j
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-//@Transactional(readOnly = true)
+@Transactional(readOnly = true)
 public class EventServiceImpl implements EventService{
 
     private final EventRepository eventRepository;
@@ -139,6 +141,7 @@ public class EventServiceImpl implements EventService{
                 "CAST({0} AS string)",
                 event.eventType
         );
+        BooleanExpression baseCondition = event.eventStart.loe(currentTime).and(event.eventEnd.goe(currentTime));
         List<EventListOut> eventListOutQuery = query
                 .select(Projections.constructor(EventListOut.class,
                     event.id,
@@ -151,6 +154,7 @@ public class EventServiceImpl implements EventService{
                     eventTypeAsString
                 ))
                 .from(event)
+                .where(baseCondition)
                 .orderBy(orderSpecifier)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -164,10 +168,72 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public List<EventListOut> endEvent(Integer pageNo, Integer size) {
+    public Page<EventListOut> prizeEvent(Pageable pageable) {
+        LocalDateTime now =LocalDateTime.now();
+        QEvent event = QEvent.event;
+        Expression<String> eventTypeAsString = Expressions.stringTemplate(
+                "CAST({0} AS string)",
+                event.eventType
+        );
+        BooleanExpression baseCondition = event.eventEnd.lt(now);
+        List<EventListOut> eventListOutQuery = query
+                .select(Projections.constructor(EventListOut.class,
+                        event.id,
+                        event.eventHead,
+                        event.linkedUrl,
+                        event.createdDate,
+                        event.eventStart,
+                        event.eventEnd,
+                        event.eventThumbnail,
+                        eventTypeAsString
+                ))
+                .from(event)
+                .where(baseCondition,
+                        event.eventType.eq(EventType.PARTICIPATE))
+                .orderBy(event.eventEnd.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+        Long count = query
+                .select(event.count())
+                .from(event)
+                .fetchOne();
+        if (count == null) count = 0L;
+        return new PageImpl<>(eventListOutQuery,pageable,count);
+    }
+
+    @Override
+    public Page<EventListOut> endEvent(Pageable pageable) {
         LocalDateTime now = LocalDateTime.now();
-        List<Event> endEvents = eventRepository.findByEventEndAfter(now);
-        return null;
+        QEvent event = QEvent.event;
+        Expression<String> eventTypeAsString = Expressions.stringTemplate(
+                "CAST({0} AS string)",
+                event.eventType
+        );
+        BooleanExpression baseCondition = event.eventEnd.lt(now);
+        List<EventListOut> eventListOutQuery = query
+                .select(Projections.constructor(EventListOut.class,
+                        event.id,
+                        event.eventHead,
+                        event.linkedUrl,
+                        event.createdDate,
+                        event.eventStart,
+                        event.eventEnd,
+                        event.eventThumbnail,
+                        eventTypeAsString
+                ))
+                .from(event)
+                .where(baseCondition)
+                .orderBy(event.eventEnd.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+        Long count = query
+                .select(event.count())
+                .from(event)
+                .fetchOne();
+        if (count == null) count = 0L;
+        return new PageImpl<>(eventListOutQuery,pageable,count);
     }
 
     @Override

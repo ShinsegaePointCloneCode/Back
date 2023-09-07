@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-public class EventListOut {
+public class   EventListOut {
     private Long id;
     private String eventHead;   //이벤트 제목
     private String linkedUrl;   //디테일페이지 연결링크

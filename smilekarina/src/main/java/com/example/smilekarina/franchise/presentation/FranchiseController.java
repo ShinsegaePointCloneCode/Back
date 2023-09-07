@@ -6,6 +6,7 @@ import com.example.smilekarina.franchise.domain.Franchise;
 import com.example.smilekarina.franchise.dto.FranchiseDto;
 import com.example.smilekarina.franchise.vo.FranchiseIn;
 import com.example.smilekarina.franchise.vo.FranchiseOut;
+import com.example.smilekarina.franchise.vo.RegionOut;
 import com.example.smilekarina.global.vo.ResponseOut;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,19 +25,20 @@ import java.util.List;
 public class FranchiseController {
     private final FranchiseService franchiseService;
     private final ModelMapper modelMapper;
-    @GetMapping("/mylounge/findstore/1 ")
-    public ResponseEntity<?>getFindStore(){
-        List<FranchiseOut> franchiseOutList = franchiseService.findStore();
-        ResponseOut<?> responseOut = ResponseOut.success(franchiseOutList);
+    @GetMapping("/mylounge/findStore/region")
+    public ResponseEntity<?>getFindStoreRegion(@RequestHeader("Authorization") String token,
+                                               @RequestBody FranchiseIn franchiseIn,
+                                               Pageable pageable){
+        FranchiseDto franchiseDto= modelMapper.map(franchiseIn,FranchiseDto.class);
+        Page<RegionOut> regionOutList = franchiseService.findStore(franchiseDto,pageable);
+        ResponseOut<?> responseOut = ResponseOut.success(regionOutList);
         return ResponseEntity.ok(responseOut);
     }
 
-    @GetMapping("/mylounge/findstore")
+    @GetMapping("/mylounge/findStore/map")
     public ResponseEntity<?>getFindStoreList(@RequestHeader("Authorization") String token,
-                                             @RequestBody FranchiseIn franchiseIn,
                                              Pageable pageable){
-        FranchiseDto franchiseDto= modelMapper.map(franchiseIn,FranchiseDto.class);
-        Page<FranchiseOut> franchiseOutList = franchiseService.findstorelist(franchiseDto,pageable);
+        Page<FranchiseOut> franchiseOutList = franchiseService.findStoreList(pageable);
         ResponseOut<?> responseOut = ResponseOut.success(franchiseOutList);
         return ResponseEntity.ok(responseOut);
     }

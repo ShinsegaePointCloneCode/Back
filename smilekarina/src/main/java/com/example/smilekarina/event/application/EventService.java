@@ -15,8 +15,10 @@ public interface EventService {
     //EventPrizeDto getPrizeEvent(Long id);
     List<EventListGetDto> getAllEvent();
     //EventGetDto checkEvent(Integer eventNo);
-    List<EventListOut> endEvent(Integer pageNo,Integer size);
+    Page<EventListOut> endEvent(Pageable pageable);
     List<EventListOut> myEventList(Integer pageNo,Integer size);
     Page<EventListOut> checkIngEvent(Integer orderType, Pageable pageable);
+
+    Page<EventListOut> prizeEvent(Pageable pageable);
 }
 

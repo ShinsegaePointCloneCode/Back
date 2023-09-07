@@ -30,10 +30,16 @@ public class EventController {
     }
 
     @GetMapping("/event/endevent")
-    public ResponseEntity<?>getEndEvent(@RequestParam(value="page") Integer pageNo,
-                                        @RequestParam(value = "size")Integer size){
-        List<EventListOut> eventEndListOut =eventService.endEvent(pageNo,size);
-        ResponseOut<?> responseOut = ResponseOut.success();
+    public ResponseEntity<?>getEndEvent(Pageable pageable){
+        Page<EventListOut> eventEndListOut =eventService.endEvent(pageable);
+        ResponseOut<?> responseOut = ResponseOut.success(eventEndListOut);
+        return ResponseEntity.ok(responseOut);
+    }
+
+    @GetMapping("/event/winevents")
+    public ResponseEntity<?>getPrizeEndListEvent(Pageable pageable){
+        Page<EventListOut> eventPrizeListOut =eventService.prizeEvent(pageable);
+        ResponseOut<?> responseOut = ResponseOut.success(eventPrizeListOut);
         return ResponseEntity.ok(responseOut);
     }
 /*
