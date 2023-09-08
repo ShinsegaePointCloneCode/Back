@@ -36,25 +36,9 @@ public class GiftController {
     @PostMapping("/point/gift")
     public ResponseEntity<?> createGift(@RequestHeader("Authorization") String token, @RequestBody GiftIn giftIn) {
 
-        // 보낸사람 포인트비밀번호 체크
-        Long userId = userService.getUserIdFromToken(token);
-
-        PointPasswordCheckDto pointPasswordCheckDto = PointPasswordCheckDto.builder()
-                .userId(userId)
-                .pointPassword(giftIn.getPointPassword())
-                .build();
-
-        Boolean checkResult = pointService.checkPointPassword(pointPasswordCheckDto);
-
-        if(!checkResult) {
-            // TODO 실패시 메시지, 코드 리턴값은 프론트와 상의 후 확정 예정 일단은 인증실패로 리턴
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
         // 선물하기 처리
-        giftService.registerGift(userId, giftIn);
+        giftService.registerGift(token, giftIn);
         ResponseOut<?> responseOut = ResponseOut.success();
-
         return ResponseEntity.ok(responseOut);
     }
 
@@ -150,14 +134,9 @@ public class GiftController {
     public ResponseEntity<?> getGiftMessage(@RequestHeader("Authorization") String token,
                                             @RequestParam(value="giftId") Long giftId) {
 
-
         GiftMessageOut getGiftMessage = giftService.getGiftMessage(giftId);
-
         ResponseOut<?> responseOut = ResponseOut.success(getGiftMessage);
         return ResponseEntity.ok(responseOut);
-
     }
-
-
 
 }

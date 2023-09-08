@@ -14,6 +14,7 @@ public enum ErrorStateCode {
 //    TOKEN_UNAUTH(false,3200, "토큰이 일치하지 않습니다"),
 //    GATEWAY(false,503, "게이트 웨이 요청에 문제가 있습니다"),
     SAMEDAYCHECK(false,4100,"동일한 출석요청입니다."),
+    INCORRECTPOINTPASSWORD(false,5100,"포인트비밀번호가 일치하지 않습니다."),
     SUCCESS(true,200, "성공");
 
     private final boolean success;

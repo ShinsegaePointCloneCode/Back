@@ -7,10 +7,13 @@ import com.example.smilekarina.gift.domain.QGift;
 import com.example.smilekarina.gift.dto.*;
 import com.example.smilekarina.gift.infrastructure.GiftRepository;
 import com.example.smilekarina.gift.vo.*;
+import com.example.smilekarina.global.exception.ErrorStateCode;
+import com.example.smilekarina.global.exception.PointPasswordIncorrectException;
 import com.example.smilekarina.point.application.PointService;
 import com.example.smilekarina.point.domain.Point;
 import com.example.smilekarina.point.domain.PointType;
 import com.example.smilekarina.point.dto.PointAddDto;
+import com.example.smilekarina.point.dto.PointPasswordCheckDto;
 import com.example.smilekarina.point.infrastructure.PointRepository;
 import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.domain.User;
@@ -45,7 +48,21 @@ public class GiftServiceImpl implements GiftService {
     // 포인트 선물하기
     @Override
     @Transactional(readOnly = false)
-    public void registerGift(Long userId, GiftIn giftIn) {
+    public void registerGift(String token, GiftIn giftIn) {
+
+        // 보낸사람 포인트비밀번호 체크
+        Long userId = userService.getUserIdFromToken(token);
+
+        PointPasswordCheckDto pointPasswordCheckDto = PointPasswordCheckDto.builder()
+                .userId(userId)
+                .pointPassword(giftIn.getPointPassword())
+                .build();
+
+        Boolean checkResult = pointService.checkPointPassword(pointPasswordCheckDto);
+
+        if(!checkResult) {
+            throw new PointPasswordIncorrectException((ErrorStateCode.INCORRECTPOINTPASSWORD));
+        }
 
         // 받는사람 로그인 아이디로 유저 아이디 추출
         Long recipientId = userService.getUserId(giftIn.getRecipientLoginId());
