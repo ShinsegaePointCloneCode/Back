@@ -7,6 +7,7 @@ import com.example.smilekarina.coupon.infrastructure.CouponPartnerRepository;
 import com.example.smilekarina.coupon.infrastructure.CouponRepository;
 import com.example.smilekarina.coupon.infrastructure.MyCouponListRepository;
 import com.example.smilekarina.coupon.vo.CouponAllSearchOut;
+import com.example.smilekarina.coupon.vo.MyCouponNumOut;
 import com.example.smilekarina.user.application.UserService;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -106,12 +107,13 @@ public class CouponServiceImpl implements CouponService{
 
     @Override
     @Transactional(readOnly = false)
-    public void createMyCoupon(String token, Long couponId) {
+    public MyCouponNumOut createMyCoupon(String token, Long couponId) {
         Long userId = userService.getUserIdFromToken(token);
         Coupon coupon = couponRepository.findById(couponId).orElse(null);
         // todo : 유효성 검사
-        generateCoupon(coupon,userId);
-
+        return  MyCouponNumOut.builder()
+                .couponNum(generateCoupon(coupon,userId))
+                .build();
     }
 
     @Override
@@ -132,9 +134,9 @@ public class CouponServiceImpl implements CouponService{
     // 타입에 따른 정렬 기준
     private OrderSpecifier<?> getOrderSpecifier(QCoupon coupon, Integer orderType) {
         return switch (orderType) {
-            case 30 -> coupon.id.asc();
-            case 40 -> coupon.couponEnd.desc();
-            default -> coupon.couponStart.asc();  // 기본 정렬
+            case 30 -> coupon.id.desc();
+            case 40 -> coupon.couponEnd.asc();
+            default -> coupon.couponStart.desc();  // 기본 정렬
         };
     }
 
@@ -208,7 +210,7 @@ public class CouponServiceImpl implements CouponService{
     }
     // 쿠폰 생성
     @Transactional(readOnly = false)
-    public void generateCoupon(Coupon coupon, Long userId) {
+    public String generateCoupon(Coupon coupon, Long userId) {
         String couponNumber = generateRandomNumber(20);
         MyCouponList myCouponList = MyCouponList.builder()
                 .useStatus(false)
@@ -218,6 +220,7 @@ public class CouponServiceImpl implements CouponService{
                 .downloadDate(LocalDateTime.now())
                 .build();
         myCouponListRepository.save(myCouponList);
+        return myCouponList.getCouponNumber();
     }
     // 바코드 번호 추출(외부 서비스)
     private String generateRandomNumber(int length) {
