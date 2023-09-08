@@ -7,14 +7,10 @@ import com.example.smilekarina.gift.dto.GiftLastDto;
 import com.example.smilekarina.gift.dto.GiftSearchConditionDto;
 import com.example.smilekarina.gift.vo.*;
 import com.example.smilekarina.global.vo.ResponseOut;
-import com.example.smilekarina.point.application.PointService;
-import com.example.smilekarina.point.dto.PointPasswordCheckDto;
-import com.example.smilekarina.user.application.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +23,6 @@ public class GiftController {
 
     private final ModelMapper modelMapper;
     private final GiftService giftService;
-    private final PointService pointService;
-    private final UserService userService;
 
     /*
         포인트 선물하기
@@ -36,25 +30,9 @@ public class GiftController {
     @PostMapping("/point/gift")
     public ResponseEntity<?> createGift(@RequestHeader("Authorization") String token, @RequestBody GiftIn giftIn) {
 
-        // 보낸사람 포인트비밀번호 체크
-        Long userId = userService.getUserIdFromToken(token);
-
-        PointPasswordCheckDto pointPasswordCheckDto = PointPasswordCheckDto.builder()
-                .userId(userId)
-                .pointPassword(giftIn.getPointPassword())
-                .build();
-
-        Boolean checkResult = pointService.checkPointPassword(pointPasswordCheckDto);
-
-        if(!checkResult) {
-            // TODO 실패시 메시지, 코드 리턴값은 프론트와 상의 후 확정 예정 일단은 인증실패로 리턴
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
         // 선물하기 처리
-        giftService.registerGift(userId, giftIn);
+        giftService.registerGift(token, giftIn);
         ResponseOut<?> responseOut = ResponseOut.success();
-
         return ResponseEntity.ok(responseOut);
     }
 
@@ -81,11 +59,9 @@ public class GiftController {
     @PostMapping("/gift/accept")
     public ResponseEntity<?> acceptGift(@RequestHeader("Authorization") String token, @RequestBody GiftAcceptIn giftAcceptIn) {
 
-        Long userId = userService.getUserIdFromToken(token);
-
         GiftAcceptDto giftAcceptDto = GiftAcceptDto.builder()
                 .giftId(giftAcceptIn.getGiftId())
-                .userId(userId)
+                .token(token)
                 .build();
 
         giftService.acceptGift(giftAcceptDto);
@@ -116,10 +92,8 @@ public class GiftController {
                                               @RequestParam(value="giftGb") String giftGb,
                                               Pageable pageable) {
 
-        Long userId = userService.getUserIdFromToken(token);
-
         GiftSearchConditionDto giftSearchConditionDto = GiftSearchConditionDto.builder()
-                .userId(userId)
+                .token(token)
                 .giftGb(giftGb)
                 .page(pageable.getPageNumber())
                 .size(pageable.getPageSize())
@@ -150,14 +124,9 @@ public class GiftController {
     public ResponseEntity<?> getGiftMessage(@RequestHeader("Authorization") String token,
                                             @RequestParam(value="giftId") Long giftId) {
 
-
         GiftMessageOut getGiftMessage = giftService.getGiftMessage(giftId);
-
         ResponseOut<?> responseOut = ResponseOut.success(getGiftMessage);
         return ResponseEntity.ok(responseOut);
-
     }
-
-
 
 }
