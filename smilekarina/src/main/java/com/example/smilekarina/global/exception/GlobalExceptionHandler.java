@@ -28,4 +28,14 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(ErrorStateCode.SAMEDAYCHECK);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
+
+    /*
+        포인트 비밀번호 불일치
+     */
+    @ExceptionHandler(PointPasswordIncorrectException.class)
+    protected ResponseEntity<ErrorResponse> handlerPointPasswordCheck(PointPasswordIncorrectException ex) {
+        log.error("PointPasswordIncorrectException", ex);
+        ErrorResponse errorResponse = new ErrorResponse(ErrorStateCode.INCORRECTPOINTPASSWORD);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
 }
