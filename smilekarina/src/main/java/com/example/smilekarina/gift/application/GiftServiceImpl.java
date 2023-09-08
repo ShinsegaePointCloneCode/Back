@@ -108,7 +108,6 @@ public class GiftServiceImpl implements GiftService {
     // 포인트 선물 수락
     @Override
     @Transactional(readOnly = false)
-    @jakarta.transaction.Transactional
     public void acceptGift(GiftAcceptDto giftAcceptDto) {
 
         Optional<Gift> gift = giftRepository.findById(giftAcceptDto.getGiftId());
@@ -134,7 +133,6 @@ public class GiftServiceImpl implements GiftService {
     // 포인트 선물 거절
     @Override
     @Transactional(readOnly = false)
-    @jakarta.transaction.Transactional
     public void cancelGift(GiftCancelDto giftCancelDto) {
 
         Optional<Gift> gift = giftRepository.findById(giftCancelDto.getGiftId());
@@ -210,8 +208,6 @@ public class GiftServiceImpl implements GiftService {
                 .fetch();
 
         List<GiftDetailListOut> giftDetailListOut = new ArrayList<>();
-
-        // TODO 포인트 내역리스트 가져오기에서 보여줘야할 선물 정보랑 비슷하니 공통메서드를 만들 수 있으면 만들 것
 
         if(!giftList.isEmpty()) {
             for(GiftDetailDto giftOne : giftList) {

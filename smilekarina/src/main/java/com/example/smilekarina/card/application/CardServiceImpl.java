@@ -163,7 +163,8 @@ public class CardServiceImpl implements CardService{
 
 
     // 포인트 카드 등록 처리
-    private void createPointCard(PointCardDto pointCardDto) {
+    @Transactional(readOnly = false)
+    public void createPointCard(PointCardDto pointCardDto) {
 
         IssueType issueType = new IssueTypeConverter().convertToEntityAttribute(pointCardDto.getIssueType());
 
@@ -176,9 +177,5 @@ public class CardServiceImpl implements CardService{
 
         pointCardRepository.save(pointCard);
     }
-
-
-
-
 
 }
