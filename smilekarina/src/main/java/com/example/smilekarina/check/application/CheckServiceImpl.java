@@ -47,7 +47,6 @@ public class CheckServiceImpl implements CheckService {
                 .collect(Collectors.toList());
     }
     @Override
-    @jakarta.transaction.Transactional
     @Transactional(readOnly = false)
     public void createCheck(String token, LocalDate time) {
         Long userId = userService.getUserIdFromToken(token);
@@ -60,6 +59,7 @@ public class CheckServiceImpl implements CheckService {
     }
 
     @Override
+    @Transactional(readOnly = false)
     public void createRoulette(String token, Integer point) {
         Long userId = userService.getUserIdFromToken(token);
         LocalDate now = LocalDate.now();
@@ -92,8 +92,8 @@ public class CheckServiceImpl implements CheckService {
                 .rouletteCheck(true)
                 .build();
     }
-
-    private void update(Long userId, CheckPoint lastPoint, LocalDate time) {
+    @Transactional(readOnly = false)
+    public void update(Long userId, CheckPoint lastPoint, LocalDate time) {
         // 차이를 계산
         int dayDifference = time.getDayOfMonth() - lastPoint.getCheckDate().getDayOfMonth();
         // 계산 로직
@@ -126,8 +126,8 @@ public class CheckServiceImpl implements CheckService {
             pushPoint(userId, 1);
         }
     }
-
-    private void create(Long userId, LocalDate time) {
+    @Transactional(readOnly = false)
+    public void create(Long userId, LocalDate time) {
         pushPoint(userId, 1);
         CheckPoint checkPoint = CheckPoint.builder()
                 .cntDate(1)
@@ -136,7 +136,8 @@ public class CheckServiceImpl implements CheckService {
                 .build();
         checkRepository.save(checkPoint);
     }
-    private void pushPoint(Long userId, int point) {
+    @Transactional(readOnly = false)
+    public void pushPoint(Long userId, int point) {
         PointAddDto pointAddDto = PointAddDto.builder()
                 .point(point)
                 .pointType(PointType.CHECK.getCode())

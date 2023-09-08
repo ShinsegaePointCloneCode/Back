@@ -105,7 +105,6 @@ public class ClubServiceImpl implements ClubService{
     }
 
     @Override
-    @jakarta.transaction.Transactional
     @Transactional(readOnly = true)
     public void clear(String token, ClubType clubType) {
         Long userId = userService.getUserIdFromToken(token);
@@ -227,8 +226,10 @@ public class ClubServiceImpl implements ClubService{
         club.setClubContent(content);
         clubRepository.save(club);
     }
-    private Long getUserIdFromToken(String token) {return userService.getUserIdFromToken(token);}
-    private String transformToCommaSeparatedString(Object obj) {
+    @Transactional(readOnly = true)
+    public Long getUserIdFromToken(String token) {return userService.getUserIdFromToken(token);}
+    @Transactional(readOnly = true)
+    public String transformToCommaSeparatedString(Object obj) {
         StringBuilder sb = new StringBuilder();
         Field[] fields = obj.getClass().getDeclaredFields();
         for (Field field : fields) {

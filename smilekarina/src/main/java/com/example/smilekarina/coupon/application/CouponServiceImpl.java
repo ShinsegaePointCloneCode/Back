@@ -207,7 +207,8 @@ public class CouponServiceImpl implements CouponService{
         return count == null ? 0L : count;
     }
     // 쿠폰 생성
-    private void generateCoupon(Coupon coupon, Long userId) {
+    @Transactional(readOnly = false)
+    public void generateCoupon(Coupon coupon, Long userId) {
         String couponNumber = generateRandomNumber(20);
         MyCouponList myCouponList = MyCouponList.builder()
                 .useStatus(false)
