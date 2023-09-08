@@ -194,29 +194,44 @@ public class  PointServiceImpl implements PointService{
     }
 
     // 소멸예정포인트 조회
-    private Integer getExtinction(User user, Long minusMonth) { // minusMonth : 계산해야할 현재 달 - minusMonth
-
-        // 1. 소멸예정달의 적립된 포인트들의 합
+    private Integer getExtinctionPoints(User user, LocalDate todayDate) { // 계산해야할 현재 달 - minusMonth
         QPoint point = QPoint.point1;
 
-        // 2년 전부터
-        LocalDate targetStartDate = LocalDate.now().minusMonths(minusMonth).minusYears(2).withDayOfMonth(1);
-        LocalDateTime targetStartDateTime = targetStartDate.atStartOfDay();
+        // For last_month:
+        LocalDate lastMonthStartDate = todayDate.minusYears(2).withDayOfMonth(1);
+        LocalDateTime lastMonthStartDateTime = lastMonthStartDate.atStartOfDay();
 
-        //
-        LocalDate targetEndDate = targetStartDate.plusMonths(1);
-        LocalDateTime targetEndDateTime = targetEndDate.atStartOfDay();
-        // 2년전 한달동안 쌓은 데이터
-        Integer sum = query
+        LocalDate lastMonthEndDate = lastMonthStartDate.plusMonths(1);
+        LocalDateTime lastMonthEndDateTime = lastMonthEndDate.atStartOfDay();
+
+        Integer last_month = query
                 .select(point.point.sum())
                 .from(point)
                 .where(point.user.eq(user)
-                        .and(point.createdDate.between(targetStartDateTime, targetEndDateTime))
+                        .and(point.createdDate.between(lastMonthStartDateTime, lastMonthEndDateTime))
                         .and(point.used.eq(false)))
                 .fetchOne();
 
-        sum = (sum != null) ? sum : 0;
-        if (sum == null) return 0;
+        last_month = (last_month != null) ? last_month : 0;
+        if (last_month == null) return 0;
+
+        // For next_month:
+        LocalDate nextMonthStartDate = lastMonthEndDate;
+        LocalDateTime nextMonthStartDateTime = nextMonthStartDate.atStartOfDay();
+
+        LocalDate nextMonthEndDate = nextMonthStartDate.plusMonths(1);
+        LocalDateTime nextMonthEndDateTime = nextMonthEndDate.atStartOfDay();
+
+        Integer next_month = query
+                .select(point.point.sum())
+                .from(point)
+                .where(point.user.eq(user)
+                        .and(point.createdDate.between(nextMonthStartDateTime, nextMonthEndDateTime))
+                        .and(point.used.eq(false)))
+                .fetchOne();
+
+        next_month = (next_month != null) ? next_month : 0;
+
         // 2. 소멸예정 기준 달의 다음달부터 어제까지 사용한 포인트 값의 합 가져오기
         // 어제까지 쌓았던 포인트를 들고와서 오늘부터(?) 쓴것부터 2년전까지 리스트로 들고온다.
         // 들고온것을 시간 역순으로 뺀다. 해당 달이 2년전부터 2달 내이면 그것을 내보낸다.
