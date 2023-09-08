@@ -131,7 +131,6 @@ public class  PointServiceImpl implements PointService{
     // 포인트 비밀번호 수정
     @Override
     @Transactional(readOnly = false)
-    @jakarta.transaction.Transactional
     public void modifyPointPassword(String token, String pointPassword) {
 
         // 토큰 정보에서 userId 값 가져 오기
@@ -195,68 +194,33 @@ public class  PointServiceImpl implements PointService{
     }
 
     // 소멸예정포인트 조회
-    private Integer getExtinction(User user, Long minusMonth) {
+    private Integer getExtinction(User user, Long minusMonth) { // minusMonth : 계산해야할 현재 달 - minusMonth
 
-        // 1. 해당 달의 마지막에 등록된 포인트 데이터의 전체포인트값 가져오기
-
-        // 1-1) 소멸예정달의 마지막에 등록된 포인트 데이터의 전체포인트값 가져오기
-        LocalDate targetMonthDate = LocalDate.now().minusMonths(minusMonth-1);
-        LocalDate targetMonthFirstDate = targetMonthDate.withDayOfMonth(1);
-        LocalDateTime targetMonthDateTime = createStartLocalDateTime(targetMonthFirstDate);
-
-        Point lastPoint = pointRepository.findFirstByUserAndCreatedDateBeforeOrderByIdDesc(
-                user, targetMonthDateTime);
-
-        // 해당 달에 쌓인 포인트가 없다면 0을 반환
-        if(lastPoint == null) {
-            return 0;
-        }
-
-        Integer extPoint = lastPoint.getTotalPoint();
-
-        // 1-2) 소멸예정 달 직전 달의 마지막에 등록된 포인트 데이터의 전체포인값 가져오기
-        LocalDate targetLastMonthDate = LocalDate.now().minusMonths(minusMonth);
-        LocalDate targetLastMonthStartDate = targetLastMonthDate.withDayOfMonth(1);
-        LocalDateTime targetLastMonthDateTime = createStartLocalDateTime(targetLastMonthStartDate);
-
-        Point lastMonthLastPoint = pointRepository.findFirstByUserAndCreatedDateBeforeOrderByIdDesc(
-                user, targetLastMonthDateTime);
-
-        // 직전 달의 전체포인트값은 제외
-        if(lastMonthLastPoint != null) {
-            extPoint = extPoint - lastMonthLastPoint.getTotalPoint();
-        }
-
-        // 2. 소멸예정 기준 달의 다음달부터 어제까지 사용한 포인트 값의 합 가져오기
+        // 1. 소멸예정달의 적립된 포인트들의 합
         QPoint point = QPoint.point1;
 
-        LocalDateTime today = createStartLocalDateTime(LocalDate.now());
+        // 2년 전부터
+        LocalDate targetStartDate = LocalDate.now().minusMonths(minusMonth).minusYears(2).withDayOfMonth(1);
+        LocalDateTime targetStartDateTime = targetStartDate.atStartOfDay();
 
-        // QueryDSL에서 sum은 Long타입으로 반환한다.
-        Long usedPoint = query
-                .select(point.point.longValue().sum())
+        //
+        LocalDate targetEndDate = targetStartDate.plusMonths(1);
+        LocalDateTime targetEndDateTime = targetEndDate.atStartOfDay();
+        // 2년전 한달동안 쌓은 데이터
+        Integer sum = query
+                .select(point.point.sum())
                 .from(point)
-                .where(point.user.eq(user))
-                .where(point.used.eq(true))
-                .where(point.createdDate.goe(targetMonthDateTime))
-                .where(point.createdDate.lt(today))
+                .where(point.user.eq(user)
+                        .and(point.createdDate.between(targetStartDateTime, targetEndDateTime))
+                        .and(point.used.eq(false)))
                 .fetchOne();
 
-        // 사용한 포인트가 있는 경우
-        if(usedPoint != null) {
-
-            Integer resultPoint = extPoint - usedPoint.intValue();
-
-            if(resultPoint > 0) {
-                // 1의 결과보다 2의 결과가 크면(소멸예정달에 쌓인 포인트가 이때까지 사용한 포인트보다 많은 경우) 소멸 예정 포인트 표시
-                return resultPoint;
-            } else {
-                return 0;
-            }
-        } else {
-            // 그 외의 경우
-            return extPoint;
-        }
+        sum = (sum != null) ? sum : 0;
+        if (sum == null) return 0;
+        // 2. 소멸예정 기준 달의 다음달부터 어제까지 사용한 포인트 값의 합 가져오기
+        // 어제까지 쌓았던 포인트를 들고와서 오늘부터(?) 쓴것부터 2년전까지 리스트로 들고온다.
+        // 들고온것을 시간 역순으로 뺀다. 해당 달이 2년전부터 2달 내이면 그것을 내보낸다.
+        return null;
     }
 
     // 날짜(뒤에 시간은 00:00:00) 만들기
