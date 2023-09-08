@@ -1,5 +1,6 @@
 package com.example.smilekarina.user.application;
 
+import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.dto.LogInDto;
 import com.example.smilekarina.user.dto.UserGetDto;
 import com.example.smilekarina.user.dto.UserSignUpDto;
@@ -23,4 +24,5 @@ public interface UserService {
     void withdrawal(String token);
     void authenticatePassword(String token, AuthenticatePasswordIn authenticatePasswordIn);
     CheckUserOut getOtherUserInfo(CheckUserIn checkUserIn);
+    User getUserFromToken(String token);
 }
