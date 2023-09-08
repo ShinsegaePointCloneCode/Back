@@ -48,8 +48,8 @@ public class CouponController {
     public ResponseEntity<?> couponToMine(@RequestHeader("Authorization") String token,
                                           @RequestBody CouponGetIn couponGetIn) {
         // 쿠폰 등록하면 해당 쿠폰을 내 쿠폰함에서 가져다 쓸수 있게 구현
-        couponService.createMyCoupon(token,couponGetIn.getCouponId());
-        return ResponseEntity.ok(ResponseOut.success());
+        MyCouponNumOut myCouponNumOut = couponService.createMyCoupon(token,couponGetIn.getCouponId());
+        return ResponseEntity.ok(ResponseOut.success(myCouponNumOut));
     }
     @PostMapping("/benefits/couponDownAll")
     public ResponseEntity<?> allCouponToMine(@RequestHeader("Authorization") String token,

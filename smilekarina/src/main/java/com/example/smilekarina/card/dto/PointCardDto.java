@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 public class PointCardDto {
 
-    private Long userId;
+    private String token;
     private String cardNumber;
     private String issueType;
     private String issueStore;
