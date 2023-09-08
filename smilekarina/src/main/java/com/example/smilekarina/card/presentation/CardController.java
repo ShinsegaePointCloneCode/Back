@@ -5,10 +5,8 @@ import com.example.smilekarina.card.dto.AffiliateCardDto;
 import com.example.smilekarina.card.dto.PointCardDto;
 import com.example.smilekarina.card.vo.*;
 import com.example.smilekarina.global.vo.ResponseOut;
-import com.example.smilekarina.user.application.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +19,6 @@ import java.util.List;
 @RequestMapping("/api/v1")
 public class CardController {
 
-    private final ModelMapper modelMapper;
-    private final UserService userService;
     private final CardService cardService;
 
     /*
@@ -31,10 +27,8 @@ public class CardController {
     @PostMapping("/pointcard/register")
     public ResponseEntity<?> registerPointCard(@RequestHeader("Authorization") String token, @RequestBody PointCardIn pointCardIn) {
 
-        Long userId = userService.getUserIdFromToken(token);
-
         PointCardDto pointCardDto = PointCardDto.builder()
-                .userId(userId)
+                .token(token)
                 .cardNumber(pointCardIn.getCardNumber())
                 .issueType(pointCardIn.getIssueType())
                 .issueStore(pointCardIn.getIssueStore())
@@ -51,10 +45,8 @@ public class CardController {
     @PostMapping("/affiliatecard/register")
     public ResponseEntity<?> registerAffiliateCard(@RequestHeader("Authorization") String token, @RequestBody AffiliateCardIn affiliateCardIn) {
 
-        Long userId = userService.getUserIdFromToken(token);
-
         AffiliateCardDto affiliateCardDto = AffiliateCardDto.builder()
-                .userId(userId)
+                .token(token)
                 .cardNumber(affiliateCardIn.getCardNumber())
                 .issueStore(affiliateCardIn.getIssueStore())
                 .lastName(affiliateCardIn.getLastName())
@@ -71,9 +63,7 @@ public class CardController {
     @GetMapping("/pointcard/online")
     public ResponseEntity<ResponseOut<?>> getOnlineCard(@RequestHeader("Authorization") String token) {
 
-        Long userId = userService.getUserIdFromToken(token);
-
-        List<OnlinePointCardOut> onlinePointCardDtolist = cardService.getOnlinePointCardList(userId);
+        List<OnlinePointCardOut> onlinePointCardDtolist = cardService.getOnlinePointCardList(token);
         ResponseOut<?> responseOut = ResponseOut.success(onlinePointCardDtolist);
         return ResponseEntity.ok(responseOut);
     }
@@ -84,9 +74,7 @@ public class CardController {
     @GetMapping("/pointcard/credit")
     public ResponseEntity<ResponseOut<?>> getCreditCard(@RequestHeader("Authorization") String token) {
 
-        Long userId = userService.getUserIdFromToken(token);
-
-        List<CreditCardOut> creditCardOutList = cardService.getCreditCardList(userId);
+        List<CreditCardOut> creditCardOutList = cardService.getCreditCardList(token);
         ResponseOut<?> responseOut = ResponseOut.success(creditCardOutList);
         return ResponseEntity.ok(responseOut);
     }
@@ -97,9 +85,7 @@ public class CardController {
     @GetMapping("/pointcard/offline")
     public ResponseEntity<ResponseOut<?>> getOfflineCard(@RequestHeader("Authorization") String token) {
 
-        Long userId = userService.getUserIdFromToken(token);
-
-        List<OfflinePointCardOut> offlinePointCardOutList = cardService.getOfflinePointCardList(userId);
+        List<OfflinePointCardOut> offlinePointCardOutList = cardService.getOfflinePointCardList(token);
         ResponseOut<?> responseOut = ResponseOut.success(offlinePointCardOutList);
         return ResponseEntity.ok(responseOut);
     }
@@ -130,9 +116,7 @@ public class CardController {
     @GetMapping("/card/pointcard")
     public ResponseEntity<ResponseOut<?>> getBarcodePointCard(@RequestHeader("Authorization") String token) {
 
-        Long userId = userService.getUserIdFromToken(token);
-
-        String cardNumber = cardService.getPointCardNumber(userId);
+        String cardNumber = cardService.getPointCardNumber(token);
 
         BarcodePointCardOut barcodePointCardOut = BarcodePointCardOut.builder()
                 .cardNumber(cardNumber)
@@ -140,10 +124,6 @@ public class CardController {
 
         ResponseOut<?> responseOut = ResponseOut.success(barcodePointCardOut);
         return ResponseEntity.ok(responseOut);
-
-
-
-
     }
 
 

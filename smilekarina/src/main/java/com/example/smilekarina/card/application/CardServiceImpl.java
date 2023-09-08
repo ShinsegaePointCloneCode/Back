@@ -9,6 +9,7 @@ import com.example.smilekarina.card.infrastructure.PointCardRepository;
 import com.example.smilekarina.card.vo.CreditCardOut;
 import com.example.smilekarina.card.vo.OfflinePointCardOut;
 import com.example.smilekarina.card.vo.OnlinePointCardOut;
+import com.example.smilekarina.user.application.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class CardServiceImpl implements CardService{
     private final PointCardRepository pointCardRepository;
     private final CreditCardRepository creditCardRepository;
     private final MileageCardRepository mileageCardRepository;
+    private final UserService userService;
 
     private static final String SAMSUNG = "삼성전자 포인트";
     private static final String SHINSEGAEPOINTDOTCOM = "신세계포인트닷컴";
@@ -46,7 +48,7 @@ public class CardServiceImpl implements CardService{
         if(affiliateCardDto.getIssueStore().equals(SAMSUNG)) {
 
             PointCardDto pointCardDto = PointCardDto.builder()
-                    .userId(affiliateCardDto.getUserId())
+                    .token(affiliateCardDto.getToken())
                     .cardNumber(affiliateCardDto.getCardNumber())
                     .issueType(IssueType.PARTNERSHIP.getCode())
                     .issueStore(affiliateCardDto.getIssueStore())
@@ -55,8 +57,10 @@ public class CardServiceImpl implements CardService{
         } else {
             // 아시아나, 대한항공인 경우에는 마일리지카드 테이블에 등록
 
+            Long userId = userService.getUserIdFromToken(affiliateCardDto.getToken());
+
             // 대표카드선택유무 판단하기
-            List<MileageCard> mileageCardList = mileageCardRepository.findByUserId(affiliateCardDto.getUserId());
+            List<MileageCard> mileageCardList = mileageCardRepository.findByUserId(userId);
 
             boolean mainSelect = false;
 
@@ -67,7 +71,7 @@ public class CardServiceImpl implements CardService{
 
             MileageCard mileageCard = MileageCard.builder()
                     .cardNumber(affiliateCardDto.getCardNumber())
-                    .userId(affiliateCardDto.getUserId())
+                    .userId(userId)
                     .issuePlace(affiliateCardDto.getIssueStore())
                     .lastName(affiliateCardDto.getLastName())
                     .mainSelect(mainSelect)
@@ -78,7 +82,9 @@ public class CardServiceImpl implements CardService{
 
     // 온라인 카드 조회
     @Override
-    public List<OnlinePointCardOut> getOnlinePointCardList(Long userId) {
+    public List<OnlinePointCardOut> getOnlinePointCardList(String token) {
+
+        Long userId = userService.getUserIdFromToken(token);
 
         IssueType issueType = new IssueTypeConverter().convertToEntityAttribute(IssueType.ONLINE.getCode());
 
@@ -99,7 +105,9 @@ public class CardServiceImpl implements CardService{
 
     // 제휴 신용카드 조회
     @Override
-    public List<CreditCardOut> getCreditCardList(Long userId) {
+    public List<CreditCardOut> getCreditCardList(String token) {
+
+        Long userId = userService.getUserIdFromToken(token);
 
         List<CreditCard> creditCardList = creditCardRepository.findByUserId(userId);
 
@@ -124,9 +132,9 @@ public class CardServiceImpl implements CardService{
 
     // 오프라인 카드 조회
     @Override
-    public List<OfflinePointCardOut> getOfflinePointCardList(Long userId) {
+    public List<OfflinePointCardOut> getOfflinePointCardList(String token) {
 
-        // TODO 포인트카드 조회하는 부분은 공통된 부분이 많기 때문에 private으로 메소드 하나 만들어서 해도 될 것 같다 추후 리팩토링 할 것
+        Long userId = userService.getUserIdFromToken(token);
 
         IssueType issueType = new IssueTypeConverter().convertToEntityAttribute(IssueType.OFFLINE.getCode());
 
@@ -151,7 +159,9 @@ public class CardServiceImpl implements CardService{
 
     // 포인트카드 번호 조회(바코드 보기 위함)
     @Override
-    public String getPointCardNumber(Long userId) {
+    public String getPointCardNumber(String token) {
+
+        Long userId = userService.getUserIdFromToken(token);
 
         IssueType issueType = new IssueTypeConverter().convertToEntityAttribute(IssueType.ONLINE.getCode());
 
@@ -166,11 +176,13 @@ public class CardServiceImpl implements CardService{
     @Transactional(readOnly = false)
     public void createPointCard(PointCardDto pointCardDto) {
 
+        Long userId = userService.getUserIdFromToken(pointCardDto.getToken());
+
         IssueType issueType = new IssueTypeConverter().convertToEntityAttribute(pointCardDto.getIssueType());
 
         PointCard pointCard = PointCard.builder()
                 .cardNumber(pointCardDto.getCardNumber())
-                .userId(pointCardDto.getUserId())
+                .userId(userId)
                 .issueType(issueType)
                 .issuePlace(pointCardDto.getIssueStore())
                 .build();
