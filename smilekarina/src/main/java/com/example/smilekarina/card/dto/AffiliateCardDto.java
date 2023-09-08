@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 public class AffiliateCardDto {
 
-    private Long userId;
+    private String token;
     private String cardNumber;
     private String issueStore;
     private String lastName;
