@@ -213,7 +213,6 @@ public class  PointServiceImpl implements PointService{
                 .fetchOne();
 
         last_month = (last_month != null) ? last_month : 0;
-        if (last_month == null) return 0;
 
         // For next_month:
         LocalDate nextMonthStartDate = lastMonthEndDate;
@@ -231,10 +230,13 @@ public class  PointServiceImpl implements PointService{
                 .fetchOne();
 
         next_month = (next_month != null) ? next_month : 0;
+        // 매달 1일 0시에 소멸예정 포인트를 결산해 준다. 해당 달에 쌓은 포인트를 만든 테이블을 만들어 준다.
 
         // 2. 소멸예정 기준 달의 다음달부터 어제까지 사용한 포인트 값의 합 가져오기
         // 어제까지 쌓았던 포인트를 들고와서 오늘부터(?) 쓴것부터 2년전까지 리스트로 들고온다.
+
         // 들고온것을 시간 역순으로 뺀다. 해당 달이 2년전부터 2달 내이면 그것을 내보낸다.
+
         return null;
     }
 
