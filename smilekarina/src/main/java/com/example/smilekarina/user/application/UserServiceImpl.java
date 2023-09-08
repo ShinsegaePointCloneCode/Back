@@ -23,7 +23,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 
 import java.util.*;
 
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService{
         userRepository.save(user);
         return user.getId();
     }
-
+    @Override
     public UserGetDto getUserByLoginId(String loginId) {
         Optional<User> user = userRepository.findByLoginId(loginId);
         user.ifPresent(u -> log.info("user is : {}", u));
@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService{
         return user.map(u -> modelMapper.map(u, UserGetDto.class))
                 .orElse(null);
     }
-    //uuid로 dto 만들기
+    // uuid로 dto 만들기
     @Override
     public UserGetDto getUserByUUID(String UUID) {
         Optional<User> user = userRepository.findByUUID(UUID);
@@ -128,22 +128,6 @@ public class UserServiceImpl implements UserService{
                 .token(JwtToken)
                 .UUID(user.getUUID())
                 .build();
-//        UserDetails userDetails = userDetailsService.loadUserByUsername(userLoginIn.getLoginId());
-//        User user = userRepository.findByLoginId(userLoginIn.getLoginId()).orElse(null);
-//        // 유저가 존재하지 않거나 삭제한 유저가 아니면
-////        log.info("user : {} ", user);
-//        if (user != null && (user.getStatus() == 1)) {
-//            // password 확인
-//            if(new BCryptPasswordEncoder().matches(userLoginIn.getPassword(), userDetails.getPassword())) {
-//                // JWT 토큰 생성 및 반환
-//                return LogInDto.builder()
-//                        .userName(user.getName())
-//                        .token(jwtTokenProvider.generateToken(userDetails))
-//                        .UUID(user.getUUID())
-//                        .build();
-//            }
-//        }
-//        return null;
     }
     @Override
     public Long getUserId(String loginId) {
@@ -222,8 +206,8 @@ public class UserServiceImpl implements UserService{
                 .build();
     }
 
-    //    @Transactional(readOnly = false)
-    private void changeUserPassword(String loginId, String newPwd) {
+    @Transactional(readOnly = false)
+    public void changeUserPassword(String loginId, String newPwd) {
         if (loginId == null || newPwd == null) {
             throw new IllegalArgumentException("Login ID or new password 가 null입니다.");
         }

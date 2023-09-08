@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional(readOnly = true)
+@Transactional(readOnly = false)
 public class AgreeServiceImpl implements AgreeService{
     private final UserService userService;
     private final AgreeAdvertiseRepository agreeAdvertiseRepository;
@@ -38,7 +38,6 @@ public class AgreeServiceImpl implements AgreeService{
     private final ModelMapper modelMapper;
 
     @Override
-    @Transactional(readOnly = false)
     public void createAgreeAdvertise(String token, AgreeAdvertiseDto agreeAdvertiseDto) {
         Long userId = userService.getUserIdFromToken(token);
         Optional<AgreeAdvertise> agreeAdvertise = agreeAdvertiseRepository.findByUserId(userId);
@@ -53,18 +52,17 @@ public class AgreeServiceImpl implements AgreeService{
         }
     }
     @Override
-    @Transactional(readOnly = false)
     public void createAgreeAdvertiseByUser(Long userId, AgreeAdvertiseDto agreeAdvertiseDto) {
         createAdvertise(userId, agreeAdvertiseDto);
     }
     @Override
+    @Transactional(readOnly = true)
     public AgreeAdvertiseOut getAgreeAdvertise(String token) {
         Long userId = userService.getUserIdFromToken(token);
         return modelMapper.map(agreeAdvertiseRepository.findByUserId(userId),AgreeAdvertiseOut.class);
     }
 
     @Override
-    @Transactional(readOnly = false)
     public void createAgreeServiceManage(String token, AgreeServiceManageDto agreeServiceManageDto) {
         Long userId = userService.getUserIdFromToken(token);
         Optional<AgreeServiceManage> agreeServiceManage = agreeServiceManageRepository.findByUserIdAndAgreeType(userId, agreeServiceManageDto.getAgreeType());
@@ -78,6 +76,7 @@ public class AgreeServiceImpl implements AgreeService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<AgreeServiceManageOut> getAgreeServiceManage(String token) {
         Long userId = userService.getUserIdFromToken(token);
         List<AgreeServiceManage> results = agreeServiceManageRepository.findByUserId(userId);
@@ -121,7 +120,6 @@ public class AgreeServiceImpl implements AgreeService{
         agreeServiceManage.setAgreeCheck(dto.getAgreeCheck());
         agreeServiceManageRepository.save(agreeServiceManage);
     }
-
     private void createAdvertise(Long userId, AgreeAdvertiseDto agreeAdvertiseDto) {
         AgreeAdvertise agreeAdvertise = AgreeAdvertise.builder()
                 .optionOne(agreeAdvertiseDto.getOptionOne())
