@@ -148,7 +148,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public FindIDOut findID(String userName, String phone) {
-        User user = userRepository.findByPhoneAndUserName(phone, userName).orElseThrow(() ->
+        User user = userRepository.findTopByPhoneAndUserName(phone, userName).orElseThrow(() ->
                 new NoSuchElementException("해당 유저가 없습니다."));
         return FindIDOut.builder()
                 .loginId(user.getLoginId())
@@ -198,12 +198,19 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public CheckUserOut getOtherUserInfo(CheckUserIn checkUserIn) {
-        User user = userRepository.findByPhoneAndUserName(checkUserIn.getPhone(),checkUserIn.getUserName())
+        User user = userRepository.findTopByPhoneAndUserName(checkUserIn.getPhone(),checkUserIn.getUserName())
                 .orElseThrow(()-> new NoSuchElementException("해당 유저가 중복됩니다"));
         return CheckUserOut.builder()
                 .userLoginId(user.getLoginId())
                 .userName(user.getName())
                 .build();
+    }
+
+    @Override
+    public User getUserFromToken(String token) {
+        String loginId = jwtTokenProvider.getLoginId(token.substring(7));
+        return userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new NoSuchElementException("해당 토큰이 없습니다."));
     }
 
     @Transactional(readOnly = false)
