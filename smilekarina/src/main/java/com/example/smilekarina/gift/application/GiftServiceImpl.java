@@ -127,6 +127,8 @@ public class GiftServiceImpl implements GiftService {
     @Transactional(readOnly = false)
     public void acceptGift(GiftAcceptDto giftAcceptDto) {
 
+        Long userId = userService.getUserIdFromToken(giftAcceptDto.getToken());
+
         Optional<Gift> gift = giftRepository.findById(giftAcceptDto.getGiftId());
 
         gift.ifPresent(modifiedGift -> {
@@ -136,7 +138,7 @@ public class GiftServiceImpl implements GiftService {
                     .point(modifiedGift.getPoint())
                     .pointType(PointType.GIFT.getCode())
                     .used(false)
-                    .userId(giftAcceptDto.getUserId())
+                    .userId(userId)
                     .build();
             Long pointId = pointService.registerPoint(pointAddDto);
 
@@ -176,33 +178,35 @@ public class GiftServiceImpl implements GiftService {
     @Override
     public GiftListOut getPointGiftList(GiftSearchConditionDto giftSearchConditionDto) {
 
+        Long userId = userService.getUserIdFromToken(giftSearchConditionDto.getToken());
+
         QGift gift = QGift.gift;
 
         // 적립 총 금액 구하기
         Long addTotalPoint = query
                 .select(gift.point.longValue().sum())
                 .from(gift)
-                .where(gift.giftRecipientId.eq(giftSearchConditionDto.getUserId()))
+                .where(gift.giftRecipientId.eq(userId))
                 .fetchOne();
 
         // 사용 총 금액 구하기
         Long usedTotalPoint = query
                 .select(gift.point.longValue().sum())
                 .from(gift)
-                .where(gift.giftSenderId.eq(giftSearchConditionDto.getUserId()))
+                .where(gift.giftSenderId.eq(userId))
                 .fetchOne();
 
         // 선물내역 리스트 구하기
         BooleanBuilder builder = new BooleanBuilder();
 
         if(giftSearchConditionDto.getGiftGb().equals("all")) {
-            builder.and(gift.giftRecipientId.eq(giftSearchConditionDto.getUserId())
-                    .or(gift.giftSenderId.eq(giftSearchConditionDto.getUserId())));
+            builder.and(gift.giftRecipientId.eq(userId)
+                    .or(gift.giftSenderId.eq(userId)));
         } else if(giftSearchConditionDto.getGiftGb().equals("send")) {
-            builder.and(gift.giftSenderId.eq(giftSearchConditionDto.getUserId()));
+            builder.and(gift.giftSenderId.eq(userId));
         } else if(giftSearchConditionDto.getGiftGb().equals("received")) {
             // 내가 받는 사람인 경우에는 대기중인 선물 내역은 리스트에 표시하지 않음
-            builder.and(gift.giftRecipientId.eq(giftSearchConditionDto.getUserId()));
+            builder.and(gift.giftRecipientId.eq(userId));
         }
 
         List<GiftDetailDto> giftList = query
@@ -230,7 +234,7 @@ public class GiftServiceImpl implements GiftService {
             for(GiftDetailDto giftOne : giftList) {
 
                 // 내가 받는 사람이고 수락 대기중인 선물인 경의 리스트 내역에 보여주지 않음
-                if(giftOne.getGiftRecipientId().equals(giftSearchConditionDto.getUserId())
+                if(giftOne.getGiftRecipientId().equals(userId)
                         && giftOne.getGiftType().equals(GiftType.WAIT)) {
                     continue;
                 }
@@ -239,7 +243,7 @@ public class GiftServiceImpl implements GiftService {
                 Long otherId = null;
 
                 // 내가 보낸 사람인 경우
-                if(giftOne.getGiftSenderId().equals(giftSearchConditionDto.getUserId()))
+                if(giftOne.getGiftSenderId().equals(userId))
                     otherId = giftOne.getGiftRecipientId();
                 else{
                     // 내가 받는 사람인 경우
@@ -250,7 +254,7 @@ public class GiftServiceImpl implements GiftService {
                 GiftDetailListOut giftDetail = GiftDetailListOut.builder()
                         .point(giftOne.getPoint())
                         .pointId(giftOne.getGiftSenderId().equals(
-                                giftSearchConditionDto.getUserId()) ?
+                                userId) ?
                                 giftOne.getSenderPointId() : giftOne.getResultPointId())
                         .updatedDate(giftOne.getUpdatedDate())
                         .giftType(giftOne.getGiftType().getCode())
@@ -268,8 +272,8 @@ public class GiftServiceImpl implements GiftService {
         Long totalRows = query
                 .select(gift.count())
                 .from(gift)
-                .where(gift.giftRecipientId.eq(giftSearchConditionDto.getUserId())
-                        .or(gift.giftSenderId.eq(giftSearchConditionDto.getUserId())))
+                .where(gift.giftRecipientId.eq(userId)
+                        .or(gift.giftSenderId.eq(userId)))
                 .fetchOne();
 
         return GiftListOut.builder()

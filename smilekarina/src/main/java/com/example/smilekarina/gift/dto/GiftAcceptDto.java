@@ -10,6 +10,6 @@ import lombok.*;
 public class GiftAcceptDto {
 
     private Long giftId;
-    private Long userId;
+    private String token;
 
 }

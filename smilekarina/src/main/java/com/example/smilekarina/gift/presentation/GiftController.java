@@ -7,14 +7,10 @@ import com.example.smilekarina.gift.dto.GiftLastDto;
 import com.example.smilekarina.gift.dto.GiftSearchConditionDto;
 import com.example.smilekarina.gift.vo.*;
 import com.example.smilekarina.global.vo.ResponseOut;
-import com.example.smilekarina.point.application.PointService;
-import com.example.smilekarina.point.dto.PointPasswordCheckDto;
-import com.example.smilekarina.user.application.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +23,6 @@ public class GiftController {
 
     private final ModelMapper modelMapper;
     private final GiftService giftService;
-    private final PointService pointService;
-    private final UserService userService;
 
     /*
         포인트 선물하기
@@ -65,11 +59,9 @@ public class GiftController {
     @PostMapping("/gift/accept")
     public ResponseEntity<?> acceptGift(@RequestHeader("Authorization") String token, @RequestBody GiftAcceptIn giftAcceptIn) {
 
-        Long userId = userService.getUserIdFromToken(token);
-
         GiftAcceptDto giftAcceptDto = GiftAcceptDto.builder()
                 .giftId(giftAcceptIn.getGiftId())
-                .userId(userId)
+                .token(token)
                 .build();
 
         giftService.acceptGift(giftAcceptDto);
@@ -100,10 +92,8 @@ public class GiftController {
                                               @RequestParam(value="giftGb") String giftGb,
                                               Pageable pageable) {
 
-        Long userId = userService.getUserIdFromToken(token);
-
         GiftSearchConditionDto giftSearchConditionDto = GiftSearchConditionDto.builder()
-                .userId(userId)
+                .token(token)
                 .giftGb(giftGb)
                 .page(pageable.getPageNumber())
                 .size(pageable.getPageSize())

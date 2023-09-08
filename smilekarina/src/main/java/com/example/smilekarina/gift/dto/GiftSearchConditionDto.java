@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 public class GiftSearchConditionDto {
 
-    private Long userId;
+    private String token;
     private String giftGb;
     private Integer page;
     private Integer size;
