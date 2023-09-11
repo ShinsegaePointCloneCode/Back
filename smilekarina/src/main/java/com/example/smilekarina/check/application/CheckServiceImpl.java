@@ -140,7 +140,7 @@ public class CheckServiceImpl implements CheckService {
     public void pushPoint(Long userId, int point) {
         PointAddDto pointAddDto = PointAddDto.builder()
                 .point(point)
-                .pointType(PointType.CHECK.getCode())
+                .pointType(PointType.ROULETTE.getCode())
                 .used(false)
                 .userId(userId)
                 .build();

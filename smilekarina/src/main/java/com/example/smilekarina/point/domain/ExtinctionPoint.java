@@ -18,9 +18,9 @@ public class ExtinctionPoint {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, name = "this_extiction_point")
-    private Integer thisExtinctionPoint;
+    private Long thisExtinctionPoint;
     @Column(nullable = false, name = "next_extiction_point")
-    private Integer nextExtictionPoint;
+    private Long nextExtictionPoint;
     @Column(nullable = false, name = "user_id")
     private Long userId;
     @Column(nullable = false, name = "update_date")
