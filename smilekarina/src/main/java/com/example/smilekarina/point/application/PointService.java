@@ -1,11 +1,10 @@
 package com.example.smilekarina.point.application;
 
 import com.example.smilekarina.point.dto.PointAddDto;
-import com.example.smilekarina.point.dto.PointGetDto;
 import com.example.smilekarina.point.dto.PointPasswordCheckDto;
 import com.example.smilekarina.point.vo.PointInfoOut;
 
-import java.util.List;
+import java.time.LocalDate;
 
 public interface PointService {
 
@@ -24,4 +23,5 @@ public interface PointService {
     // 포인트 비밀번호 수정
     void modifyPointPassword(String token, String pointPassword);
 
+    void amountMonthPoint(Long userId, LocalDate targetDate);
 }
