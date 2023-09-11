@@ -4,6 +4,7 @@ import com.example.smilekarina.point.domain.*;
 import com.example.smilekarina.point.dto.PointAddDto;
 import com.example.smilekarina.point.dto.PointPasswordCheckDto;
 import com.example.smilekarina.point.infrastructure.ExtinctionPointRepository;
+import com.example.smilekarina.point.infrastructure.MonthPointRepository;
 import com.example.smilekarina.point.infrastructure.PointRepository;
 import com.example.smilekarina.point.vo.PointInfoOut;
 import com.example.smilekarina.user.application.UserService;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -32,6 +34,7 @@ public class  PointServiceImpl implements PointService{
     private final UserService userService;
     private final PointRepository pointRepository;
     private final UserRepository userRepository;
+    private final MonthPointRepository monthPointRepository;
     private final ExtinctionPointRepository extinctionPointRepository;
     private final JPAQueryFactory query;
 
@@ -65,9 +68,9 @@ public class  PointServiceImpl implements PointService{
                     .build();
         } else {
             // 다음달 소멸예정 포인트 조회
-            Integer extPoint = extinctionPoint.getThisExtinctionPoint();
+            Integer extPoint = Math.toIntExact(extinctionPoint.getThisExtinctionPoint());
             // 다다음달 소멸예정 포인트 조회
-            Integer extNextPoint = extinctionPoint.getNextExtictionPoint();
+            Integer extNextPoint = Math.toIntExact(extinctionPoint.getNextExtictionPoint());
 
             return PointInfoOut.builder()
                     .totalPoint(usablPoint)
@@ -193,52 +196,141 @@ public class  PointServiceImpl implements PointService{
         return addExpectedPoint.intValue();
     }
 
-    // 소멸예정포인트 조회
-    private Integer getExtinctionPoints(User user, LocalDate todayDate) { // 계산해야할 현재 달 - minusMonth
+    // 한달간 쌓은 포인트 결산 메소드
+    @Override
+    @Transactional(readOnly = false)
+    public void amountMonthPoint(Long userId, LocalDate targetDate) {
         QPoint point = QPoint.point1;
 
-        // For last_month:
-        LocalDate lastMonthStartDate = todayDate.minusYears(2).withDayOfMonth(1);
-        LocalDateTime lastMonthStartDateTime = lastMonthStartDate.atStartOfDay();
+        // 해당 달의 처음과 끝을 기준으로 설정
+        LocalDate startDate = targetDate.withDayOfMonth(1);
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDate endDate = startDate.plusMonths(1);
+        LocalDateTime endDateTime = endDate.atStartOfDay();
 
-        LocalDate lastMonthEndDate = lastMonthStartDate.plusMonths(1);
-        LocalDateTime lastMonthEndDateTime = lastMonthEndDate.atStartOfDay();
+        // 해당 유저의 월 포인트 가져오기
+        Optional<MonthPoint> monthPointOpt = monthPointRepository.findByYearMonthAndUserId(startDate, userId);
 
-        Integer last_month = query
+        // 해당 유저에 맞는 id를 비교하여 포인트 합계 계산
+        Integer sum = query
                 .select(point.point.sum())
                 .from(point)
-                .where(point.user.eq(user)
-                        .and(point.createdDate.between(lastMonthStartDateTime, lastMonthEndDateTime))
-                        .and(point.used.eq(false)))
+                .where(point.user.id.eq(userId)
+                        .and(point.createdDate.between(startDateTime, endDateTime)))
                 .fetchOne();
 
-        last_month = (last_month != null) ? last_month : 0;
+        sum = (sum != null) ? sum : 0;  // If the sum is null, set it to 0
 
-        // For next_month:
-        LocalDate nextMonthStartDate = lastMonthEndDate;
-        LocalDateTime nextMonthStartDateTime = nextMonthStartDate.atStartOfDay();
-
-        LocalDate nextMonthEndDate = nextMonthStartDate.plusMonths(1);
-        LocalDateTime nextMonthEndDateTime = nextMonthEndDate.atStartOfDay();
-
-        Integer next_month = query
-                .select(point.point.sum())
-                .from(point)
-                .where(point.user.eq(user)
-                        .and(point.createdDate.between(nextMonthStartDateTime, nextMonthEndDateTime))
-                        .and(point.used.eq(false)))
-                .fetchOne();
-
-        next_month = (next_month != null) ? next_month : 0;
-        // 매달 1일 0시에 소멸예정 포인트를 결산해 준다. 해당 달에 쌓은 포인트를 만든 테이블을 만들어 준다.
-
-        // 2. 소멸예정 기준 달의 다음달부터 어제까지 사용한 포인트 값의 합 가져오기
-        // 어제까지 쌓았던 포인트를 들고와서 오늘부터(?) 쓴것부터 2년전까지 리스트로 들고온다.
-
-        // 들고온것을 시간 역순으로 뺀다. 해당 달이 2년전부터 2달 내이면 그것을 내보낸다.
-
-        return null;
+        if (monthPointOpt.isPresent()) {
+            // 데이터가 있으면 해당 날짜로 날짜를 바꿔주고, 합계도 바꿔준다.
+            MonthPoint existingMonthPoint = monthPointOpt.get();
+            existingMonthPoint.setYearMonth(startDate);
+            existingMonthPoint.setMonthPoint(Long.valueOf(sum));
+            monthPointRepository.save(existingMonthPoint);
+        } else {
+            // 데이터가 없으면 새로운 데이터를 만들어 준다.
+            MonthPoint monthPoint = MonthPoint.builder()
+                    .yearMonth(startDate)
+                    .monthPoint(Long.valueOf(sum))
+                    .userId(userId)
+                    .build();
+        }
     }
+
+
+
+    // 소멸예정포인트 결산
+    @Transactional(readOnly = false)
+    public void getExtinctionPoints(Long userId, LocalDate todayDate) { // 계산해야할 현재 달
+        // 어제까지 pointRepo에 마지막에 저장된 내역을 들고와서 계산할 포인트를 정한다.
+        LocalDateTime endOfYesterday = todayDate.atStartOfDay();
+        Point lastPointBeforeToday = pointRepository.findFirstByUserIdAndCreatedDateBeforeOrderByCreatedDateDesc(userId, endOfYesterday);
+
+        if (lastPointBeforeToday == null) {
+            // 해당 User에 대한 오늘 이전의 포인트가 없는 경우
+            ExtinctionPoint.builder()
+                    .userId(userId)
+                    .thisExtinctionPoint(0L)
+                    .nextExtictionPoint(0L)
+                    .build();
+            return;
+        }
+        // 계산할 포인트 설정
+        int extraPoint = lastPointBeforeToday.getTotalPoint();
+
+        LocalDate endPeriod = todayDate.minusYears(2).plusMonths(2).with(TemporalAdjusters.lastDayOfMonth());
+        LocalDate currentMonthLastDay = todayDate.with(TemporalAdjusters.lastDayOfMonth());
+        // 2달전에 계산된 모든 포인트를 현재포인트로 뺀다. 이를 통해 소멸 예정 포인트를 구한다.
+        while (!currentMonthLastDay.isBefore(endPeriod)) {
+            MonthPoint currentMonthPoint = monthPointRepository.findByYearMonthAndUserId(currentMonthLastDay, userId).orElse(null);
+
+            if (currentMonthPoint != null) {
+                extraPoint -= currentMonthPoint.getMonthPoint().intValue();
+            }
+            currentMonthLastDay = currentMonthLastDay.minusMonths(1).with(TemporalAdjusters.lastDayOfMonth());
+
+            // 만약 extraPoint가 0 이하가 되면 lastMonth와 nextMonth를 0으로 설정하고, while문을 벗어남
+            if (extraPoint <= 0) {
+                break;
+            }
+        }
+
+        long lastMonth = 0L;
+        long nextMonth = 0L;
+
+        if (extraPoint < 0) {
+            // 만약 소멸될 포인트가 없는 경우
+            ExtinctionPoint.builder()
+                    .userId(userId)
+                    .thisExtinctionPoint(0L)
+                    .nextExtictionPoint(0L)
+                    .build();
+            return;
+        }
+
+        // 소멸 예정 포인트 구하기
+        LocalDate twoYearsAgoThisMonthLastDay = todayDate.minusYears(2).with(TemporalAdjusters.lastDayOfMonth());
+        LocalDate twoYearsAgoNextMonthLastDay = twoYearsAgoThisMonthLastDay.plusMonths(1).with(TemporalAdjusters.lastDayOfMonth());
+
+        MonthPoint lastMonthPoint = monthPointRepository.findByYearMonthAndUserId(twoYearsAgoThisMonthLastDay, userId).orElse(null);
+        MonthPoint nextMonthPoint = monthPointRepository.findByYearMonthAndUserId(twoYearsAgoNextMonthLastDay, userId).orElse(null);
+
+        if (nextMonthPoint != null) {
+            extraPoint -= nextMonthPoint.getMonthPoint().intValue();
+            if (extraPoint < 0) {
+                // 만약 1 - 10 을 했다면 nextMonth에 1포인트를 준다.
+                nextMonth = nextMonthPoint.getMonthPoint().intValue() + extraPoint;
+                ExtinctionPoint.builder()
+                        .userId(userId)
+                        .thisExtinctionPoint(0L)
+                        .nextExtictionPoint(nextMonth)
+                        .build();
+                return;
+            }
+        }
+
+        if (lastMonthPoint != null) {
+            extraPoint -= lastMonthPoint.getMonthPoint().intValue();
+            if (extraPoint < 0) {
+                lastMonth =  lastMonthPoint.getMonthPoint().intValue() + extraPoint;
+                ExtinctionPoint.builder()
+                        .userId(userId)
+                        .thisExtinctionPoint(lastMonth)
+                        .nextExtictionPoint(nextMonthPoint.getMonthPoint())
+                        .build();
+                return;
+            }
+        }
+
+
+        ExtinctionPoint.builder()
+                .userId(userId)
+                .thisExtinctionPoint(lastMonthPoint.getMonthPoint())
+                .nextExtictionPoint(nextMonthPoint.getMonthPoint())
+                .build();
+    }
+
+
 
     // 날짜(뒤에 시간은 00:00:00) 만들기
     private LocalDateTime createStartLocalDateTime(LocalDate date) {
