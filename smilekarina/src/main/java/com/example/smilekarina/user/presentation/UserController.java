@@ -79,7 +79,7 @@ public class UserController {
             ResponseOut<?> responseOut = ResponseOut.success();
             return ResponseEntity.ok(responseOut);
         }
-        ResponseOut<?> responseOut = ResponseOut.checkLogId(loginId);
+        ResponseOut<?> responseOut = ResponseOut.fail(loginId);
         return ResponseEntity.ok(responseOut);
     }
     @Operation(summary= "로그인 하기", description= "login id와 password로 로그인 하기", tags = { "User Controller" })

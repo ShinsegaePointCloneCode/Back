@@ -365,7 +365,7 @@ public class  PointServiceImpl implements PointService{
         LocalDateTime endDateTime = endDate.atStartOfDay();
 
         // 해당 유저의 월 포인트 가져오기
-        Optional<MonthPoint> monthPointOpt = monthPointRepository.findByYearMonthAndUserId(startDate, userId);
+        Optional<MonthPoint> monthPointOpt = monthPointRepository.findByYearMonthDateAndUserId(startDate, userId);
 
         // 해당 유저에 맞는 id를 비교하여 포인트 합계 계산
         Integer sum = query
@@ -380,20 +380,18 @@ public class  PointServiceImpl implements PointService{
         if (monthPointOpt.isPresent()) {
             // 데이터가 있으면 해당 날짜로 날짜를 바꿔주고, 합계도 바꿔준다.
             MonthPoint existingMonthPoint = monthPointOpt.get();
-            existingMonthPoint.setYearMonth(startDate);
+            existingMonthPoint.setYearMonthDate(startDate);
             existingMonthPoint.setMonthPoint(Long.valueOf(sum));
             monthPointRepository.save(existingMonthPoint);
         } else {
             // 데이터가 없으면 새로운 데이터를 만들어 준다.
             MonthPoint monthPoint = MonthPoint.builder()
-                    .yearMonth(startDate)
+                    .yearMonthDate(startDate)
                     .monthPoint(Long.valueOf(sum))
                     .userId(userId)
                     .build();
         }
     }
-
-
 
     // 소멸예정포인트 결산
     @Transactional(readOnly = false)
@@ -414,15 +412,15 @@ public class  PointServiceImpl implements PointService{
         // 계산할 포인트 설정
         int extraPoint = lastPointBeforeToday.getTotalPoint();
 
-        LocalDate endPeriod = todayDate.minusYears(2).plusMonths(2).with(TemporalAdjusters.lastDayOfMonth());
+        LocalDate endPeriod = todayDate.minusYears(2)
+                .plusMonths(2).with(TemporalAdjusters.lastDayOfMonth());
         LocalDate currentMonthLastDay = todayDate.with(TemporalAdjusters.lastDayOfMonth());
         // 2달전에 계산된 모든 포인트를 현재포인트로 뺀다. 이를 통해 소멸 예정 포인트를 구한다.
         while (!currentMonthLastDay.isBefore(endPeriod)) {
-            MonthPoint currentMonthPoint = monthPointRepository.findByYearMonthAndUserId(currentMonthLastDay, userId).orElse(null);
+            MonthPoint currentMonthPoint = monthPointRepository.findByYearMonthDateAndUserId(currentMonthLastDay, userId)
+                    .orElseThrow(() -> new NoSuchElementException("해당 포인트가 없습니다."));
 
-            if (currentMonthPoint != null) {
-                extraPoint -= currentMonthPoint.getMonthPoint().intValue();
-            }
+            extraPoint -= currentMonthPoint.getMonthPoint().intValue();
             currentMonthLastDay = currentMonthLastDay.minusMonths(1).with(TemporalAdjusters.lastDayOfMonth());
 
             // 만약 extraPoint가 0 이하가 되면 lastMonth와 nextMonth를 0으로 설정하고, while문을 벗어남
@@ -448,8 +446,8 @@ public class  PointServiceImpl implements PointService{
         LocalDate twoYearsAgoThisMonthLastDay = todayDate.minusYears(2).with(TemporalAdjusters.lastDayOfMonth());
         LocalDate twoYearsAgoNextMonthLastDay = twoYearsAgoThisMonthLastDay.plusMonths(1).with(TemporalAdjusters.lastDayOfMonth());
 
-        MonthPoint lastMonthPoint = monthPointRepository.findByYearMonthAndUserId(twoYearsAgoThisMonthLastDay, userId).orElse(null);
-        MonthPoint nextMonthPoint = monthPointRepository.findByYearMonthAndUserId(twoYearsAgoNextMonthLastDay, userId).orElse(null);
+        MonthPoint lastMonthPoint = monthPointRepository.findByYearMonthDateAndUserId(twoYearsAgoThisMonthLastDay, userId).orElse(null);
+        MonthPoint nextMonthPoint = monthPointRepository.findByYearMonthDateAndUserId(twoYearsAgoNextMonthLastDay, userId).orElse(null);
 
         if (nextMonthPoint != null) {
             extraPoint -= nextMonthPoint.getMonthPoint().intValue();
