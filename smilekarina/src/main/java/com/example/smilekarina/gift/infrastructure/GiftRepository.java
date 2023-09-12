@@ -10,4 +10,8 @@ public interface GiftRepository extends JpaRepository<Gift, Long> {
 
     Optional<Gift> findFirstByGiftRecipientIdAndGiftTypeOrderByIdDesc(Long gift_recipientId, GiftType giftType);
 
+    Gift findByResultPointId(Long pointId);
+
+    Gift findBySenderPointId(Long pointId);
+
 }
