@@ -25,7 +25,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional(readOnly = true)
+//@Transactional(readOnly = true)
 public class FranchiseServiceImpl implements FranchiseService{
     private final JPAQueryFactory query;
 
@@ -76,11 +76,11 @@ public class FranchiseServiceImpl implements FranchiseService{
 
 
     @Override
-    public Page<FranchiseOut> findStoreList(Pageable pageable) {
+    public List<FranchiseOut> findStoreList() {
         QBranch branch =QBranch.branch;
         QFranchise franchise =QFranchise.franchise;
 
-        List<FranchiseOut> FranchiseOut = query
+        List<FranchiseOut> franchiseOut = query
                 .select(Projections.constructor(FranchiseOut.class,
                         franchise.franchiseName,
                         franchise.franchiseImage,
@@ -92,14 +92,14 @@ public class FranchiseServiceImpl implements FranchiseService{
                 .from(branch)
                 .leftJoin(branch.franchise, franchise)
                 .where(branch.franchise.eq(franchise))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+
                 .fetch();
-        Long count = query
-                .select(franchise.count())
-                .from(franchise)
-                .fetchOne();
-        if (count == null) count = 0L;
-        return new PageImpl<>(FranchiseOut,pageable,count);
+//        Long count = query
+//                .select(franchise.count())
+//                .from(franchise)
+//                .fetchOne();
+//        if (count == null) count = 0L;
+//        return new PageImpl<>(FranchiseOut,count);
+        return franchiseOut;
     }
 }

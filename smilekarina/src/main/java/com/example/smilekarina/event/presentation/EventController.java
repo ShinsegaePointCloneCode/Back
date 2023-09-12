@@ -2,6 +2,7 @@ package com.example.smilekarina.event.presentation;
 import com.example.smilekarina.event.application.EventService;
 import com.example.smilekarina.event.dto.EventListGetDto;
 import com.example.smilekarina.event.vo.EventListOut;
+import com.example.smilekarina.event.vo.EventParticipateIn;
 import com.example.smilekarina.global.vo.ResponseOut;
 import com.example.smilekarina.event.vo.EventOut;
 import lombok.RequiredArgsConstructor;
@@ -43,14 +44,15 @@ public class EventController {
         ResponseOut<?> responseOut = ResponseOut.success(eventPrizeListOut);
         return ResponseEntity.ok(responseOut);
     }
-/*
+
     @PostMapping("/benefits/myEvent")
-    public ResponseEntity<?> myEvent(@RequestBody EventGetDto eventGetDto) {
-        eventService.myEvent(eventGetDto);
+    public ResponseEntity<?> myEvent(@RequestHeader("Authorization") String token,
+                                     @RequestBody EventParticipateIn eventParticipateIn) {
+        eventService.createMyEvent(token, modelMapper.map(eventParticipateIn, EventListGetDto.class));
         ResponseOut<?> responseOut = ResponseOut.success();
         return ResponseEntity.ok(responseOut);
     }
- */
+
     //query string 파라미터로 id 값에 해당하는 데이터 요청 -> 이야기해보기 string이 아니고 Long 으로 받으면 안되나용 ..?ㅎㅎㅎ
 
     @GetMapping("/event")
@@ -63,16 +65,17 @@ public class EventController {
 
 
     @GetMapping("/benefits/myEvent")
-    public ResponseEntity<?>detailMyEvent(@RequestParam(value = "page")Integer pageNo,
-                                        @RequestParam(value = "size") Integer size){
-        List<EventListOut> myEventListOut=eventService.myEventList(pageNo,size);
-        ResponseOut<?> responseOut =ResponseOut.success();
+    public ResponseEntity<?>myPAEvent(@RequestHeader("Authorization") String token,
+                                      Pageable pageable){
+        Page<EventListOut> myPAEventListOut=eventService.myPAEventList(token,pageable);
+        ResponseOut<?> responseOut =ResponseOut.success(myPAEventListOut);
         return ResponseEntity.ok(responseOut);
     }
-    @GetMapping("/event/1")
-    public ResponseEntity<?>event1(){
-        List<EventListGetDto> eventListGetDtoList =eventService.getAllEvent();
-        ResponseOut<?> responseOut =ResponseOut.success(eventListGetDtoList);
+    @GetMapping("/benefits/winEvent")
+    public ResponseEntity<?>myWinEvent(@RequestHeader("Authorization") String token,
+                                       Pageable pageable){
+        Page<EventListOut> myWinEvent =eventService.myWinEvent(token,pageable);
+        ResponseOut<?> responseOut =ResponseOut.success(myWinEvent);
         return ResponseEntity.ok(responseOut);
     }
 }
