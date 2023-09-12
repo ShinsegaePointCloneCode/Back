@@ -171,8 +171,26 @@ public class CardServiceImpl implements CardService{
         return pointCard.getCardNumber();
     }
 
+    // 회원가입시 온라인포인트카드 등록 - 회원가입 후 화면로딩시 에러 발생 예방을 위해 임시로 만들어 둠
+    @Override
+    @Transactional(readOnly = false)
+    public void registerOnlinePointCard(Long userId) {
 
-    // 포인트 카드 등록 처리
+        // 고정 문자열 + 유저Id 값
+        String cardNumber = "9350120011212405";
+        Long onlineCardNumber = Long.parseLong(cardNumber) + userId;
+
+        PointCard pointCard = PointCard.builder()
+                .cardNumber(Long.toString(onlineCardNumber))
+                .userId(userId)
+                .issueType(IssueType.ONLINE)
+                .issuePlace(SHINSEGAEPOINTDOTCOM)
+                .build();
+
+        pointCardRepository.save(pointCard);
+    }
+
+    // 포인트 카드 등록 처리 - 원래 private였는데 Transactional 쓰기 위해 public으로 선언
     @Transactional(readOnly = false)
     public void createPointCard(PointCardDto pointCardDto) {
 

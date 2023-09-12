@@ -3,6 +3,7 @@ package com.example.smilekarina.user.presentation;
 import com.example.smilekarina.agree.application.AgreeService;
 import com.example.smilekarina.agree.dto.AgreeAdvertiseDto;
 import com.example.smilekarina.agree.vo.AgreeAdvertiseIn;
+import com.example.smilekarina.card.application.CardService;
 import com.example.smilekarina.global.vo.ResponseOut;
 import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.dto.LogInDto;
@@ -33,6 +34,7 @@ public class UserController {
     private final ModelMapper modelMapper;
     private final UserService userService;
     private final AgreeService agreeService;
+    private final CardService cardService;
 //    private final RedisService redisService;
     @Operation(summary = "회원 추가 요청", description = "회원을 등록합니다.", tags = { "User Controller" })
     @ApiResponses({
@@ -48,6 +50,7 @@ public class UserController {
         Long userId = userService.createUser(modelMapper.map(userAgreeSignUpIn.getUserSignUpIn(), UserSignUpDto.class));
         agreeService.createAgreeAdvertiseByUser(userId,
                 modelMapper.map(userAgreeSignUpIn.getAgreeAdvertiseIn(), AgreeAdvertiseDto.class));
+        cardService.registerOnlinePointCard(userId);
         return ResponseEntity.ok(ResponseOut.success(userSignUpOutCreate(userAgreeSignUpIn)));
     }
 
