@@ -2,10 +2,12 @@ package com.example.smilekarina.point.presentation;
 
 import com.example.smilekarina.global.vo.ResponseOut;
 import com.example.smilekarina.point.application.PointService;
+import com.example.smilekarina.point.dto.PointSearchConditionDto;
 import com.example.smilekarina.point.vo.*;
 import com.example.smilekarina.user.application.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,27 +68,59 @@ public class PointController {
     /*
         포인트 리스트 조회
      */
+    @GetMapping("/point/pointList")
+    public ResponseEntity<?> getPointList(@RequestHeader("Authorization") String token,
+                                          @RequestParam(value="pointType") String pointType,
+                                          @RequestParam(value="rangeStartDate") String rangeStartDate,
+                                          @RequestParam(value="rangeEndDate") String rangeEndDate,
+                                          @RequestParam(value="usedType") String usedType,
+                                          @RequestParam(value="pointHistoryType") String pointHistoryType,
+                                          Pageable pageable) {
+
+        PointSearchConditionDto pointSearchConditionDto = PointSearchConditionDto.builder()
+                .token(token)
+                .pointType(pointType)
+                .rangeStartDate(rangeStartDate)
+                .rangeEndDate(rangeEndDate)
+                .usedType(usedType)
+                .pointHistoryType(pointHistoryType)
+                .page(pageable.getPageNumber())
+                .size(pageable.getPageSize())
+                .offset(pageable.getOffset())
+                .build();
+
+        PointListOut pointListOut = pointService.getPointList(pointSearchConditionDto);
+        ResponseOut<?> responseOut = ResponseOut.success(pointListOut);
+        return ResponseEntity.ok(responseOut);
+    }
+
+    /*
+        포인트 리스트 상세 내역 조회
+     */
+    @GetMapping("point/pointListDetail")
+    public ResponseEntity<?> getPointList(@RequestHeader("Authorization") String token,
+                                          @RequestParam(value="pointId") String pointId,
+                                          @RequestParam(value="pointType") String pointType) {
+
+        // 이벤트 당첨 적립은 어떻게 쌓이는지 정보가 없어서 일단은 룰렛, 출석 적립만 표시
+
+        // [스마트영수증]인 경우
+        // [일반]인 경우
+        // [출석],[룰렛]인 경우
+        // [선물], [선물사용취소]인 경우
+        // [소멸]인 경우
+
+        // [이벤트]인 경우
+        // [전환]인 경우
+
+
+        ResponseOut<?> responseOut = ResponseOut.success();
+        return ResponseEntity.ok(responseOut);
+    }
 
 
 
 
 
 
-
-
-
-//    /*
-//        테스트 데이터 넣기용
-//     */
-//    @PostMapping("/point")
-//    void addPoint(@RequestBody PointIn pointIn) {
-//        log.info("INPUT Object Data is : {}" , pointIn);
-//        PointAddDto pointAddDto = PointAddDto.builder()
-//                .pointType(pointIn.getPointType())
-//                .point(pointIn.getPoint())
-//                .used(pointIn.getUsed())
-//                .userId(pointIn.getUserId())
-//                .build();
-//        pointService.registerPoint(pointAddDto);
-//    }
 }

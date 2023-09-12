@@ -1,33 +1,42 @@
 package com.example.smilekarina.point.application;
 
+import com.example.smilekarina.gift.dto.GiftDetailDto;
 import com.example.smilekarina.point.domain.*;
 import com.example.smilekarina.point.dto.PointAddDto;
+import com.example.smilekarina.point.dto.PointDetailDto;
 import com.example.smilekarina.point.dto.PointPasswordCheckDto;
+import com.example.smilekarina.point.dto.PointSearchConditionDto;
 import com.example.smilekarina.point.infrastructure.ExtinctionPointRepository;
 import com.example.smilekarina.point.infrastructure.MonthPointRepository;
 import com.example.smilekarina.point.infrastructure.PointRepository;
+import com.example.smilekarina.point.vo.PointDetailOut;
 import com.example.smilekarina.point.vo.PointInfoOut;
+import com.example.smilekarina.point.vo.PointListOut;
 import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.infrastructure.UserRepository;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @Transactional(readOnly = true)
 public class  PointServiceImpl implements PointService{
 
@@ -146,6 +155,133 @@ public class  PointServiceImpl implements PointService{
         user.ifPresent(modifiedUser -> {
             modifiedUser.setPointPassword(pointPassword);
         });
+    }
+
+    // 포인트 리스트 조회
+    @Override
+    public PointListOut getPointList(PointSearchConditionDto pointSearchConditionDto) {
+
+        User user = userService.getUserFromToken(pointSearchConditionDto.getToken());
+
+        QPoint point = QPoint.point1;
+
+        // 고정 조건
+        LocalDate startDate = LocalDate.parse(pointSearchConditionDto.getRangeStartDate(), DateTimeFormatter.ISO_DATE);
+        LocalDate endDate = LocalDate.parse(pointSearchConditionDto.getRangeEndDate(), DateTimeFormatter.ISO_DATE);
+        BooleanExpression baseCondition = point.user.eq(user)
+                .and(point.createdDate.between(createStartLocalDateTime(startDate),
+                        createEndLocalDateTime(endDate)));
+
+        // 그외 조건
+        // 포인트 리스트 조건 설정 - pointType
+        BooleanBuilder pointTypeBuilder = new BooleanBuilder();
+        String pointType = pointSearchConditionDto.getPointType();
+        if(pointType.equals("used")) {
+            pointTypeBuilder.and(point.pointType.in(PointType.GIFT,PointType.CANCELGIFT,PointType.CONVERT).not());
+        } else if(pointType.equals("gift")) {
+            pointTypeBuilder.and(point.pointType.in(PointType.GIFT,PointType.CANCELGIFT));
+        } else if(pointType.equals("convert")) {
+            pointTypeBuilder.and(point.pointType.eq(PointType.CONVERT));
+        }
+
+        // 포인트 리스트 조건 설정 - usedType
+        String usedType = pointSearchConditionDto.getUsedType();
+        BooleanBuilder usedTypeBuilder = new BooleanBuilder();
+        if(usedType.equals("false")) {
+            usedTypeBuilder.and(point.used.eq(false));
+        } else if(usedType.equals("true")) {
+            usedTypeBuilder.and(point.used.eq(true));
+        }
+
+        // 포인트 리스트 조건 설정 - pointHistoryType
+        String pointHistoryType = pointSearchConditionDto.getPointHistoryType();
+        BooleanBuilder pointHistoryTypeBuilder = new BooleanBuilder();
+        if(pointHistoryType.equals("event")) {
+            pointHistoryTypeBuilder.and(point.pointType.in(PointType.CHECK,PointType.ROULETTE,PointType.EVENT));
+        } else if(pointHistoryType.equals("general")) {
+            pointHistoryTypeBuilder.and(point.pointType.in(PointType.CHECK,PointType.ROULETTE,PointType.EVENT)).not();
+        }
+
+        // 포인트 적립/사용구분(usedType)이 [전체]이거나 [적립]인 경우에는 적립 총 금액 구하기
+        Long addTotalPoint = 0L;
+        if(usedType.equals("all") || usedType.equals("false")) {
+            addTotalPoint = query
+                    .select(point.point.longValue().sum())
+                    .from(point)
+                    .where(baseCondition)
+                    .where(pointTypeBuilder)
+                    .where(point.used.eq(false))
+                    .where(pointHistoryTypeBuilder)
+                    .fetchOne();
+        }
+
+        // 포인트 적립/사용구분(usedType)이 [전체]이거나 [사용]인 경우에는 사용 총 금액 구하기
+        Long usedTotalPoint = 0L;
+        if(usedType.equals("all") || usedType.equals("true")) {
+            usedTotalPoint = query
+                    .select(point.point.longValue().sum())
+                    .from(point)
+                    .where(baseCondition)
+                    .where(pointTypeBuilder)
+                    .where(point.used.eq(true))
+                    .where(pointHistoryTypeBuilder)
+                    .fetchOne();
+        }
+
+        String tmp = PointType.SMARTRECEIPT.getValue();
+
+        // 포인트 리스트 구하기
+        List<PointDetailDto> pointDetailDtoList = query
+                .select(Projections.constructor(PointDetailDto.class,
+                        point.id,
+                        point.point,
+                        point.used,
+                        point.pointType,
+                        point.createdDate
+                ))
+                .from(point)
+                .where(baseCondition)
+                .where(pointTypeBuilder)
+                .where(usedTypeBuilder)
+                .where(pointHistoryTypeBuilder)
+                .orderBy(point.createdDate.desc())
+                .orderBy(point.used.desc())
+                .offset(pointSearchConditionDto.getOffset())
+                .limit(pointSearchConditionDto.getSize())
+                .fetch();
+
+        // TODO PointType의 value값을 바로 뺄 수 있으면 이렇게 안해도 된다. 방법을 모르겠어서 일단 이렇게 처리
+        List<PointDetailOut> pointDetailOutList = new ArrayList<>();
+        if(pointDetailDtoList != null) {
+            pointDetailOutList = pointDetailDtoList.stream().map(pointDetail -> {
+                return PointDetailOut.builder()
+                        .pointId(pointDetail.getPointId())
+                        .point(pointDetail.getPoint())
+                        .used(pointDetail.getUsed())
+                        .pointType(pointDetail.getPointType().getValue())
+                        .createdDate(pointDetail.getCreatedDate())
+                        .build();
+            }).toList();
+        }
+
+        // 해당 유저의 포인트 데이터 총 갯수 구하기
+        Long totalRows = query
+                .select(point.count())
+                .from(point)
+                .where(baseCondition)
+                .where(pointTypeBuilder)
+                .where(usedTypeBuilder)
+                .where(pointHistoryTypeBuilder)
+                .fetchOne();
+
+        return PointListOut.builder()
+                .aTotalPoint(addTotalPoint == null ? 0 : addTotalPoint)
+                .uTotalPoint(usedTotalPoint == null ? 0 : usedTotalPoint)
+                .pointDetailOutList(pointDetailOutList)
+                .page(pointSearchConditionDto.getPage())
+                .size(pointSearchConditionDto.getSize())
+                .totalRows(totalRows == null ? 0 : totalRows)
+                .build();
     }
 
     // 사용가능포인트 조회
@@ -338,9 +474,12 @@ public class  PointServiceImpl implements PointService{
     }
 
     // 날짜(뒤에 시간은 23:59:59) 만들기
-//    private LocalDateTime createEndLocalDateTime(LocalDate date) {
-//        return LocalDateTime.of(date, LocalTime.of(23,59,59));
-//    }
+    private LocalDateTime createEndLocalDateTime(LocalDate date) {
+        return LocalDateTime.of(date, LocalTime.of(23,59,59));
+    }
+
+
+
 
     // 밑에는 강사님 코드 참고용 ************************************
 
