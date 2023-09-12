@@ -9,6 +9,7 @@ import com.example.smilekarina.point.dto.PointSearchConditionDto;
 import com.example.smilekarina.point.infrastructure.ExtinctionPointRepository;
 import com.example.smilekarina.point.infrastructure.MonthPointRepository;
 import com.example.smilekarina.point.infrastructure.PointRepository;
+import com.example.smilekarina.point.vo.PointContentOut;
 import com.example.smilekarina.point.vo.PointDetailOut;
 import com.example.smilekarina.point.vo.PointInfoOut;
 import com.example.smilekarina.point.vo.PointListOut;
@@ -281,6 +282,25 @@ public class  PointServiceImpl implements PointService{
                 .page(pointSearchConditionDto.getPage())
                 .size(pointSearchConditionDto.getSize())
                 .totalRows(totalRows == null ? 0 : totalRows)
+                .build();
+    }
+
+    // 포인트 리스트 상세 내역 조회 - 출석, 룰렛
+    @Override
+    public PointContentOut getEventPoint(String pointType) {
+        return PointContentOut.builder()
+                .franchiseName("신세계포인트닷컴")
+                .addDetailDesc(PointType.CHECK.getValue().equals(pointType) ?
+                        "[APP] 출석체크 포인트 지급" : "[APP] 럭키룰렛 포인트 지급")
+                .build();
+    }
+
+    // 포인트 리스트 상세 내역 조회 - 소멸
+    @Override
+    public PointContentOut getExtinction() {
+        return PointContentOut.builder()
+                .franchiseName("신세계") // 신세계 소멸 밖에 본 적이 없어서 일단 고정
+                .addDetailDesc("포인트 유효기간 경과 소멸")
                 .build();
     }
 

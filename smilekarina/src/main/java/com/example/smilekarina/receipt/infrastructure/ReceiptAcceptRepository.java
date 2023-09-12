@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReceiptAcceptRepository extends JpaRepository<ReceiptAccept, Long> {
 
+    ReceiptAccept findByPointId(Long pointId);
+
 }

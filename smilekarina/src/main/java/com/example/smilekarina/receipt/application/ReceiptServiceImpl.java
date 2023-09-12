@@ -2,8 +2,11 @@ package com.example.smilekarina.receipt.application;
 
 import com.example.smilekarina.point.application.PointService;
 import com.example.smilekarina.point.dto.PointAddDto;
+import com.example.smilekarina.point.vo.PointContentOut;
 import com.example.smilekarina.receipt.domain.Receipt;
+import com.example.smilekarina.receipt.domain.ReceiptAccept;
 import com.example.smilekarina.receipt.domain.SmartReceipt;
+import com.example.smilekarina.receipt.infrastructure.ReceiptAcceptRepository;
 import com.example.smilekarina.receipt.infrastructure.ReceiptRepository;
 import com.example.smilekarina.receipt.infrastructure.SmartReceiptRepository;
 import com.example.smilekarina.receipt.vo.SmartReceiptPointIn;
@@ -23,6 +26,7 @@ public class ReceiptServiceImpl implements ReceiptService{
     private final PointService pointService;
     private final ReceiptRepository receiptRepository;
     private final SmartReceiptRepository smartReceiptRepository;
+    private final ReceiptAcceptRepository receiptAcceptRepository;
 
     // 영수증 인증 완료 후 적립
     @Override
@@ -57,5 +61,30 @@ public class ReceiptServiceImpl implements ReceiptService{
                 .branchName(smartReceiptPointIn.getBranchName())
                 .build();
         smartReceiptRepository.save(smartReceipt);
+    }
+
+    // 스마트 영수증 조회가 가능한 곳 적립/사용 포인트 조회
+    @Override
+    public PointContentOut getSmartReceipt(Long pointId) {
+
+        SmartReceipt smartReceipt = smartReceiptRepository.findByPointId(pointId);
+
+        Receipt receipt = receiptRepository.findById(smartReceipt.getId()).orElseThrow(IllegalArgumentException::new);;
+
+        return PointContentOut.builder()
+                .franchiseName(smartReceipt.getBranchName())
+                .receiptNumber(receipt.getReceiptNumber())
+                .build();
+    }
+
+    // 일반 적립/사용 포인트 조회
+    @Override
+    public PointContentOut getReceiptAccept(Long pointId) {
+
+        ReceiptAccept receiptAccept = receiptAcceptRepository.findByPointId(pointId);
+
+        return PointContentOut.builder()
+                .franchiseName(receiptAccept.getBranchName())
+                .build();
     }
 }
