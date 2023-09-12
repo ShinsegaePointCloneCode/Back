@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService{
         user.ifPresent(u -> log.info("user is : {}", u));
 
         return user.map(u -> modelMapper.map(u, UserGetDto.class))
-                .orElseThrow(() -> new NoUserException(UserErrorStateCode.NOUSER));
+                .orElse(null);
     }
     // uuid로 dto 만들기
     @Override
