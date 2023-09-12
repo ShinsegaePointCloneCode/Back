@@ -26,9 +26,10 @@ public interface CardService {
     // 오프라인 카드 조회
     List<OfflinePointCardOut> getOfflinePointCardList(String token);
 
-
     // 포인트카드 번호 조회(바코드 보기 위함)
     String getPointCardNumber(String token);
 
+    // 회원가입시 온라인포인트카드 등록
+    void registerOnlinePointCard(Long userId);
 
 }
