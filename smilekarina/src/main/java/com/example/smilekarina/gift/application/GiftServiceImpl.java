@@ -15,6 +15,7 @@ import com.example.smilekarina.point.domain.PointType;
 import com.example.smilekarina.point.dto.PointAddDto;
 import com.example.smilekarina.point.dto.PointPasswordCheckDto;
 import com.example.smilekarina.point.infrastructure.PointRepository;
+import com.example.smilekarina.point.vo.PointContentOut;
 import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.infrastructure.UserRepository;
@@ -310,4 +311,45 @@ public class GiftServiceImpl implements GiftService {
                 .build();
     }
 
+    // 포인트 리스트 상세 내역 조회 - 선물, 선물사용취소
+    @Override
+    public PointContentOut getGiftPont(Long pointId, String pointType) {
+
+        if(PointType.CANCELGIFT.getValue().equals(pointType)) {
+
+            Gift gift = giftRepository.findByResultPointId(pointId);
+            User user = userRepository.findById(gift.getGiftRecipientId()).orElseThrow(() -> new NoSuchElementException("User not found"));
+
+            return PointContentOut.builder()
+                    .messageOnOff(gift.getGiftMessage() == null ? false : true)
+                    .giftType(gift.getGiftType().getValue())
+                    .otherName(user.getName())
+                    .otherId(user.getLoginId())
+                    .giftId(gift.getId())
+                    .build();
+
+        } else {
+
+            Long otherUserId = null;
+            Gift gift = giftRepository.findByResultPointId(pointId);
+
+            // 받는 사람이 아니라면 보낸 사람 정보로 다시 검색하기
+            if(gift == null) {
+                gift = giftRepository.findBySenderPointId(pointId);
+                otherUserId = gift.getGiftRecipientId();
+            } else {
+                otherUserId = gift.getSenderPointId();
+            }
+
+            User user = userRepository.findById(otherUserId).orElseThrow(() -> new NoSuchElementException("User not found"));
+
+            return PointContentOut.builder()
+                    .messageOnOff(gift.getGiftMessage() == null ? false : true)
+                    .giftType(gift.getGiftType().getValue())
+                    .otherName(user.getName())
+                    .otherId(user.getLoginId())
+                    .giftId(gift.getId())
+                    .build();
+        }
+    }
 }

@@ -8,6 +8,7 @@ import com.example.smilekarina.gift.vo.GiftIn;
 import com.example.smilekarina.gift.vo.GiftListOut;
 import com.example.smilekarina.gift.vo.GiftMessageOut;
 import com.example.smilekarina.gift.vo.GiftPointDetailOut;
+import com.example.smilekarina.point.vo.PointContentOut;
 
 public interface GiftService {
 
@@ -31,4 +32,7 @@ public interface GiftService {
 
     // 선물 메세지 조회
     GiftMessageOut getGiftMessage(Long giftId);
+
+    // 포인트 리스트 상세 내역 조회 - 선물, 선물사용취소
+    PointContentOut getGiftPont(Long pointId, String pointType);
 }
