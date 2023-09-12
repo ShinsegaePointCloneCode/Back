@@ -1,14 +1,15 @@
-package com.example.smilekarina.event.vo;
+package com.example.smilekarina.event.dto;
 
 import com.example.smilekarina.event.domain.EventType;
 import lombok.*;
 
+@Builder
+@ToString
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventParticipateIn {
+public class EventParticipateDto {
     Long eventId;
     Boolean prizeBool;
 }
