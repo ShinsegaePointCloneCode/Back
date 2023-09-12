@@ -98,7 +98,7 @@ public class UserController {
     }
     @Operation(summary= "포인트 선물 인증", description= "포인트 선물 기록을 가져와서 그사람의 아이디와 이름을 준다.",
             tags = { "User Controller" })
-    @GetMapping("/user/checkuser")
+    @PostMapping("/user/checkuser")
     public ResponseEntity<?> checkOtherUser(@RequestBody CheckUserIn checkUserIn) {
         CheckUserOut checkUserOut = userService.getOtherUserInfo(checkUserIn);
 
