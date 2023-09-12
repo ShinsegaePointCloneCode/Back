@@ -20,14 +20,14 @@ public class MonthPoint {
     private Long id;
     @Column(nullable = false, name = "user_id")
     private Long userId;
-    @Column(nullable = false, name = "year_month")
-    private LocalDate yearMonth;
+    @Column(nullable = false, name = "year_month_date")
+    private LocalDate yearMonthDate;
     @Column(nullable = false, name = "month_point")
     private Long monthPoint;
     public void setMonthPoint(Long monthPoint) {
         this.monthPoint = monthPoint;
     }
-    public void setYearMonth(LocalDate yearMonth) {
-        this.yearMonth = yearMonth;
+    public void setYearMonthDate(LocalDate yearMonthDate) {
+        this.yearMonthDate = yearMonthDate;
     }
 }

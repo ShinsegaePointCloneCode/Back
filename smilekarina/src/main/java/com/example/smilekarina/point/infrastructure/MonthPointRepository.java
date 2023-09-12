@@ -8,7 +8,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MonthPointRepository extends JpaRepository<MonthPoint, Long> {
-    Optional<MonthPoint> findByYearMonthAndUserId(LocalDate startDate, Long userId);
-
-    List<MonthPoint> findByUserIdOrderByYearMonthDesc(Long userId);
+    Optional<MonthPoint> findByYearMonthDateAndUserId(LocalDate startDate, Long userId);
 }
