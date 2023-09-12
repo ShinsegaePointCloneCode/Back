@@ -37,9 +37,8 @@ public class FranchiseController {
     }
 
     @GetMapping("/mylounge/findStore/map")
-    public ResponseEntity<?>getFindStoreList(@RequestHeader("Authorization") String token,
-                                             Pageable pageable){
-        Page<FranchiseOut> franchiseOutList = franchiseService.findStoreList(pageable);
+    public ResponseEntity<?>getFindStoreList(@RequestHeader("Authorization") String token){
+        List<FranchiseOut> franchiseOutList = franchiseService.findStoreList();
         ResponseOut<?> responseOut = ResponseOut.success(franchiseOutList);
         return ResponseEntity.ok(responseOut);
     }

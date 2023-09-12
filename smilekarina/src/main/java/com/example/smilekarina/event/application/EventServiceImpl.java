@@ -4,8 +4,11 @@ import com.example.smilekarina.event.domain.*;
 import com.example.smilekarina.event.dto.*;
 import com.example.smilekarina.event.infrastructure.EventDetailImageRepository;
 import com.example.smilekarina.event.infrastructure.EventRepository;
+import com.example.smilekarina.event.infrastructure.MyEventListRepository;
 import com.example.smilekarina.event.vo.EventListOut;
 import com.example.smilekarina.event.vo.EventOut;
+import com.example.smilekarina.user.application.UserService;
+import com.example.smilekarina.user.domain.User;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -34,10 +37,11 @@ import java.util.NoSuchElementException;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Transactional(readOnly = true)
 public class EventServiceImpl implements EventService{
-
+    private final UserService userService;
     private final EventRepository eventRepository;
     private final EventDetailImageRepository eventDetailImageRepository;
     private final JPAQueryFactory query;
+    private final MyEventListRepository myEventListRepository;
     /*
     @Override
     public void createEvent(CreateEventDto createEventDto){
@@ -133,9 +137,9 @@ public class EventServiceImpl implements EventService{
         LocalDateTime currentTime =LocalDateTime.now();
         QEvent event = QEvent.event;
         OrderSpecifier<?> orderSpecifier = switch (orderType) {
-            case 30 -> event.createdDate.asc();
-            case 40 -> event.eventEnd.desc();
-            default -> event.createdDate.asc();  // 기본 정렬
+            case 30 -> event.createdDate.desc();
+            case 40 -> event.eventEnd.asc();
+            default -> event.createdDate.desc();  // 기본 정렬
         };
         Expression<String> eventTypeAsString = Expressions.stringTemplate(
                 "CAST({0} AS string)",
@@ -190,6 +194,92 @@ public class EventServiceImpl implements EventService{
                 .from(event)
                 .where(baseCondition,
                         event.eventType.eq(EventType.PARTICIPATE))
+                .orderBy(event.eventEnd.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+        Long count = query
+                .select(event.count())
+                .from(event)
+                .fetchOne();
+        if (count == null) count = 0L;
+        return new PageImpl<>(eventListOutQuery,pageable,count);
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public void createMyEvent(String token, EventListGetDto dto) {
+        User user = userService.getUserFromToken(token);
+        MyEventList myEventList=MyEventList.builder()
+                .prizeBool(false)
+                .eventId(dto.getEventId())
+                .user(user)
+                .build();
+        myEventListRepository.save(myEventList);
+    }
+
+    @Override
+    public Page<EventListOut> myPAEventList(String token, Pageable pageable) {
+        User user = userService.getUserFromToken(token);
+        QEvent event = QEvent.event;
+        QMyEventList myEventList =QMyEventList.myEventList;
+        Expression<String> eventTypeAsString = Expressions.stringTemplate(
+                "CAST({0} AS string)",
+                event.eventType
+        );
+        List<EventListOut> eventListOutQuery = query
+                .select(Projections.constructor(EventListOut.class,
+                        event.id,
+                        event.eventHead,
+                        event.linkedUrl,
+                        event.createdDate,
+                        event.eventStart,
+                        event.eventEnd,
+                        event.eventThumbnail,
+                        eventTypeAsString
+                ))
+                .from(event)
+                .leftJoin(myEventList).on(myEventList.eventId.eq(event.id).and(myEventList.user.eq(user)))
+                .where(
+                        myEventList.user.eq(user),
+                        myEventList.prizeBool.eq(false))
+                .orderBy(event.eventEnd.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+        Long count = query
+                .select(event.count())
+                .from(event)
+                .fetchOne();
+        if (count == null) count = 0L;
+        return new PageImpl<>(eventListOutQuery,pageable,count);
+    }
+
+    @Override
+    public Page<EventListOut> myWinEvent(String token, Pageable pageable) {
+        User user = userService.getUserFromToken(token);
+        QEvent event = QEvent.event;
+        QMyEventList myEventList =QMyEventList.myEventList;
+        Expression<String> eventTypeAsString = Expressions.stringTemplate(
+                "CAST({0} AS string)",
+                event.eventType
+        );
+        List<EventListOut> eventListOutQuery = query
+                .select(Projections.constructor(EventListOut.class,
+                        event.id,
+                        event.eventHead,
+                        event.linkedUrl,
+                        event.createdDate,
+                        event.eventStart,
+                        event.eventEnd,
+                        event.eventThumbnail,
+                        eventTypeAsString
+                ))
+                .from(event)
+                .leftJoin(myEventList).on(myEventList.eventId.eq(event.id).and(myEventList.user.eq(user)))
+                .where(
+                        myEventList.user.eq(user),
+                        myEventList.prizeBool.eq(true))
                 .orderBy(event.eventEnd.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

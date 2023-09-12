@@ -11,5 +11,5 @@ import java.util.List;
 public interface FranchiseService {
     Page<RegionOut> findStore(FranchiseDto franchiseDto, Pageable pageable);
 
-    Page<FranchiseOut> findStoreList(Pageable pageable);
+    List<FranchiseOut> findStoreList();
 }
