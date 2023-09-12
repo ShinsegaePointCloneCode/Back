@@ -152,6 +152,21 @@ public class UserController {
         }
     }
 
+    @Operation(summary= "소셜 로그인", description= "소셜 로그인하기 id를 통해 로그인 여부를 확인", tags = { "User Controller" })
+    @PostMapping("/user/oauth")
+    public ResponseEntity<?> oauthCheck(@RequestBody OauthIn oauthIn) {
+        LogInDto logInDto = userService.findOauth(oauthIn);
+        LogInOut logInOut = modelMapper.map(logInDto, LogInOut.class);
+        return ResponseEntity.ok(ResponseOut.success(logInOut));
+    }
+    @Operation(summary= "소셜 로그인 등록", description= "소셜 로그인 상태에서 id를 통해 등록", tags = { "User Controller" })
+    @PostMapping("/user/oauth/create")
+    public ResponseEntity<?> oauthCreate(@RequestHeader("Authorization") String token,
+                                         @RequestBody OauthIn oauthIn) {
+        userService.createOauth(token,oauthIn);
+        return ResponseEntity.ok(ResponseOut.success());
+    }
+
     private UserSignUpOut userSignUpOutCreate(UserAgreeSignUpIn userAgreeSignUpIn) {
         AgreeAdvertiseIn ad = userAgreeSignUpIn.getAgreeAdvertiseIn();
         UserSignUpIn us = userAgreeSignUpIn.getUserSignUpIn();

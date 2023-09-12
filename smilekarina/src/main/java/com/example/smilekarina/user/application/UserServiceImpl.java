@@ -3,14 +3,13 @@ package com.example.smilekarina.user.application;
 import com.example.smilekarina.config.security.JwtTokenProvider;
 import com.example.smilekarina.global.exception.ErrorStateCode;
 import com.example.smilekarina.global.exception.TokenInvalidException;
+import com.example.smilekarina.user.domain.QUser;
 import com.example.smilekarina.user.domain.Roll;
 import com.example.smilekarina.user.domain.User;
 import com.example.smilekarina.user.dto.LogInDto;
 import com.example.smilekarina.user.dto.UserGetDto;
 import com.example.smilekarina.user.dto.UserSignUpDto;
-import com.example.smilekarina.user.exception.NoPasswordException;
-import com.example.smilekarina.user.exception.SamePasswordException;
-import com.example.smilekarina.user.exception.UserErrorStateCode;
+import com.example.smilekarina.user.exception.*;
 import com.example.smilekarina.user.vo.*;
 import com.example.smilekarina.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +19,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -211,6 +211,46 @@ public class UserServiceImpl implements UserService{
         String loginId = jwtTokenProvider.getLoginId(token.substring(7));
         return userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new NoSuchElementException("해당 토큰이 없습니다."));
+    }
+
+    @Override
+    // 로그인 했을 경우 등록되어 있다면 로그인 시켜주기
+    public LogInDto findOauth(OauthIn oauthIn) {
+        if(Objects.equals(oauthIn.getProvider(), "kakao")) {
+            User user = userRepository.findByKakaoId(oauthIn.getId())
+                    .orElseThrow(() -> new NoAuthException(UserErrorStateCode.NOAUTH));
+            String JwtToken = jwtTokenProvider.generateToken(user);
+            return LogInDto.builder()
+                    .userName(user.getName())
+                    .token(JwtToken)
+                    .UUID(user.getUUID())
+                    .build();
+        } else if(Objects.equals(oauthIn.getProvider(), "naver")) {
+            User user = userRepository.findByNaverId(oauthIn.getId())
+                    .orElseThrow(() -> new NoAuthException(UserErrorStateCode.NOAUTH));
+            String JwtToken = jwtTokenProvider.generateToken(user);
+            return LogInDto.builder()
+                    .userName(user.getName())
+                    .token(JwtToken)
+                    .UUID(user.getUUID())
+                    .build();
+        } else throw new NoUserException(UserErrorStateCode.NOUSER);
+    }
+
+    @Override
+    public void createOauth(String token, OauthIn oauthIn) {
+        String loginId = jwtTokenProvider.getLoginId(token.substring(7));
+        User user = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new NoUserException(UserErrorStateCode.NOUSER));
+        if (oauthIn.getProvider().equals("kakao")) {
+            user.setKakaoId(oauthIn.getId());
+            userRepository.save(user);
+        } else if (oauthIn.getProvider().equals("naver")) {
+            user.setNaverId(oauthIn.getId());
+            userRepository.save(user);
+        } else {
+            throw new NoUserException(UserErrorStateCode.NOUSER);
+        }
     }
 
     @Transactional(readOnly = false)

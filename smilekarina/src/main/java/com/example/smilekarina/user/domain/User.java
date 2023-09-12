@@ -45,6 +45,10 @@ public class User extends BaseEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = true, length = 10, name = "roll")
     private Roll roll;
+    @Column(name = "kakao_id")
+    private String kakaoId;
+    @Column(name = "naver_id")
+    private String naverId;
     public String getName() {
         return userName;
     }
@@ -59,6 +63,12 @@ public class User extends BaseEntity implements UserDetails {
     public void setPointPassword(String pointPassword) { this.pointPassword = pointPassword; }
 //     security impl
     public void setStatus(Integer status) { this.status = status; }
+    public void setKakaoId(String kakaoId) {
+        this.kakaoId = kakaoId;
+    }
+    public void setNaverId(String naverId) {
+        this.naverId = naverId;
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(roll.name()));
