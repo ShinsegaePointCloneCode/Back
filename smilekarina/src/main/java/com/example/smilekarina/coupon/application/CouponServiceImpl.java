@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Optional;
 
@@ -53,7 +54,8 @@ public class CouponServiceImpl implements CouponService{
     @Transactional(readOnly = false)
     public void createCoupon(CouponDto dto) {
 //        log.info(String.valueOf(dto.getCouponPartnerId()));
-        CouponPartner couponPartner = couponPartnerRepository.findById(dto.getCouponPartnerId()).orElse(null);
+        CouponPartner couponPartner = couponPartnerRepository.findById(dto.getCouponPartnerId())
+                .orElseThrow(() -> new NoSuchElementException("쿠폰이 없습니다."));
 //        log.info(String.valueOf(couponPartner.getId()));
         Coupon coupon = Coupon.builder()
                 .couponName(dto.getCouponName())
@@ -109,8 +111,8 @@ public class CouponServiceImpl implements CouponService{
     @Transactional(readOnly = false)
     public MyCouponNumOut createMyCoupon(String token, Long couponId) {
         Long userId = userService.getUserIdFromToken(token);
-        Coupon coupon = couponRepository.findById(couponId).orElse(null);
-        // todo : 유효성 검사
+        Coupon coupon = couponRepository.findById(couponId)
+                .orElseThrow(() -> new NoSuchElementException("쿠폰이 없습니다."));
         return  MyCouponNumOut.builder()
                 .couponNum(generateCoupon(coupon,userId))
                 .build();
@@ -121,7 +123,6 @@ public class CouponServiceImpl implements CouponService{
     public void createAllMyCoupon(String token, List<Long> couponList) {
         Long userId = userService.getUserIdFromToken(token);
         // 최대 20개 이하
-        // todo : 유효성 검사
         couponList.stream()
                 .map(couponRepository::findById)
                 .filter(Optional::isPresent)
