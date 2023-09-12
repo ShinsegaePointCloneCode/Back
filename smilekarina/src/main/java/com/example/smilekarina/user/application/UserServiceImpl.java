@@ -256,6 +256,17 @@ public class UserServiceImpl implements UserService{
         }
     }
 
+    @Override
+    public void checkPointPassword(String token, PointPasswordIn passwordIn) {
+        String loginId = jwtTokenProvider.getLoginId(token.substring(7));
+        User user = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new NoUserException(UserErrorStateCode.NOUSER));
+        if (user.getPointPassword().equals(passwordIn.getPassword())) {
+            return;
+        }
+        throw new NoSuchElementException("비밀번호 오류");
+    }
+
     @Transactional(readOnly = false)
     public void changeUserPassword(String loginId, String newPwd) {
         if (loginId == null || newPwd == null) {

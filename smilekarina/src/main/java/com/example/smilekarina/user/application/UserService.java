@@ -27,4 +27,5 @@ public interface UserService {
     User getUserFromToken(String token);
     LogInDto findOauth(OauthIn oauthIn);
     void createOauth(String token, OauthIn oauthIn);
+    void checkPointPassword(String token, PointPasswordIn passwordIn);
 }
