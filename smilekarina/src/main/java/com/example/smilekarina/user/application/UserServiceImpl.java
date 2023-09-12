@@ -238,16 +238,20 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional(readOnly = false)
     public void createOauth(String token, OauthIn oauthIn) {
         String loginId = jwtTokenProvider.getLoginId(token.substring(7));
         User user = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new NoUserException(UserErrorStateCode.NOUSER));
+        log.info("user : "+loginId);
         if (oauthIn.getProvider().equals("kakao")) {
             user.setKakaoId(oauthIn.getId());
             userRepository.save(user);
+            log.info("kakao : "+oauthIn.getId());
         } else if (oauthIn.getProvider().equals("naver")) {
             user.setNaverId(oauthIn.getId());
             userRepository.save(user);
+            log.info("naver : "+oauthIn.getId());
         } else {
             throw new NoUserException(UserErrorStateCode.NOUSER);
         }
