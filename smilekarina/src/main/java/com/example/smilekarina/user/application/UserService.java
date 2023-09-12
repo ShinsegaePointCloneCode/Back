@@ -25,4 +25,6 @@ public interface UserService {
     void authenticatePassword(String token, AuthenticatePasswordIn authenticatePasswordIn);
     CheckUserOut getOtherUserInfo(CheckUserIn checkUserIn);
     User getUserFromToken(String token);
+    LogInDto findOauth(OauthIn oauthIn);
+    void createOauth(String token, OauthIn oauthIn);
 }
