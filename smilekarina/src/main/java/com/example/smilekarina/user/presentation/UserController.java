@@ -101,8 +101,7 @@ public class UserController {
     @PostMapping("/user/checkuser")
     public ResponseEntity<?> checkOtherUser(@RequestBody CheckUserIn checkUserIn) {
         CheckUserOut checkUserOut = userService.getOtherUserInfo(checkUserIn);
-
-        return ResponseEntity.ok(ResponseOut.success());
+        return ResponseEntity.ok(ResponseOut.success(checkUserOut));
     }
     @Operation(summary= "아이디 찾기", description= "userName과 폰번호로 id 찾기", tags = { "User Controller" })
     @GetMapping("/member/findIdPw")

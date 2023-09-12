@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService{
         user.ifPresent(u -> log.info("user is : {}", u));
 
         return user.map(u -> modelMapper.map(u, UserGetDto.class))
-                .orElse(null);
+                .orElseThrow(() -> new NoUserException(UserErrorStateCode.NOUSER));
     }
     // uuid로 dto 만들기
     @Override
@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService{
         Optional<User> user = userRepository.findByUUID(UUID);
         user.ifPresent(u -> log.info("user is : {}", u));
         return user.map(u -> modelMapper.map(user, UserGetDto.class))
-                .orElse(null);
+                .orElseThrow(() -> new NoUserException(UserErrorStateCode.NOUSER));
     }
 
     @Override
@@ -116,7 +116,7 @@ public class UserServiceImpl implements UserService{
             )
         );
         User user = userRepository.findByLoginId(userLoginIn.getLoginId())
-                .orElseThrow(() -> new NoSuchElementException("없는 유저 입니다."));
+                .orElseThrow(() -> new NoUserException(UserErrorStateCode.NOUSER));
         if(user.getStatus() == 3) {
             throw new NoSuchElementException("탈퇴한 유저 입니다.");
         } else if (user.getStatus() == 2) {
@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public Long getUserId(String loginId) {
         Optional<User> optionalUser =  userRepository.findByLoginId(loginId);
-        return optionalUser.orElseThrow(() -> new NoSuchElementException("User not found")).getId();
+        return optionalUser.orElseThrow(() -> new NoUserException(UserErrorStateCode.NOUSER)).getId();
     }
     @Override
     public UserGetDto getUserDtoFromToken(String token) {
@@ -143,13 +143,13 @@ public class UserServiceImpl implements UserService{
     public Long getUserIdFromToken(String token) {
         String loginId = jwtTokenProvider.getLoginId(token.substring(7));
         Optional<User> optionalUser = userRepository.findByLoginId(loginId);
-        return optionalUser.orElseThrow(() -> new NoSuchElementException("User not found")).getId();
+        return optionalUser.orElseThrow(() -> new NoUserException(UserErrorStateCode.NOUSER)).getId();
     }
 
     @Override
     public FindIDOut findID(String userName, String phone) {
-        User user = userRepository.findTopByPhoneAndUserName(phone, userName).orElseThrow(() ->
-                new NoSuchElementException("해당 유저가 없습니다."));
+        User user = userRepository.findTopByPhoneAndUserName(phone, userName)
+                .orElseThrow(() -> new NoUserException(UserErrorStateCode.NOUSER));
         return FindIDOut.builder()
                 .loginId(user.getLoginId())
                 .address(user.getAddress())
@@ -179,8 +179,9 @@ public class UserServiceImpl implements UserService{
     @Transactional(readOnly = false)
     public void withdrawal(String token) {
         String loginId = jwtTokenProvider.getLoginId(token.substring(7));
-        User user = userRepository.findByLoginId(loginId).orElse(null);
-        Objects.requireNonNull(user).setStatus(3);
+        User user = userRepository.findByLoginId(loginId)
+                        .orElseThrow(() -> new NoUserException(UserErrorStateCode.NOUSER));
+        user.setStatus(3);
         userRepository.save(user);
     }
 
@@ -199,10 +200,11 @@ public class UserServiceImpl implements UserService{
     @Override
     public CheckUserOut getOtherUserInfo(CheckUserIn checkUserIn) {
         User user = userRepository.findTopByPhoneAndUserName(checkUserIn.getPhone(),checkUserIn.getUserName())
-                .orElseThrow(()-> new NoSuchElementException("해당 유저가 중복됩니다"));
+                .orElseThrow(()-> new NoUserException(UserErrorStateCode.NOUSER));
         return CheckUserOut.builder()
                 .userLoginId(user.getLoginId())
                 .userName(user.getName())
+                .UUID(user.getUUID())
                 .build();
     }
 
@@ -210,7 +212,7 @@ public class UserServiceImpl implements UserService{
     public User getUserFromToken(String token) {
         String loginId = jwtTokenProvider.getLoginId(token.substring(7));
         return userRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new NoSuchElementException("해당 토큰이 없습니다."));
+                .orElseThrow(() -> new TokenInvalidException(ErrorStateCode.TOKEN_INVALID));
     }
 
     @Override
@@ -243,15 +245,12 @@ public class UserServiceImpl implements UserService{
         String loginId = jwtTokenProvider.getLoginId(token.substring(7));
         User user = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new NoUserException(UserErrorStateCode.NOUSER));
-        log.info("user : "+loginId);
         if (oauthIn.getProvider().equals("kakao")) {
             user.setKakaoId(oauthIn.getId());
             userRepository.save(user);
-            log.info("kakao : "+oauthIn.getId());
         } else if (oauthIn.getProvider().equals("naver")) {
             user.setNaverId(oauthIn.getId());
             userRepository.save(user);
-            log.info("naver : "+oauthIn.getId());
         } else {
             throw new NoUserException(UserErrorStateCode.NOUSER);
         }
