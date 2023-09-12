@@ -9,4 +9,5 @@ import lombok.Setter;
 public class CheckUserOut {
     private String userName;
     private String userLoginId;
+    private String UUID;
 }
