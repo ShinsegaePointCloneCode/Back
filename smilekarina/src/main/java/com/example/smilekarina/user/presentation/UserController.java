@@ -170,7 +170,7 @@ public class UserController {
     }
     @Operation(summary= "포인트 비밀 번호 확인", description= "포인트 비밀번호로 확인", tags = { "User Controller" })
     @PostMapping("/check/pointPassword")
-    public ResponseEntity<?> oauthCreate(@RequestHeader("Authorization") String token,
+    public ResponseEntity<?> checkPointPassword(@RequestHeader("Authorization") String token,
                                          @RequestBody PointPasswordIn passwordIn) {
         userService.checkPointPassword(token,passwordIn);
         return ResponseEntity.ok(ResponseOut.success());
