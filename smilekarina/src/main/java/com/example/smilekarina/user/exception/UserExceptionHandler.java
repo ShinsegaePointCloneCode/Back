@@ -39,5 +39,24 @@ public class UserExceptionHandler {
     ErrorResponse errorResponse = new ErrorResponse(UserErrorStateCode.NOPASSWORD);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
+    /**
+      유저가 없음
+     */
+    @ExceptionHandler(NoUserException.class)
+    protected ResponseEntity<ErrorResponse> handlePreSameDay(NoUserException ex) {
+        log.error("NoPasswordException", ex);
+        ErrorResponse errorResponse = new ErrorResponse(UserErrorStateCode.NOUSER);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+    /**
+     auth에 유저가 없음
+     */
+    @ExceptionHandler(NoAuthException.class)
+    protected ResponseEntity<ErrorResponse> handlePreSameDay(NoAuthException ex) {
+        log.error("NoPasswordException", ex);
+        ErrorResponse errorResponse = new ErrorResponse(UserErrorStateCode.NOAUTH);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
 
 }
