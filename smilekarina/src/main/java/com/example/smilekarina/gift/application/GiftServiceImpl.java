@@ -18,6 +18,8 @@ import com.example.smilekarina.point.infrastructure.PointRepository;
 import com.example.smilekarina.point.vo.PointContentOut;
 import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.domain.User;
+import com.example.smilekarina.user.exception.NoUserException;
+import com.example.smilekarina.user.exception.UserErrorStateCode;
 import com.example.smilekarina.user.infrastructure.UserRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
@@ -111,7 +113,8 @@ public class GiftServiceImpl implements GiftService {
         Gift targetGift = gift.get();
 
         // 보낸 유저 정보 가져오기
-        User user = userRepository.findById(targetGift.getGiftSenderId()).orElseThrow(() -> new NoSuchElementException("User not found"));
+        User user = userRepository.findById(targetGift.getGiftSenderId())
+                .orElseThrow(() -> new NoUserException(UserErrorStateCode.NOUSER));
 
         return GiftLastDto.builder()
                 .giftId(targetGift.getId())
@@ -250,7 +253,8 @@ public class GiftServiceImpl implements GiftService {
                     // 내가 받는 사람인 경우
                     otherId = giftOne.getGiftSenderId();
                 }
-                User user = userRepository.findById(otherId).orElseThrow(() -> new NoSuchElementException("User not found"));
+                User user = userRepository.findById(otherId)
+                        .orElseThrow(() -> new NoUserException(UserErrorStateCode.NOUSER));
 
                 GiftDetailListOut giftDetail = GiftDetailListOut.builder()
                         .point(giftOne.getPoint())
@@ -291,7 +295,8 @@ public class GiftServiceImpl implements GiftService {
     @Override
     public GiftPointDetailOut getGiftPointDetail(Long pointId) {
 
-        Point point = pointRepository.findById(pointId).orElseThrow(() -> new NoSuchElementException("Point not found"));
+        Point point = pointRepository.findById(pointId)
+                .orElseThrow(() -> new NoSuchElementException("Point not found"));
 
         return GiftPointDetailOut.builder()
                 .pointType(point.getPointType().getCode())
@@ -303,7 +308,8 @@ public class GiftServiceImpl implements GiftService {
     @Override
     public GiftMessageOut getGiftMessage(Long giftId) {
 
-        Gift gift = giftRepository.findById(giftId).orElseThrow(() -> new NoSuchElementException("Gift not found"));
+        Gift gift = giftRepository.findById(giftId)
+                .orElseThrow(() -> new NoSuchElementException("Gift not found"));
 
         return GiftMessageOut.builder()
                 .giftMessage(gift.getGiftMessage())
@@ -318,7 +324,8 @@ public class GiftServiceImpl implements GiftService {
         if(PointType.CANCELGIFT.getValue().equals(pointType)) {
 
             Gift gift = giftRepository.findByResultPointId(pointId);
-            User user = userRepository.findById(gift.getGiftRecipientId()).orElseThrow(() -> new NoSuchElementException("User not found"));
+            User user = userRepository.findById(gift.getGiftRecipientId())
+                    .orElseThrow(() -> new NoUserException(UserErrorStateCode.NOUSER));
 
             return PointContentOut.builder()
                     .messageOnOff(gift.getGiftMessage() == null ? false : true)
@@ -341,7 +348,8 @@ public class GiftServiceImpl implements GiftService {
                 otherUserId = gift.getSenderPointId();
             }
 
-            User user = userRepository.findById(otherUserId).orElseThrow(() -> new NoSuchElementException("User not found"));
+            User user = userRepository.findById(otherUserId)
+                    .orElseThrow(() -> new NoUserException(UserErrorStateCode.NOUSER));
 
             return PointContentOut.builder()
                     .messageOnOff(gift.getGiftMessage() == null ? false : true)
