@@ -71,7 +71,7 @@ public class ReceiptServiceImpl implements ReceiptService{
 
         SmartReceipt smartReceipt = smartReceiptRepository.findByPointId(pointId);
 
-        Receipt receipt = receiptRepository.findById(smartReceipt.getId())
+        Receipt receipt = receiptRepository.findById(smartReceipt.getReceiptId())
                 .orElseThrow(() -> new NoReceiptException(ReceiptErrorStateCode.NORECEIPT));
 
         return PointContentOut.builder()
