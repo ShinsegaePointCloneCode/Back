@@ -3,9 +3,8 @@ package com.example.smilekarina.franchise.presentation;
 
 import com.example.smilekarina.franchise.application.FranchiseService;
 import com.example.smilekarina.franchise.dto.FranchiseDto;
-import com.example.smilekarina.franchise.vo.FranchiseIn;
-import com.example.smilekarina.franchise.vo.FranchiseOut;
-import com.example.smilekarina.franchise.vo.RegionOut;
+import com.example.smilekarina.franchise.dto.MyStoreDto;
+import com.example.smilekarina.franchise.vo.*;
 import com.example.smilekarina.global.vo.ResponseOut;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,4 +39,19 @@ public class FranchiseController {
         ResponseOut<?> responseOut = ResponseOut.success(franchiseOutList);
         return ResponseEntity.ok(responseOut);
     }
+    @PostMapping("/mylounge/regularstore")
+    public ResponseEntity<?> myStore(@RequestHeader("Authorization") String token,
+                                     @RequestBody MyStoreIn myStoreIn){
+        franchiseService.createMyStore(token, modelMapper.map(myStoreIn, MyStoreDto.class));
+        ResponseOut<?> responseOut = ResponseOut.success();
+        return ResponseEntity.ok(responseOut);
+    }
+    @GetMapping("/mylounge/regularstore")
+    public ResponseEntity<?>myReStoreList(@RequestHeader("Authorization") String token,
+                                       Pageable pageable){
+        Page<MyStoreOut> myStoreOuts = franchiseService.myStoreOuts(token,pageable);
+        ResponseOut<?> responseOut = ResponseOut.success(myStoreOuts);
+        return ResponseEntity.ok(responseOut);
+    }
+
 }

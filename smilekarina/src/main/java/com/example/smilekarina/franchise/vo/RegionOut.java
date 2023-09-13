@@ -7,6 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegionOut {
+    private Integer branchId;
     private String franchiseName;
     private String sidoName;
     private String gugunName;
