@@ -22,7 +22,7 @@ public class ScheduledTasks {
     private final UserService userService;
     private final PointService pointService;
     private final JPAQueryFactory query;
-    @Scheduled(cron = "0 0 0 * * ?")  // 초 분 시 일 월 요일(일 1, 월 2--)
+    @Scheduled(cron = "0 0 2 * * ?")  // 초 분 시 일 월 요일(일 1, 월 2--)
     public void executeAllUser() {
         List<User> users = userService.getAllUsers();
         LocalDate targetDate = LocalDate.now().minusDays(1);
@@ -32,7 +32,7 @@ public class ScheduledTasks {
         System.out.println("Executed task at " + LocalDateTime.now());
     }
     // 매달 결산한 유저의 한달간 모은 데이터를 만들어주는 스케줄러
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 0 1 * * ?")
     public void collectMonthPay() {
         // 대상 달은 이전 달이므로 minusDays(1)을 사용
         LocalDateTime now = LocalDateTime.now();
