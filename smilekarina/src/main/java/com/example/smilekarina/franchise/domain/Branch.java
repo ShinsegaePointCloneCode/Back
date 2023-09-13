@@ -17,9 +17,9 @@ public class Branch {
     private String branchAddress;
     @Column(nullable = false, length = 45, name="branch_name")
     private String branchName;
-    @Column(nullable = false,length = 10,name="sido_name")
+    @Column(length = 10,name="sido_name")
     private String sidoName;
-    @Column(nullable = false,length = 20,name="gugun_name")
+    @Column(length = 20,name="gugun_name")
     private String gugunName;
 
     @Column(nullable = false,name = "branch_latitude")

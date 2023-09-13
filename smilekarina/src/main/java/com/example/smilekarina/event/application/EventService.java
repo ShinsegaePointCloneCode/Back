@@ -6,17 +6,10 @@ import com.example.smilekarina.event.vo.EventOut;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 public interface EventService {
-    //void createEvent(CreateEventDto createEventDto);
+
     EventOut getEvent(Long eventNo);
-    EventGetDto myEvent(EventGetDto eventGetDto);
-    //EventPrizeDto getPrizeEvent(Long id);
-    List<EventListGetDto> getAllEvent();
-    //EventGetDto checkEvent(Integer eventNo);
     Page<EventListOut> endEvent(Pageable pageable);
-    List<EventListOut> myEventList(Integer pageNo,Integer size);
     Page<EventListOut> checkIngEvent(Integer orderType, Pageable pageable);
 
     Page<EventListOut> prizeEvent(Pageable pageable);

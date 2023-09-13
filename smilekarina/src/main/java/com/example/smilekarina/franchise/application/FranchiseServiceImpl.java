@@ -19,60 +19,110 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-//@Transactional(readOnly = true)
+@Transactional(readOnly = true)
 public class FranchiseServiceImpl implements FranchiseService{
     private final JPAQueryFactory query;
 
-    @Override
-    public Page<RegionOut> findStore(FranchiseDto franchiseDto, Pageable pageable) {
-        QBranch branch =QBranch.branch;
-        QFranchise franchise =QFranchise.franchise;
+@Override
+public Page<RegionOut> findStore(FranchiseDto franchiseDto, Pageable pageable) {
+    QBranch branch = QBranch.branch;
+    QFranchise franchise = QFranchise.franchise;
 
-        BooleanBuilder builder = new BooleanBuilder();
+    BooleanBuilder builder = new BooleanBuilder();
 
-        // 동적 쿼리 조건 추가
-        if (StringUtils.hasText(franchiseDto.getFranchiseName())) {
-            builder.and(franchise.franchiseName.eq(franchiseDto.getFranchiseName()));
-        }
-        if (StringUtils.hasText(franchiseDto.getSidoNm())) {
-            builder.and(branch.sidoName.eq(franchiseDto.getSidoNm()));
-        }
-        if (StringUtils.hasText(franchiseDto.getGugunName())) {
-            builder.and(branch.gugunName.eq(franchiseDto.getGugunName()));
-        }
+    // 동적 쿼리 조건 추가
+    if (StringUtils.hasText(franchiseDto.getFranchiseName()) && !franchiseDto.getFranchiseName().equals("total")) {
+        builder.and(franchise.franchiseName.eq(franchiseDto.getFranchiseName()));
+    }
 
-        // 조건들을 AND 연산자로 결합
-        Predicate finalPredicate = builder.getValue();
+    if (StringUtils.hasText(franchiseDto.getSidoNm()) && !franchiseDto.getSidoNm().equals("total")) {
+        builder.and(branch.sidoName.eq(franchiseDto.getSidoNm()));
+    }
 
-        List<RegionOut> RegionOut = query
+    if (StringUtils.hasText(franchiseDto.getGugunName()) && !franchiseDto.getGugunName().equals("total")) {
+        builder.and(branch.gugunName.eq(franchiseDto.getGugunName()));
+    }
+
+    // 조건들을 AND 연산자로 결합
+    Predicate finalPredicate = builder.getValue();
+
+    List<RegionOut> regionOutList;
+
+    if (!franchiseDto.getFranchiseName().equals("total") && !franchiseDto.getSidoNm().equals("total")
+            && !franchiseDto.getGugunName().equals("total")) {
+        // 모든 조건이 제공되면 해당 조건으로 검색
+        regionOutList = query
                 .select(Projections.constructor(RegionOut.class,
                         franchise.franchiseName,
                         branch.sidoName,
                         branch.gugunName,
                         branch.branchName,
-                        branch.branchAddress
-                        ))
+                        branch.branchAddress))
                 .from(branch)
                 .leftJoin(branch.franchise, franchise)
-                .where(branch.franchise.eq(franchise),finalPredicate)
+                .where(branch.franchise.eq(franchise), finalPredicate)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-        Long count = query
-                .select(franchise.count())
-                .from(franchise)
-                .fetchOne();
-        if (count == null) count = 0L;
-        return new PageImpl<>(RegionOut,pageable,count);
-
+    } else if (!franchiseDto.getSidoNm().equals("total") && !franchiseDto.getGugunName().equals("total")) {
+        // sidoNm과 gugunName이 모두 제공되면 해당 조건으로 검색
+        regionOutList = query
+                .select(Projections.constructor(RegionOut.class,
+                        franchise.franchiseName,
+                        branch.sidoName,
+                        branch.gugunName,
+                        branch.branchName,
+                        branch.branchAddress))
+                .from(branch)
+                .leftJoin(branch.franchise, franchise)
+                .where(branch.franchise.eq(franchise), finalPredicate)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+    } else if (!franchiseDto.getFranchiseName().equals("total")) {
+        // franchiseName만 제공되면 해당 조건으로 검색
+        regionOutList = query
+                .select(Projections.constructor(RegionOut.class,
+                        franchise.franchiseName,
+                        branch.sidoName,
+                        branch.gugunName,
+                        branch.branchName,
+                        branch.branchAddress))
+                .from(branch)
+                .leftJoin(branch.franchise, franchise)
+                .where(branch.franchise.eq(franchise), finalPredicate)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+    } else {
+        // 모든 조건이 "total"이면 모든 데이터 출력
+        regionOutList = query
+                .select(Projections.constructor(RegionOut.class,
+                        franchise.franchiseName,
+                        branch.sidoName,
+                        branch.gugunName,
+                        branch.branchName,
+                        branch.branchAddress))
+                .from(branch)
+                .leftJoin(branch.franchise, franchise)
+                .where(branch.franchise.eq(franchise), finalPredicate)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
     }
 
+    Long count = query
+            .select(franchise.count())
+            .from(franchise)
+            .fetchOne();
+    if (count == null) count = 0L;
+    return new PageImpl<>(regionOutList, pageable, count);
+}
 
 
     @Override
@@ -94,12 +144,7 @@ public class FranchiseServiceImpl implements FranchiseService{
                 .where(branch.franchise.eq(franchise))
 
                 .fetch();
-//        Long count = query
-//                .select(franchise.count())
-//                .from(franchise)
-//                .fetchOne();
-//        if (count == null) count = 0L;
-//        return new PageImpl<>(FranchiseOut,count);
+
         return franchiseOut;
     }
 }

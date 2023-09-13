@@ -2,7 +2,6 @@ package com.example.smilekarina.franchise.presentation;
 
 
 import com.example.smilekarina.franchise.application.FranchiseService;
-import com.example.smilekarina.franchise.domain.Franchise;
 import com.example.smilekarina.franchise.dto.FranchiseDto;
 import com.example.smilekarina.franchise.vo.FranchiseIn;
 import com.example.smilekarina.franchise.vo.FranchiseOut;
@@ -13,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
