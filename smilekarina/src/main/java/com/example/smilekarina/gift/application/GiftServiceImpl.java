@@ -262,7 +262,7 @@ public class GiftServiceImpl implements GiftService {
                                 userId) ?
                                 giftOne.getSenderPointId() : giftOne.getResultPointId())
                         .showDate(giftOne.getUpdatedDate())
-                        .giftType(giftOne.getGiftType().getCode())
+                        .giftType(giftOne.getGiftType().getValue())
                         .messageOnOff(giftOne.getGiftMessage() == null ? false : true)
                         .giftId(giftOne.getGiftId())
                         .otherName(user.getName())
@@ -299,7 +299,7 @@ public class GiftServiceImpl implements GiftService {
                 .orElseThrow(() -> new NoSuchElementException("Point not found"));
 
         return GiftPointDetailOut.builder()
-                .pointType(point.getPointType().getCode())
+                .pointType(point.getPointType().getValue())
                 .used(point.getUsed())
                 .build();
     }
