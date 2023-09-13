@@ -8,19 +8,19 @@ spring:
       hikari:
         jdbc-url: jdbc:mysql://34.64.70.212:3307/ssgpoint
         read-only: false
-        username: root
-        password: 1234
+        username: ${MASTER_NAME}
+        password: ${MASTER_PW}
         driver-class-name: com.mysql.cj.jdbc.Driver
     slave:
       hikari:
         jdbc-url: jdbc:mysql://34.64.70.212:3308/ssgpoint
         read-only: true
-        username: root
-        password: 1234
+        username: ${SLAVE_NAME}
+        password: ${SLAVE_PW}
         driver-class-name: com.mysql.cj.jdbc.Driver
 
 JWT:
-  SECRET_KEY: f9ee13691cd0a3de2875b5fdcf5babcdb3394a3801e0843d6f998f78b9e016a0
+  SECRET_KEY: ${JWT_KEY}
   EXPIRATION_TIME: 14400000
   header: Authorization
   prefix: Bearer
