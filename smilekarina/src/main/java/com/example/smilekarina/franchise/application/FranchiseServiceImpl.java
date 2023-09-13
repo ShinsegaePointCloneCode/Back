@@ -52,11 +52,7 @@ public Page<RegionOut> findStore(FranchiseDto franchiseDto, Pageable pageable) {
     Predicate finalPredicate = builder.getValue();
 
     List<RegionOut> regionOutList;
-
-    if (!franchiseDto.getFranchiseName().equals("total") && !franchiseDto.getSidoNm().equals("total")
-            && !franchiseDto.getGugunName().equals("total")) {
-        // 모든 조건이 제공되면 해당 조건으로 검색
-        regionOutList = query
+    regionOutList = query
                 .select(Projections.constructor(RegionOut.class,
                         franchise.franchiseName,
                         branch.sidoName,
@@ -69,52 +65,6 @@ public Page<RegionOut> findStore(FranchiseDto franchiseDto, Pageable pageable) {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-    } else if (!franchiseDto.getSidoNm().equals("total") && !franchiseDto.getGugunName().equals("total")) {
-        // sidoNm과 gugunName이 모두 제공되면 해당 조건으로 검색
-        regionOutList = query
-                .select(Projections.constructor(RegionOut.class,
-                        franchise.franchiseName,
-                        branch.sidoName,
-                        branch.gugunName,
-                        branch.branchName,
-                        branch.branchAddress))
-                .from(branch)
-                .leftJoin(branch.franchise, franchise)
-                .where(branch.franchise.eq(franchise), finalPredicate)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-    } else if (!franchiseDto.getFranchiseName().equals("total")) {
-        // franchiseName만 제공되면 해당 조건으로 검색
-        regionOutList = query
-                .select(Projections.constructor(RegionOut.class,
-                        franchise.franchiseName,
-                        branch.sidoName,
-                        branch.gugunName,
-                        branch.branchName,
-                        branch.branchAddress))
-                .from(branch)
-                .leftJoin(branch.franchise, franchise)
-                .where(branch.franchise.eq(franchise), finalPredicate)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-    } else {
-        // 모든 조건이 "total"이면 모든 데이터 출력
-        regionOutList = query
-                .select(Projections.constructor(RegionOut.class,
-                        franchise.franchiseName,
-                        branch.sidoName,
-                        branch.gugunName,
-                        branch.branchName,
-                        branch.branchAddress))
-                .from(branch)
-                .leftJoin(branch.franchise, franchise)
-                .where(branch.franchise.eq(franchise), finalPredicate)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-    }
 
     Long count = query
             .select(franchise.count())
