@@ -1,6 +1,5 @@
 package com.example.smilekarina.event.vo;
 
-import com.example.smilekarina.event.domain.Event;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -21,18 +20,4 @@ public class EventOut {
     private LocalDateTime eventEnd; //이벤트 종료일
     private String eventType;   //이벤트 종류
     private List<String> eventDetailImage;
-
-    /*
-    public EventOut(Event event){
-        this.eventId=event.getId();
-        this.eventHead=event.getEventHead();
-        this.linkedUrl=event.getLinkedUrl();
-        this.regDate=event.getCreatedDate();
-        this.eventResultDate=event.getEventResultDate();
-        this.eventStart=event.getEventStart();
-        this.eventEnd=event.getEventEnd();
-        this.
-    }
-
-     */
 }

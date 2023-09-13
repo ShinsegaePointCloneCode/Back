@@ -1,6 +1,5 @@
 package com.example.smilekarina.event.vo;
 
-import com.example.smilekarina.event.domain.EventType;
 import lombok.*;
 
 @Getter
