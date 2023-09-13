@@ -75,7 +75,7 @@ public class CheckServiceImpl implements CheckService {
                     .rouletteDate(now)
                     .build();
             rouletteRepository.save(roulette);
-            pushPoint(userId, point);
+            pushRoullettePoint(userId, point);
 //        }
     }
 
@@ -138,10 +138,20 @@ public class CheckServiceImpl implements CheckService {
         checkRepository.save(checkPoint);
     }
     @Transactional(readOnly = false)
-    public void pushPoint(Long userId, int point) {
+    public void pushRoullettePoint(Long userId, int point) {
         PointAddDto pointAddDto = PointAddDto.builder()
                 .point(point)
                 .pointType(PointType.ROULETTE.getCode())
+                .used(false)
+                .userId(userId)
+                .build();
+        pointService.registerPoint(pointAddDto);
+    }
+    @Transactional(readOnly = false)
+    public void pushPoint(Long userId, int point) {
+        PointAddDto pointAddDto = PointAddDto.builder()
+                .point(point)
+                .pointType(PointType.CHECK.getCode())
                 .used(false)
                 .userId(userId)
                 .build();
