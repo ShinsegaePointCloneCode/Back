@@ -79,8 +79,8 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public List<UserGetDto> getAllUsers() {
-        return null;
+    public List<User> getAllUsers() {
+        return userRepository.findByStatus(1);
     }
 
     @Override

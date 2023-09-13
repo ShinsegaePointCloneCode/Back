@@ -7,6 +7,5 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 public interface ExtinctionPointRepository  extends JpaRepository<ExtinctionPoint, Long> {
-
     Optional<ExtinctionPoint> findByUpdateDateAndUserId(LocalDate now, Long userId);
 }
