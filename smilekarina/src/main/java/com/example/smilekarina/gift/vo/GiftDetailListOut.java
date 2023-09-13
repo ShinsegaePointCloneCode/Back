@@ -15,7 +15,7 @@ public class GiftDetailListOut {
 
     private Integer point;
     private Long pointId;
-    private LocalDateTime updatedDate;
+    private LocalDateTime showDate;
     private String giftType;
     private Boolean messageOnOff;
     private Long giftId;

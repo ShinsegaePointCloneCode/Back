@@ -18,6 +18,6 @@ public class PointDetailOut {
     private Integer point;
     private Boolean used;
     private String pointType;
-    private LocalDateTime createdDate;
+    private LocalDateTime showDate;
 
 }

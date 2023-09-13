@@ -263,7 +263,7 @@ public class  PointServiceImpl implements PointService{
                         .point(pointDetail.getPoint())
                         .used(pointDetail.getUsed())
                         .pointType(pointDetail.getPointType().getValue())
-                        .createdDate(pointDetail.getCreatedDate())
+                        .showDate(pointDetail.getCreatedDate())
                         .build();
             }).toList();
         }

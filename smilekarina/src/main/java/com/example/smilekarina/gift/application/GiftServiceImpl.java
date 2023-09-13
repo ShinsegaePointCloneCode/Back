@@ -261,7 +261,7 @@ public class GiftServiceImpl implements GiftService {
                         .pointId(giftOne.getGiftSenderId().equals(
                                 userId) ?
                                 giftOne.getSenderPointId() : giftOne.getResultPointId())
-                        .updatedDate(giftOne.getUpdatedDate())
+                        .showDate(giftOne.getUpdatedDate())
                         .giftType(giftOne.getGiftType().getCode())
                         .messageOnOff(giftOne.getGiftMessage() == null ? false : true)
                         .giftId(giftOne.getGiftId())
