@@ -100,22 +100,22 @@ public class CheckServiceImpl implements CheckService {
         int newCntDate;
         // 하루 차이가 난 경우
         log.info(String.valueOf(dayDifference));
-        if (dayDifference == 1) {
-            newCntDate = lastPoint.getCntDate() + 1;
-            pushPoint(userId, 1);
-            if (newCntDate > 9) {
-                newCntDate = 0; // 9를 넘어가면 0으로 설정
-                pushPoint(userId, 10);
-            }
-            CheckPoint checkPoint = CheckPoint.builder()
-                    .userId(userId)
-                    .cntDate(newCntDate)
-                    .checkDate(time)
-                    .build();
-            checkRepository.save(checkPoint);
-        } else if(dayDifference < 1) {
-            throw new SameDayCheckException(ErrorStateCode.SAMEDAYCHECK);
-        } else {
+//        if (dayDifference == 1) {
+//            newCntDate = lastPoint.getCntDate() + 1;
+//            pushPoint(userId, 1);
+//            if (newCntDate > 9) {
+//                newCntDate = 0; // 9를 넘어가면 0으로 설정
+//                pushPoint(userId, 10);
+//            }
+//            CheckPoint checkPoint = CheckPoint.builder()
+//                    .userId(userId)
+//                    .cntDate(newCntDate)
+//                    .checkDate(time)
+//                    .build();
+//            checkRepository.save(checkPoint);
+//        } else if(dayDifference < 1) {
+//            throw new SameDayCheckException(ErrorStateCode.SAMEDAYCHECK);
+//        } else {
             newCntDate = 1; // 차이가 1보다 크면 1로 설정
             CheckPoint checkPoint = CheckPoint.builder()
                     .userId(userId)
@@ -124,7 +124,7 @@ public class CheckServiceImpl implements CheckService {
                     .build();
             checkRepository.save(checkPoint);
             pushPoint(userId, 1);
-        }
+//        }
     }
     @Transactional(readOnly = false)
     public void create(Long userId, LocalDate time) {
