@@ -15,6 +15,8 @@ import com.example.smilekarina.point.vo.PointInfoOut;
 import com.example.smilekarina.point.vo.PointListOut;
 import com.example.smilekarina.user.application.UserService;
 import com.example.smilekarina.user.domain.User;
+import com.example.smilekarina.user.exception.NoUserException;
+import com.example.smilekarina.user.exception.UserErrorStateCode;
 import com.example.smilekarina.user.infrastructure.UserRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
@@ -52,7 +54,7 @@ public class  PointServiceImpl implements PointService{
     @Override
     public Integer getUsablePoint(Long userId) {
 
-        User user = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
+        User user = userRepository.findById(userId).orElseThrow(()-> new NoUserException(UserErrorStateCode.NOUSER));
         return getUsablePoint(user);
     }
 
@@ -60,7 +62,7 @@ public class  PointServiceImpl implements PointService{
     @Override
     public PointInfoOut getPointInfo(Long userId) {
 
-        User user = userRepository.findById(userId).orElseThrow(NoSuchElementException::new);
+        User user = userRepository.findById(userId).orElseThrow(()-> new NoUserException(UserErrorStateCode.NOUSER));
 
         // 사용가능 포인트 조회
         Integer usablPoint = getUsablePoint(user);
@@ -97,7 +99,8 @@ public class  PointServiceImpl implements PointService{
     @Transactional(readOnly = false)
     public Long registerPoint(PointAddDto pointAddDto) {
 
-        User user = userRepository.findById(pointAddDto.getUserId()).orElseThrow(IllegalArgumentException::new);
+        User user = userRepository.findById(pointAddDto.getUserId())
+                .orElseThrow(()-> new NoUserException(UserErrorStateCode.NOUSER));
 
         // TotalPoint 계산을 위해 가장 최신 포인트 정보 가져 오기
         Point lastPoint = pointRepository.findFirstByUserOrderByIdDesc(user);
@@ -131,7 +134,8 @@ public class  PointServiceImpl implements PointService{
     @Override
     public Boolean checkPointPassword(PointPasswordCheckDto pointPasswordCheckDto) {
 
-        User user = userRepository.findById(pointPasswordCheckDto.getUserId()).orElseThrow(IllegalArgumentException::new);
+        User user = userRepository.findById(pointPasswordCheckDto.getUserId())
+                .orElseThrow(()-> new NoUserException(UserErrorStateCode.NOUSER));
 
         // 포인트 비밀번호가 없거나 일치하지 않은 경우
         if(user.getPointPassword() == null || !user.getPointPassword().equals(pointPasswordCheckDto.getPointPassword())) {
@@ -251,7 +255,6 @@ public class  PointServiceImpl implements PointService{
                 .limit(pointSearchConditionDto.getSize())
                 .fetch();
 
-        // TODO PointType의 value값을 바로 뺄 수 있으면 이렇게 안해도 된다. 방법을 모르겠어서 일단 이렇게 처리
         List<PointDetailOut> pointDetailOutList = new ArrayList<>();
         if(pointDetailDtoList != null) {
             pointDetailOutList = pointDetailDtoList.stream().map(pointDetail -> {
@@ -484,8 +487,6 @@ public class  PointServiceImpl implements PointService{
                 .build();
     }
 
-
-
     // 날짜(뒤에 시간은 00:00:00) 만들기
     private LocalDateTime createStartLocalDateTime(LocalDate date) {
         return LocalDateTime.of(date, LocalTime.of(0,0,0));
@@ -496,45 +497,4 @@ public class  PointServiceImpl implements PointService{
         return LocalDateTime.of(date, LocalTime.of(23,59,59));
     }
 
-
-
-
-    // 밑에는 강사님 코드 참고용 ************************************
-
-//    @Override
-//    @Convert(converter = PointTypeConverter.class)
-//    public void createPoint(PointAddDto pointAddDto) {
-//
-//        User getUser = userRepository.findByLoginId(pointAddDto.getLoginId()).get();
-//        log.info("user is : {}" , getUser);
-//
-//        PointType pointType = new PointTypeConverter().convertToEntityAttribute(pointAddDto.getPointType());
-//
-//        //todo TotalPoint 계산
-//
-//        pointRepository.save(Point.builder()
-//                .point(pointAddDto.getPoint())
-//                .totalPoint(pointAddDto.getPoint())
-//                .pointType(pointType)
-//                .user(getUser)
-//                .used(pointAddDto.getUsed())
-//                .build());
-//    }
-//
-//    @Override
-//    @Convert(converter = PointTypeConverter.class)
-//    public List<PointGetDto> getPointByUser(Long userId) {
-//        List<Point> pointList = pointRepository.findByUserId(userId);
-//        List<PointGetDto> pointGetDtoList = pointList.stream().map(point -> {
-//                    PointType pointType = new PointTypeConverter().convertToEntityAttribute(point.getPointType().getCode());
-//                    return PointGetDto.builder()
-//                            .pointType(pointType.getValue())
-//                            .point(point.getPoint())
-//                            .used(point.getUsed())
-//                            .build();
-//                }
-//        ).toList();
-//        log.info("pointList is : {}" , pointList);
-//        return pointGetDtoList;
-//    }
 }

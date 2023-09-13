@@ -6,6 +6,8 @@ import com.example.smilekarina.point.vo.PointContentOut;
 import com.example.smilekarina.receipt.domain.Receipt;
 import com.example.smilekarina.receipt.domain.ReceiptAccept;
 import com.example.smilekarina.receipt.domain.SmartReceipt;
+import com.example.smilekarina.receipt.exception.NoReceiptException;
+import com.example.smilekarina.receipt.exception.ReceiptErrorStateCode;
 import com.example.smilekarina.receipt.infrastructure.ReceiptAcceptRepository;
 import com.example.smilekarina.receipt.infrastructure.ReceiptRepository;
 import com.example.smilekarina.receipt.infrastructure.SmartReceiptRepository;
@@ -69,7 +71,8 @@ public class ReceiptServiceImpl implements ReceiptService{
 
         SmartReceipt smartReceipt = smartReceiptRepository.findByPointId(pointId);
 
-        Receipt receipt = receiptRepository.findById(smartReceipt.getId()).orElseThrow(IllegalArgumentException::new);;
+        Receipt receipt = receiptRepository.findById(smartReceipt.getId())
+                .orElseThrow(() -> new NoReceiptException(ReceiptErrorStateCode.NORECEIPT));
 
         return PointContentOut.builder()
                 .franchiseName(smartReceipt.getBranchName())
