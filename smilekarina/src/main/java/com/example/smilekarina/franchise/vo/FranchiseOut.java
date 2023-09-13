@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FranchiseOut {
+    private Integer branchId;
     private String franchiseName;
     private String franchiseImage;
     private String branchName;
