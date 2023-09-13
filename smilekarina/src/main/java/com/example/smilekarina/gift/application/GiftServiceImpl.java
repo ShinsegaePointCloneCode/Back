@@ -300,7 +300,7 @@ public class GiftServiceImpl implements GiftService {
 
         return GiftPointDetailOut.builder()
                 .pointType(point.getPointType().getValue())
-                .used(point.getUsed())
+                .used(!point.getUsed() ? "적립" : "사용")
                 .build();
     }
 

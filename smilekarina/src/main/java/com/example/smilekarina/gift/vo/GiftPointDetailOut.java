@@ -9,6 +9,6 @@ import lombok.*;
 public class GiftPointDetailOut {
 
     private String pointType;
-    private Boolean used;
+    private String used;
 
 }
