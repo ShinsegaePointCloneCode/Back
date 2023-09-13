@@ -18,4 +18,6 @@ public interface FranchiseService {
     void createMyStore(String token, MyStoreDto myStoreDto);
 
     Page<MyStoreOut> myStoreOuts(String token, Pageable pageable);
+
+    void clearMyStore(String token, MyStoreDto myStoreDto);
 }

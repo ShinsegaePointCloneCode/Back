@@ -53,5 +53,11 @@ public class FranchiseController {
         ResponseOut<?> responseOut = ResponseOut.success(myStoreOuts);
         return ResponseEntity.ok(responseOut);
     }
-
+    @DeleteMapping("/mylounge/regularstore")
+    public ResponseEntity<?> deleteMyStore(@RequestHeader("Authorization") String token,
+                                           @RequestBody MyStoreIn myStoreIn){
+        franchiseService.clearMyStore(token,modelMapper.map(myStoreIn, MyStoreDto.class));
+        ResponseOut<?> responseOut = ResponseOut.success();
+        return ResponseEntity.ok(responseOut);
+    }
 }

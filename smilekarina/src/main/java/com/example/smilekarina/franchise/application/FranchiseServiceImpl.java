@@ -153,4 +153,15 @@ public Page<RegionOut> findStore(FranchiseDto franchiseDto, Pageable pageable) {
         return new PageImpl<>(myStoreOutList, pageable, count);
     }
 
+    @Override
+    @Transactional(readOnly = false)
+    public void clearMyStore(String token, MyStoreDto myStoreDto) {
+        User user =userService.getUserFromToken(token);
+        Integer branchId = myStoreDto.getBranchId();
+        MyStore myStore = myStoreRepository.findByUserAndBranchId(user, branchId);
+        if (myStore != null) {
+            myStoreRepository.delete(myStore);
+        }
+    }
+
 }
