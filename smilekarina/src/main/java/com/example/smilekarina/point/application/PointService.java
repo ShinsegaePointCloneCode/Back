@@ -34,6 +34,6 @@ public interface PointService {
 
     // 포인트 리스트 상세 내역 조회 - 소멸
     PointContentOut getExtinction();
-
     void amountMonthPoint(Long userId, LocalDate targetDate);
+    void getExtinctionPoints(Long userId, LocalDate todayDate);
 }

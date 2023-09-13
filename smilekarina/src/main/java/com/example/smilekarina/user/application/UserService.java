@@ -12,7 +12,7 @@ public interface UserService {
     Long createUser(UserSignUpDto userSignUpDto);
     UserGetDto getUserByLoginId(String loginId);
     UserGetDto getUserByUUID(String UUID);
-    List<UserGetDto> getAllUsers();
+    List<User> getAllUsers();
     void modify(String UUID, UserModifyIn userModifyIn);
     LogInDto loginUser(UserLoginIn userLoginIn);
     UserGetDto getUserDtoFromToken(String token);
