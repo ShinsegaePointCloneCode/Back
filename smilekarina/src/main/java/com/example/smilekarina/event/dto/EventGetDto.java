@@ -1,6 +1,5 @@
 package com.example.smilekarina.event.dto;
 
-import com.example.smilekarina.event.domain.EventDetailImage;
 import lombok.*;
 
 import java.time.LocalDateTime;

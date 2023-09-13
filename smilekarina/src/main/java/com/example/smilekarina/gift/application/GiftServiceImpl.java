@@ -261,8 +261,8 @@ public class GiftServiceImpl implements GiftService {
                         .pointId(giftOne.getGiftSenderId().equals(
                                 userId) ?
                                 giftOne.getSenderPointId() : giftOne.getResultPointId())
-                        .updatedDate(giftOne.getUpdatedDate())
-                        .giftType(giftOne.getGiftType().getCode())
+                        .showDate(giftOne.getUpdatedDate())
+                        .giftType(giftOne.getGiftType().getValue())
                         .messageOnOff(giftOne.getGiftMessage() == null ? false : true)
                         .giftId(giftOne.getGiftId())
                         .otherName(user.getName())
@@ -299,8 +299,8 @@ public class GiftServiceImpl implements GiftService {
                 .orElseThrow(() -> new NoSuchElementException("Point not found"));
 
         return GiftPointDetailOut.builder()
-                .pointType(point.getPointType().getCode())
-                .used(point.getUsed())
+                .pointType(point.getPointType().getValue())
+                .used(!point.getUsed() ? "적립" : "사용")
                 .build();
     }
 

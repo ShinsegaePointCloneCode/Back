@@ -261,9 +261,9 @@ public class  PointServiceImpl implements PointService{
                 return PointDetailOut.builder()
                         .pointId(pointDetail.getPointId())
                         .point(pointDetail.getPoint())
-                        .used(pointDetail.getUsed())
+                        .used(!pointDetail.getUsed() ? "적립" : "사용")
                         .pointType(pointDetail.getPointType().getValue())
-                        .createdDate(pointDetail.getCreatedDate())
+                        .showDate(pointDetail.getCreatedDate())
                         .build();
             }).toList();
         }

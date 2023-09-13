@@ -16,8 +16,8 @@ public class PointDetailOut {
 
     private Long pointId;
     private Integer point;
-    private Boolean used;
+    private String used;
     private String pointType;
-    private LocalDateTime createdDate;
+    private LocalDateTime showDate;
 
 }

@@ -13,8 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -23,6 +21,7 @@ import java.util.List;
 public class EventController {
     private final EventService eventService;
     private final ModelMapper modelMapper;
+
     @GetMapping("/event/ingevent/{orderType}")
     public ResponseEntity<?> getIngEvent(@PathVariable(value = "orderType") Integer orderType,
                                          Pageable pageable){
@@ -52,8 +51,6 @@ public class EventController {
         ResponseOut<?> responseOut = ResponseOut.success();
         return ResponseEntity.ok(responseOut);
     }
-
-    //query string 파라미터로 id 값에 해당하는 데이터 요청 -> 이야기해보기 string이 아니고 Long 으로 받으면 안되나용 ..?ㅎㅎㅎ
 
     @GetMapping("/event")
     public ResponseEntity<?>detailEvent(@RequestParam(value = "eventNo")Long eventNo){

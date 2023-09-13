@@ -88,50 +88,6 @@ public class EventServiceImpl implements EventService{
 
     }
 
-
-
-
-    @Override
-    public EventGetDto myEvent(EventGetDto eventGetDto) {
-    return null;
-    }
-
-
-    /*
-    @Override
-    public EventPrizeDto getPrizeEvent(Long id){
-        Event event=eventRepository.findById(id).get();
-        log.info("{}",event);
-        ModelMapper mapper=new ModelMapper();
-        EventPrizeDto eventPrizeDto = mapper.map(event, EventPrizeDto.class);
-        log.info("{}", eventPrizeDto);
-        return eventPrizeDto;
-    }
-
-     */
-
-    //이벤트리스트로 보기
-    @Override
-    public List<EventListGetDto> getAllEvent() {
-        List<Event> eventlist=eventRepository.findAll();
-        //Event에서 EventGetDto로 넣어주는 처리
-        //USer Point에 Sample 찾기
-        List<EventListGetDto> eventListGetDtoList = eventlist.stream().map(event->{
-                    EventType eventype = new EventTypeConverter().convertToEntityAttribute(event.getEventType().getCode());
-                    return EventListGetDto.builder()
-                            .eventHead(event.getEventHead())
-                            .linkedUrl(event.getLinkedUrl())
-                            .regDate(event.getCreatedDate())
-                            .eventStart(event.getEventStart())
-                            .eventEnd(event.getEventEnd())
-                            .eventThumbnail(event.getEventThumbnail())
-                            .build();
-                }
-        ).toList();
-        log.info("Eventlist is : {}" , eventlist);
-        return eventListGetDtoList;
-    }
-
     @Override
     public Page<EventListOut> checkIngEvent(Integer orderType, Pageable pageable) {
         LocalDateTime currentTime =LocalDateTime.now();
@@ -325,11 +281,5 @@ public class EventServiceImpl implements EventService{
         if (count == null) count = 0L;
         return new PageImpl<>(eventListOutQuery,pageable,count);
     }
-
-    @Override
-    public List<EventListOut> myEventList(Integer pageNo, Integer size) {
-        return null;
-    }
-
 
 }
