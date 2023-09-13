@@ -65,7 +65,13 @@ public class CheckServiceImpl implements CheckService {
         LocalDate now = LocalDate.now();
         Optional<Roulette> rouletteValue = rouletteRepository.findByRouletteDateAndUserId(now,userId);
         if(rouletteValue.isPresent()) {
-            throw new NoSuchElementException("중복 룰렛되고 있습니다.");
+            Roulette roulette = Roulette.builder()
+                    .userId(userId)
+                    .rouletteDate(now)
+                    .build();
+            rouletteRepository.save(roulette);
+            pushPoint(userId, point);
+//            throw new NoSuchElementException("중복 룰렛되고 있습니다.");
         } else if(point > 1000) {
             throw new NoSuchElementException("요청된 포인트가 초과되었습니다.");
         } else {
