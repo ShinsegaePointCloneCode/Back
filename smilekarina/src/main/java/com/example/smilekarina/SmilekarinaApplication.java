@@ -6,8 +6,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.util.TimeZone;
-
 @EnableJpaAuditing // base entity 자동 적용
 @EnableScheduling // 스케줄링 활성화
 //@EnableBatchProcessing // 배치기능 활성화
