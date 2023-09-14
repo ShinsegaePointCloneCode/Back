@@ -27,7 +27,7 @@
 
 ## ✨ 기능 및 화면
 ### 1) 메인 화면
-![image](./exec/captureImg/1.png)
+![image](./exec/captureImg/1.png){: width="100" height="100"}
 ![image](./exec/captureImg/4.png)
 ![image](./exec/captureImg/5.png)
 - 모든 서비스를 접근 할수 있는 페이지 입니다.
