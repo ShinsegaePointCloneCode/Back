@@ -91,26 +91,6 @@ public class CardController {
     }
 
     /*
-        제휴 포인트 카드 조회 (화면구현유무에 따라 작업예정)
-     */
-
-    /*
-        제휴 마일리지 카드 조회 (화면구현유무에 따라 작업예정)
-     */
-
-    /*
-        제휴 카드 수정 - API명세서에도 추가필요(화면구현유무에 따라 추가예정)
-     */
-
-    /*
-        제휴 카드 삭제 - API명세서에도 추가필요(화면구현유무에 따라 추가예정)
-     */
-
-    /*
-        대표 카드 수정 - API명세서에도 추가필요(화면구현유무에 따라 추가예정)
-     */
-
-    /*
         포인트카드 번호 조회(바코드 보기 위함)
      */
     @GetMapping("/card/pointcard")
@@ -125,6 +105,5 @@ public class CardController {
         ResponseOut<?> responseOut = ResponseOut.success(barcodePointCardOut);
         return ResponseEntity.ok(responseOut);
     }
-
 
 }

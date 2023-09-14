@@ -1,6 +1,5 @@
 package com.example.smilekarina.point.application;
 
-import com.example.smilekarina.gift.dto.GiftDetailDto;
 import com.example.smilekarina.point.domain.*;
 import com.example.smilekarina.point.dto.PointAddDto;
 import com.example.smilekarina.point.dto.PointDetailDto;
@@ -34,7 +33,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service

@@ -1,6 +1,5 @@
 package com.example.smilekarina.point.vo;
 
-import com.example.smilekarina.point.domain.PointType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
