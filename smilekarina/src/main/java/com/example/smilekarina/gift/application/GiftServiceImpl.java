@@ -353,7 +353,7 @@ public class GiftServiceImpl implements GiftService {
                 gift = giftRepository.findBySenderPointId(pointId);
                 otherUserId = gift.getGiftRecipientId();
             } else {
-                otherUserId = gift.getSenderPointId();
+                otherUserId = gift.getGiftSenderId();
             }
 
             User user = userRepository.findById(otherUserId)
