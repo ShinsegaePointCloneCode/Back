@@ -237,9 +237,17 @@ public class GiftServiceImpl implements GiftService {
         if(!giftList.isEmpty()) {
             for(GiftDetailDto giftOne : giftList) {
 
-                // 내가 받는 사람이고 수락 대기중인 선물인 경의 리스트 내역에 보여주지 않음
+                // 내가 받는 사람이고 수락 대기 중인 선물인 경우의 리스트 내역에 보여주지 않고 적립 포인트에서 제외
                 if(giftOne.getGiftRecipientId().equals(userId)
                         && giftOne.getGiftType().equals(GiftType.WAIT)) {
+                    addTotalPoint = addTotalPoint - giftOne.getPoint();
+                    continue;
+                }
+
+                // 내가 받는 사람이고 취소인 선물인 경우의 리스트 내역에 보여주지 않고 적립 포인트에서 제외
+                if(giftOne.getGiftRecipientId().equals(userId)
+                        && giftOne.getGiftType().equals(GiftType.CANCEL)) {
+                    addTotalPoint = addTotalPoint - giftOne.getPoint();
                     continue;
                 }
 
