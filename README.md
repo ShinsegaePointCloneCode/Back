@@ -1,4 +1,4 @@
-# Front
+
 # 포인트를 쌓고 적립하는 KarinaPoint
 
 <br>
