@@ -21,7 +21,7 @@
 
 ### "작업 파일"
 - 📑 Event Stoming : https://miro.com/app/board/uXjVMlIqv7U=/?share_link_id=479010144120
-- 📑 ERD : https://www.erdcloud.com/d/tQn8bohpKTm3xmkdy
+- 📑 ERD : https://www.erdcloud.com/d/biaFjMHtwcZuyCMTf
 - 📑 API, 요구사항 정의서, WBS : https://docs.google.com/spreadsheets/d/187mT7rzsiOdJvDZn1QiEwpiCblH_ZM3xRNI8xBltHow/edit?usp=sharing
 <br>
 
