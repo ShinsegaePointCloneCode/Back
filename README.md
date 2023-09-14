@@ -27,7 +27,7 @@
 
 ## ✨ 기능 및 화면
 ### 1) 메인 화면
-### Frontend  
+
 <div align="space-between">  
   <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/1.png" width="200" height="400"/>
   <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/4.png" width="200" height="400"/>
@@ -36,10 +36,10 @@
 
 - 모든 서비스를 접근 할수 있는 페이지 입니다.
 <br>
-<div align="space-between">  
-  <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/2.png" width="200" height="400"/>
+
+  <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/2.png" width="200" height="100"/>
   <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/3.png" width="200" height="400"/>
-</div>
+
 
 - 앱으로 설치해서 PWA를 이용해서 볼수 있는 기능을 제공합니다.
 
@@ -131,6 +131,7 @@
 <div align="space-between">  
   <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/38.png" width="200" height="400"/>
   <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/39.png" width="200" height="400"/>
+  <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/40.png" width="200" height="400"/>
 </div>
 
 - 진행 이벤트, 종료 이벤트, 당첨 이벤트를 확인할 수 있습니다.
@@ -140,8 +141,8 @@
 
 ### 8) 쿠폰 기능
 <div align="space-between">  
-  <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/40.png" width="200" height="400"/>
   <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/41.png" width="200" height="400"/>
+  <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/42.png" width="200" height="400"/>
 </div>
 
 - 다양한 쿠폰을 제공합니다.
@@ -153,10 +154,9 @@
 
 <br>
 
-## 📃 데이터 명세
+## 🚀 아키텍쳐
 
-
-<br>
+<img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/%EC%95%84%ED%82%A4%ED%85%8D%EC%B3%90.png"/>
 
 ## 🏋️‍♂️ 기술 스택
 ### Frontend  
@@ -197,18 +197,8 @@
 
 <br>
 
-## ⚙ 아키텍처
-
-
-<br>
-
-## 🖥️ 실행 방법
-[포팅 메뉴얼]()에 자세히 작성되어 있습니다😊 참고해 주세요 !
-
-<br>
-
 ## 팀원 소개
-![image](./exec/팀원.png)
+  <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/%ED%8C%80%EC%9B%90.png"/>
 
 ## 개발 참고 자료
 [PR 보내는 방법](./Contribute.md)
