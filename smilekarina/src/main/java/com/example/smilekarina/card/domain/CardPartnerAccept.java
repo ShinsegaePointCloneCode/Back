@@ -21,6 +21,4 @@ public class CardPartnerAccept {
     @Column(nullable = false, name = "point_id")
     private Long pointId;
 
-    // TODO 컬럼이 부족한 것 같다. 개발식 확인 필요
-
 }

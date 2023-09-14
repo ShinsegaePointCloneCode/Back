@@ -1,7 +1,5 @@
 package com.example.smilekarina.point.vo;
 
-import com.example.smilekarina.point.domain.PointType;
-import com.example.smilekarina.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
 
