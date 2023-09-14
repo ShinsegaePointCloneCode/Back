@@ -40,53 +40,94 @@
   <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/2.png" width="200" height="400"/>
   <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/3.png" width="200" height="400"/>
 </div>
+
 - 앱으로 설치해서 PWA를 이용해서 볼수 있는 기능을 제공합니다.
 
 <br>
 <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/6.png" width="200" height="400"/>
+
 - UX를 위해서 다크모드를 지원합니다.
 <br>
-### 2) 로그인 화면
-<img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/7.png" width="200" height="400"/>
-- 회원가입에는 아이디 찾기, 비밀번호 찾기, 회원가입, 아이디 저장, 자동 로그인 기능을 지원합니다.
+
+### 2) 포인트 기능
+
+  <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/43.png" width="200" height="400"/>
+
+- 포인트에서는 자신의 포인트 적립/사용 내역을 확인할 수 있습니다.
+- 기간, 영수증 여부, 선물, 전환을 통해 분기해서 포인트 적립/사용 내역을 확인 할 수 있습니다.
+  
 <div align="space-between">  
+  <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/45.png" width="200" height="400"/>
+  <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/46.png" width="200" height="400"/>
+  <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/47.png" width="200" height="400"/>
+</div>
+
+- 다른 사람에게 포인트를 선물할 수 있습니다.
+- 받은 사람은 선물 수락/거절을 선택할 수 있습니다.
+
+<br>
+
+  <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/48.png" width="200" height="400"/>
+
+- 다른 제휴사의 포인트를 적립할 수 있습니다.
+- 제휴사, 브랜드, 매장명을 선택하고 일련번호를 입력하면 해당 포인트를 쌓을 수 있습니다.
+
+### 3) 로그인 화면
+<div align="space-between">  
+  <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/7.png" width="200" height="400"/>
   <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/17.png" width="200" height="400"/>
   <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/18.png" width="200" height="400"/>
 </div>
+<br>
+
+- 회원가입에는 아이디 찾기, 비밀번호 찾기, 회원가입, 아이디 저장, 자동 로그인 기능을 지원합니다.
 - 또한 네이버와 카카오톡을 통해 로그인을 할 수 있습니다.(단 회원가입한 유저에 의해 가능)
 
 <br>
 
-### 3) 로그인 후 메인 화면
+### 4) 로그인 후 메인 화면
 <div align="space-between">  
 <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/19.png" width="200" height="400"/>
 <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/20.png" width="200" height="400"/>
 </div>
+
+<br>
+
 - 로그인 한 유저는 자신의 포인트를 확인하고 자신의 포인트카드를 연결할 수 있습니다.
 - 멤버십 서비스, 출석체크, 로그인, 쿠폰, 이벤트 등 다양한 기능에 접근할 수 있게 됩니다.
 - 로그인 하지 않았을 때 접근 한 경우 로그인 페이지로 리다이랙트 됩니다.
 
 <br>
 
-### 4) 출석체크와 룰렛기능
+### 5) 출석체크와 룰렛기능
 <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/33.gif" width="200" height="400"/>
-- 로그인한 유저는 하루에 한번 룰렛을 할 수 있습니다.
-<img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/34.png" width="200" height="400"/>
-- 로그인한 유저는 하루에 한번 출석을 할 수 있습니다.
-- 10일 연속 출석을 한 경우 추가적인 포인트를 획득할 수 있습니다.
 <br>
 
-### 5) 매장 찾기 기능
+- 로그인한 유저는 하루에 한번 룰렛을 할 수 있습니다.
+
+<img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/34.png" width="200" height="400"/>
+
+<br>
+
+- 로그인한 유저는 하루에 한번 출석을 할 수 있습니다.
+- 10일 연속 출석을 한 경우 추가적인 포인트를 획득할 수 있습니다.
+  
+<br>
+
+### 6) 매장 찾기 기능
 <div align="space-between">  
 <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/36.png" width="200" height="400"/>
 <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/37.png" width="200" height="400"/>
 </div>
+
+<br>
+
 - 프랜차이즈 종류마다 분기해서 매장을 찾을 수 있습니다.
 - 해당 프랜차이즈 지점을 선택해서 자주 찾는 매장(자신의 매장)으로 등록할 수 있습니다.
 
 <br>
 
-### 6) 이벤트 기능
+### 7) 이벤트 기능
 <div align="space-between">  
   <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/38.png" width="200" height="400"/>
   <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/39.png" width="200" height="400"/>
@@ -97,11 +138,12 @@
 
 <br>
 
-### 7) 쿠폰 기능
+### 8) 쿠폰 기능
 <div align="space-between">  
   <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/40.png" width="200" height="400"/>
   <img src="https://github.com/ShinsegaePointCloneCode/Back/blob/develop/exec/captureImg/41.png" width="200" height="400"/>
 </div>
+
 - 다양한 쿠폰을 제공합니다.
 - 해당 쿠폰을 다운했을 경우 바코드를 줍니다. 그리고 전체 다운을 통해 UX를 도와줍니다.
 
