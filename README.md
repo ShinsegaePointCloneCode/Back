@@ -3,9 +3,6 @@
 
 <br>
 
-[![gif](/asset/machine_state_gif.gif)](https://youtu.be/TqG5Wmtujec)
-🔼 클릭하면 UCC로 이동합니다 !
-
 <br>
 
 ##  💁 간단 소개
