@@ -11,7 +11,7 @@
 회원이 가입하고 이벤트와 자신의 포인트, 출석과 룰렛을 통한 포인트를 쌓고 유저간 선물 기능으로 주고 받을 수 있는 사이트 (휴대폰, 웹 전용)
 
 
-- 🔗 LINK : https://smilekarina-point.vercel.app
+- 🔗 LINK : https://smilekarina-point.vercel.app (배포 중단)
 - 🎼 Period : 2023.07.31 ~ 2023.09.18 (8주간 진행)
 - 📑 Notion : https://cold-eel-56c.notion.site/9cb79d2785454b389f4975887cb60727?v=87c07bf232d74e28b8d15dbb880a3abe&pvs=4
 <br>
